@@ -1,4 +1,4 @@
-package rizki.practicum.learning.service;
+package rizki.practicum.learning.service.role;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,19 +15,23 @@ public class RoleGeneratorService {
 
         Role headLaboratory = new Role();
         headLaboratory.setId("1");
-        headLaboratory.setDescription("Kepala Laboratorium");
+        headLaboratory.setDescription(RoleDefinition.HeadLaboratory.description);
+        headLaboratory.setInitial(RoleDefinition.HeadLaboratory.initial);
 
         Role coordinatorAssistant = new Role();
         coordinatorAssistant.setId("2");
-        coordinatorAssistant.setDescription("Koordinator Asisten");
+        coordinatorAssistant.setDescription(RoleDefinition.CoordinatorAssistance.description);
+        coordinatorAssistant.setInitial(RoleDefinition.CoordinatorAssistance.initial);
 
         Role assistant = new Role();
         assistant.setId("3");
-        assistant.setDescription("Asisten Praktikum");
+        assistant.setDescription(RoleDefinition.Assistance.description);
+        assistant.setInitial(RoleDefinition.Assistance.initial);
 
         Role practican = new Role();
         practican.setId("4");
-        practican.setDescription("Mahasiswa");
+        practican.setDescription(RoleDefinition.Practican.description);
+        practican.setInitial(RoleDefinition.Practican.initial);
 
         roleRepository.save(headLaboratory);
         roleRepository.save(coordinatorAssistant);

@@ -1,4 +1,4 @@
-package rizki.practicum.learning;
+package rizki.practicum.learning.service;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -9,7 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import rizki.practicum.learning.entity.User;
 import rizki.practicum.learning.repository.UserRepository;
-import rizki.practicum.learning.service.UserService;
+import rizki.practicum.learning.service.user.UserService;
 import rizki.practicum.learning.util.Confirmation;
 
 import java.util.logging.Logger;

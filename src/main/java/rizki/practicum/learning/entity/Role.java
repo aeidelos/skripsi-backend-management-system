@@ -11,16 +11,19 @@ import javax.persistence.Id;
 import javax.validation.constraints.Size;
 
 @Entity
+@Setter @Getter
 public class Role {
 
-    @Setter @Getter
     @Id
-    @GeneratedValue(generator ="uuid")
-    @GenericGenerator(name="uuid", strategy = "uuid2")
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
     private String id;
 
-    @Setter @Getter
     @Size(max = 25)
     @Column(nullable = false, unique = true)
     private String description;
+
+    @Size(max = 25)
+    @Column(nullable = false, unique = true)
+    private String initial;
 }
