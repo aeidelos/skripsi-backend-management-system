@@ -8,20 +8,23 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.stream.Stream;
 
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
+import rizki.practicum.learning.configuration.FilesLocation;
 
 @Service
+@Qualifier("StorageService")
 public class StorageService implements StorageServiceInterface{
 
-
     Logger log = LoggerFactory.getLogger(this.getClass().getName());
-    private final Path rootLocation = Paths.get(rizki.practicum.learning.configuration.Files.UserPhoto.location);
+    Path rootLocation = Paths.get(FilesLocation.UserPhoto.LOCATION);;
 
     @Override
     public void init() {
@@ -33,8 +36,16 @@ public class StorageService implements StorageServiceInterface{
     }
 
     @Override
-    public void store(MultipartFile file) {
-
+    public String store(MultipartFile file) {
+        String filename;
+        try {
+            filename = rizki.practicum.learning.util.hash.MD5.generate(file.getOriginalFilename())+"."+
+                    FilenameUtils.getExtension(file.getOriginalFilename());
+            Files.copy(file.getInputStream(), this.rootLocation.resolve(filename));
+        } catch (Exception e) {
+            throw new RuntimeException(StorageServiceMessage.SAVE_RESOURCE_FAIL);
+        }
+        return filename;
     }
 
     @Override

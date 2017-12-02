@@ -6,8 +6,9 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import rizki.practicum.learning.service.role.RoleGeneratorService;
+import rizki.practicum.learning.service.generator.RoleGeneratorService;
 import rizki.practicum.learning.service.storage.StorageService;
+import rizki.practicum.learning.service.storage.StorageServiceInterface;
 
 @SpringBootApplication
 public class LearningManagementSystemApplication {
@@ -19,7 +20,7 @@ public class LearningManagementSystemApplication {
 	@Bean
 	InitializingBean prepareData(){
 		return() -> {
-			roleGeneratorService.populateRole();
+			roleGeneratorService.populate();
 		};
 	}
 

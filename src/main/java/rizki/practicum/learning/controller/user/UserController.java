@@ -1,6 +1,7 @@
 package rizki.practicum.learning.controller.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,8 +11,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import rizki.practicum.learning.configuration.Routes;
 import rizki.practicum.learning.entity.User;
-import rizki.practicum.learning.service.storage.StorageService;
-import rizki.practicum.learning.service.user.UserService;
+import rizki.practicum.learning.service.role.RoleDefinition;
+import rizki.practicum.learning.service.role.RoleServiceInterface;
+import rizki.practicum.learning.service.storage.StorageServiceInterface;
+import rizki.practicum.learning.service.user.UserServiceInterface;
 import rizki.practicum.learning.util.Confirmation;
 import rizki.practicum.learning.util.response.ResponseWrapper;
 import java.util.Map;
@@ -20,10 +23,13 @@ import java.util.Map;
 public class UserController {
 
     @Autowired
-    private UserService userService;
+    private UserServiceInterface userService;
+
+    @Autowired @Qualifier("UserPhotoStorageService")
+    private StorageServiceInterface storageService;
 
     @Autowired
-    private StorageService storageService;
+    private RoleServiceInterface roleService;
 
     @Autowired
     private ResponseWrapper responseWrapper;
@@ -34,7 +40,7 @@ public class UserController {
             @RequestParam("name") String name,
             @RequestParam("password") String password,
             @RequestParam("identity") String identity,
-            @RequestParam("photo") MultipartFile photo
+            @RequestParam(value="photo", required=false) MultipartFile photo
             ){
 
         User newUser = new User();
@@ -43,10 +49,10 @@ public class UserController {
         newUser.setPassword(password);
         newUser.setEmail(email);
         newUser.setIdentity(identity);
-        newUser.setPhoto(photo.getOriginalFilename());
+        newUser.setRole(roleService.getRole(RoleDefinition.Practican.initial));
         try{
             Confirmation confirmation = userService.createUser(newUser);
-            storageService.store(photo);
+            if(photo!=null) newUser.setPhoto(storageService.store(photo));
             return responseWrapper.restResponseCollectionWrapper(HttpStatus.CREATED,null,
                     Routes.UserRoutes.USER_REGISTER,1,confirmation.getMessage());
         }catch (Exception e){

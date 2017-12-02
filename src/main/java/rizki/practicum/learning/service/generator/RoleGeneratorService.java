@@ -1,17 +1,18 @@
-package rizki.practicum.learning.service.role;
+package rizki.practicum.learning.service.generator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import rizki.practicum.learning.entity.Role;
 import rizki.practicum.learning.repository.RoleRepository;
+import rizki.practicum.learning.service.role.RoleDefinition;
 
 @Service
-public class RoleGeneratorService {
+public class RoleGeneratorService implements GeneratorService {
 
     @Autowired
     private RoleRepository roleRepository;
 
-    public void populateRole(){
+    public void populate(){
 
         Role headLaboratory = new Role();
         headLaboratory.setId("1");
@@ -37,6 +38,11 @@ public class RoleGeneratorService {
         roleRepository.save(coordinatorAssistant);
         roleRepository.save(assistant);
         roleRepository.save(practican);
+
+    }
+
+    @Override
+    public void destroy() {
 
     }
 
