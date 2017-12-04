@@ -7,7 +7,7 @@ import rizki.practicum.learning.repository.RoleRepository;
 import rizki.practicum.learning.service.role.RoleDefinition;
 
 @Service
-public class RoleGeneratorService implements GeneratorService {
+public class RoleGeneratorServiceImpl implements GeneratorService {
 
     @Autowired
     private RoleRepository roleRepository;

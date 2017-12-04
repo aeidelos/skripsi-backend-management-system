@@ -8,26 +8,18 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.validation.constraints.Size;
 
-@Entity
 @Setter @Getter
-public class Role {
-
+@Entity
+public class Course {
     @Id
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
-    @Setter @Getter
     private String id;
 
-    @Size(max = 25)
-    @Column(nullable = false, unique = true)
-    @Setter @Getter
-    private String description;
+    @Column
+    private String courseCode;
 
-    @Size(max = 25)
-    @Column(nullable = false, unique = true)
-    @Setter @Getter
-    private String initial;
-
+    @Column
+    private String courseName;
 }

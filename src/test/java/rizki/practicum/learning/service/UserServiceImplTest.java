@@ -9,19 +9,19 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import rizki.practicum.learning.entity.User;
 import rizki.practicum.learning.repository.UserRepository;
-import rizki.practicum.learning.service.user.UserService;
+import rizki.practicum.learning.service.user.UserServiceImpl;
 import rizki.practicum.learning.util.Confirmation;
 
 import java.util.logging.Logger;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class UserServiceTest{
+public class UserServiceImplTest {
 
-    private static final Logger LOGGER = Logger.getLogger( UserServiceTest.class.getName() );
+    private static final Logger LOGGER = Logger.getLogger( UserServiceImplTest.class.getName() );
 
     @Autowired
-    private UserService userService;
+    private UserServiceImpl userServiceImpl;
 
     @Autowired
     private UserRepository userRepository;
@@ -52,7 +52,7 @@ public class UserServiceTest{
         newUser.setPassword("Password Testing");
         newUser.setEmail("Email Testing");
         newUser.setIdentity("Identity Testing");
-        Confirmation createUser = userService.createUser(newUser);
+        Confirmation createUser = userServiceImpl.createUser(newUser);
         Assert.assertNotNull(createUser);
         Assert.assertTrue(createUser.isSuccess());
     }
@@ -64,7 +64,7 @@ public class UserServiceTest{
         newUser.setPassword("Password Duplicated Email Testing");
         newUser.setEmail("Email");
         newUser.setIdentity("Identity Duplicated Email Testing");
-        Confirmation createUser = userService.createUser(newUser);
+        Confirmation createUser = userServiceImpl.createUser(newUser);
         Assert.assertNotNull(createUser);
         Assert.assertFalse(createUser.isSuccess());
     }
@@ -77,7 +77,7 @@ public class UserServiceTest{
         newUser.setPassword("Password Duplicated Identify Testing");
         newUser.setEmail("Email Duplicated Identify Testing");
         newUser.setIdentity("Identity");
-        Confirmation createUser = userService.createUser(newUser);
+        Confirmation createUser = userServiceImpl.createUser(newUser);
         Assert.assertNotNull(createUser);
         Assert.assertFalse(createUser.isSuccess());
     }
@@ -89,7 +89,7 @@ public class UserServiceTest{
         newUser.setPassword(null);
         newUser.setEmail(null);
         newUser.setIdentity("Identity");
-        Confirmation createUser = userService.createUser(newUser);
+        Confirmation createUser = userServiceImpl.createUser(newUser);
         Assert.assertNotNull(createUser);
         Assert.assertFalse(createUser.isSuccess());
     }
@@ -119,19 +119,19 @@ public class UserServiceTest{
     }
     @Test
     public void removeUser(){
-        Confirmation removeUser = userService.removeUser(user.getId());
+        Confirmation removeUser = userServiceImpl.removeUser(user.getId());
         Assert.assertNotNull(removeUser);
         Assert.assertTrue(removeUser.isSuccess());
     }
     @Test
     public void removeUserIfNullId(){
-        Confirmation removeUser = userService.removeUser(null);
+        Confirmation removeUser = userServiceImpl.removeUser(null);
         Assert.assertNotNull(removeUser);
         Assert.assertFalse(removeUser.isSuccess());
     }
     @Test
     public void removeUserIfNotFoundId(){
-        Confirmation removeUser = userService.removeUser("RandomText");
+        Confirmation removeUser = userServiceImpl.removeUser("RandomText");
         Assert.assertNotNull(removeUser);
         Assert.assertFalse(removeUser.isSuccess());
     }

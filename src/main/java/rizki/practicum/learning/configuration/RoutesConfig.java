@@ -1,6 +1,6 @@
 package rizki.practicum.learning.configuration;
 
-public interface Routes {
+public interface RoutesConfig {
 
     interface AuthenticationRoutes {
 

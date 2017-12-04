@@ -9,6 +9,7 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 @Entity
 @Setter @Getter
@@ -40,4 +41,11 @@ public class User {
     @OnDelete(action = OnDeleteAction.NO_ACTION)
     private Role role;
 
+    @OneToOne
+    @ElementCollection(targetClass=Practicum.class)
+    private Practicum CoordinatorAssistance;
+
+    @OneToMany
+    @ElementCollection(targetClass=Classroom.class)
+    private List<Classroom> Assistance;
 }

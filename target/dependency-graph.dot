@@ -1,0 +1,235 @@
+digraph "learning" {
+  node [shape="box",style="rounded",fontname="Helvetica",fontsize="14"]
+  edge [fontsize="10",fontname="Helvetica"]
+
+  // Node Definitions:
+  "org.springframework.boot:spring-boot-starter:jar"[label=<spring-boot-starter>]
+  "org.springframework.boot:spring-boot:jar"[label=<spring-boot>]
+  "org.springframework.boot:spring-boot-autoconfigure:jar"[label=<spring-boot-autoconfigure>]
+  "ch.qos.logback:logback-classic:jar"[label=<logback-classic>]
+  "ch.qos.logback:logback-core:jar"[label=<logback-core>]
+  "org.springframework.boot:spring-boot-starter-logging:jar"[label=<spring-boot-starter-logging>]
+  "org.slf4j:jul-to-slf4j:jar"[label=<jul-to-slf4j>]
+  "org.slf4j:log4j-over-slf4j:jar"[label=<log4j-over-slf4j>]
+  "org.yaml:snakeyaml:jar"[label=<snakeyaml<font point-size="10"><br/>(runtime)</font>>]
+  "org.springframework.boot:spring-boot-starter-data-jpa:jar"[label=<spring-boot-starter-data-jpa>]
+  "org.springframework.boot:spring-boot-starter-aop:jar"[label=<spring-boot-starter-aop>]
+  "org.springframework:spring-aop:jar"[label=<spring-aop>]
+  "org.aspectj:aspectjweaver:jar"[label=<aspectjweaver>]
+  "org.hibernate:hibernate-core:jar"[label=<hibernate-core>]
+  "org.jboss.logging:jboss-logging:jar"[label=<jboss-logging>]
+  "org.hibernate.javax.persistence:hibernate-jpa-2.1-api:jar"[label=<hibernate-jpa-2.1-api>]
+  "org.javassist:javassist:jar"[label=<javassist>]
+  "antlr:antlr:jar"[label=<antlr>]
+  "org.jboss:jandex:jar"[label=<jandex>]
+  "dom4j:dom4j:jar"[label=<dom4j>]
+  "org.hibernate.common:hibernate-commons-annotations:jar"[label=<hibernate-commons-annotations>]
+  "org.hibernate:hibernate-entitymanager:jar"[label=<hibernate-entitymanager>]
+  "javax.transaction:javax.transaction-api:jar"[label=<javax.transaction-api>]
+  "org.springframework.data:spring-data-jpa:jar"[label=<spring-data-jpa>]
+  "org.springframework.data:spring-data-commons:jar"[label=<spring-data-commons>]
+  "org.springframework:spring-orm:jar"[label=<spring-orm>]
+  "org.springframework:spring-context:jar"[label=<spring-context>]
+  "org.springframework:spring-tx:jar"[label=<spring-tx>]
+  "org.springframework:spring-beans:jar"[label=<spring-beans>]
+  "org.slf4j:slf4j-api:jar"[label=<slf4j-api>]
+  "org.slf4j:jcl-over-slf4j:jar"[label=<jcl-over-slf4j>]
+  "org.springframework:spring-aspects:jar"[label=<spring-aspects>]
+  "rizki.practicum:learning:jar"[label=<learning>]
+  "org.mongodb:mongodb-driver:jar"[label=<mongodb-driver>]
+  "org.mongodb:mongodb-driver-core:jar"[label=<mongodb-driver-core>]
+  "org.mongodb:bson:jar"[label=<bson>]
+  "org.springframework.boot:spring-boot-starter-data-mongodb:jar"[label=<spring-boot-starter-data-mongodb>]
+  "org.springframework.data:spring-data-mongodb:jar"[label=<spring-data-mongodb>]
+  "org.springframework:spring-expression:jar"[label=<spring-expression>]
+  "org.springframework.data:spring-data-redis:jar"[label=<spring-data-redis>]
+  "org.springframework.data:spring-data-keyvalue:jar"[label=<spring-data-keyvalue>]
+  "org.springframework:spring-oxm:jar"[label=<spring-oxm>]
+  "org.springframework:spring-context-support:jar"[label=<spring-context-support>]
+  "org.springframework.boot:spring-boot-starter-data-redis:jar"[label=<spring-boot-starter-data-redis>]
+  "redis.clients:jedis:jar"[label=<jedis>]
+  "org.apache.commons:commons-pool2:jar"[label=<commons-pool2>]
+  "org.springframework.boot:spring-boot-starter-data-rest:jar"[label=<spring-boot-starter-data-rest>]
+  "com.fasterxml.jackson.core:jackson-annotations:jar"[label=<jackson-annotations>]
+  "com.fasterxml.jackson.core:jackson-databind:jar"[label=<jackson-databind>]
+  "com.fasterxml.jackson.core:jackson-core:jar"[label=<jackson-core>]
+  "org.springframework.data:spring-data-rest-core:jar"[label=<spring-data-rest-core>]
+  "org.springframework.hateoas:spring-hateoas:jar"[label=<spring-hateoas>]
+  "org.springframework.plugin:spring-plugin-core:jar"[label=<spring-plugin-core>]
+  "org.atteo:evo-inflector:jar"[label=<evo-inflector>]
+  "org.springframework.data:spring-data-rest-webmvc:jar"[label=<spring-data-rest-webmvc>]
+  "org.apache.tomcat:tomcat-jdbc:jar"[label=<tomcat-jdbc>]
+  "org.apache.tomcat:tomcat-juli:jar"[label=<tomcat-juli>]
+  "org.springframework.boot:spring-boot-starter-jdbc:jar"[label=<spring-boot-starter-jdbc>]
+  "org.springframework:spring-jdbc:jar"[label=<spring-jdbc>]
+  "org.springframework.session:spring-session:jar"[label=<spring-session>]
+  "org.springframework.boot:spring-boot-starter-validation:jar"[label=<spring-boot-starter-validation>]
+  "org.apache.tomcat.embed:tomcat-embed-el:jar"[label=<tomcat-embed-el>]
+  "org.hibernate:hibernate-validator:jar"[label=<hibernate-validator>]
+  "javax.validation:validation-api:jar"[label=<validation-api>]
+  "com.fasterxml:classmate:jar"[label=<classmate>]
+  "org.apache.tomcat.embed:tomcat-embed-core:jar"[label=<tomcat-embed-core>]
+  "org.apache.tomcat:tomcat-annotations-api:jar"[label=<tomcat-annotations-api>]
+  "org.springframework.boot:spring-boot-starter-tomcat:jar"[label=<spring-boot-starter-tomcat>]
+  "org.apache.tomcat.embed:tomcat-embed-websocket:jar"[label=<tomcat-embed-websocket>]
+  "org.springframework.boot:spring-boot-starter-web:jar"[label=<spring-boot-starter-web>]
+  "org.springframework:spring-web:jar"[label=<spring-web>]
+  "org.springframework:spring-webmvc:jar"[label=<spring-webmvc>]
+  "mysql:mysql-connector-java:jar"[label=<mysql-connector-java<font point-size="10"><br/>(runtime)</font>>]
+  "org.projectlombok:lombok:jar"[label=<lombok>]
+  "org.springframework.boot:spring-boot-starter-test:jar"[label=<spring-boot-starter-test<font point-size="10"><br/>(test)</font>>]
+  "org.springframework.boot:spring-boot-test:jar"[label=<spring-boot-test<font point-size="10"><br/>(test)</font>>]
+  "org.springframework.boot:spring-boot-test-autoconfigure:jar"[label=<spring-boot-test-autoconfigure<font point-size="10"><br/>(test)</font>>]
+  "net.minidev:accessors-smart:jar"[label=<accessors-smart<font point-size="10"><br/>(test)</font>>]
+  "org.ow2.asm:asm:jar"[label=<asm<font point-size="10"><br/>(test)</font>>]
+  "net.minidev:json-smart:jar"[label=<json-smart<font point-size="10"><br/>(test)</font>>]
+  "com.jayway.jsonpath:json-path:jar"[label=<json-path<font point-size="10"><br/>(test)</font>>]
+  "junit:junit:jar"[label=<junit<font point-size="10"><br/>(test)</font>>]
+  "org.assertj:assertj-core:jar"[label=<assertj-core<font point-size="10"><br/>(test)</font>>]
+  "org.mockito:mockito-core:jar"[label=<mockito-core<font point-size="10"><br/>(test)</font>>]
+  "org.objenesis:objenesis:jar"[label=<objenesis<font point-size="10"><br/>(test)</font>>]
+  "org.hamcrest:hamcrest-core:jar"[label=<hamcrest-core<font point-size="10"><br/>(test)</font>>]
+  "org.hamcrest:hamcrest-library:jar"[label=<hamcrest-library<font point-size="10"><br/>(test)</font>>]
+  "org.skyscreamer:jsonassert:jar"[label=<jsonassert<font point-size="10"><br/>(test)</font>>]
+  "com.vaadin.external.google:android-json:jar"[label=<android-json<font point-size="10"><br/>(test)</font>>]
+  "org.springframework:spring-core:jar"[label=<spring-core>]
+  "org.springframework:spring-test:jar"[label=<spring-test<font point-size="10"><br/>(test)</font>>]
+  "commons-io:commons-io:jar"[label=<commons-io>]
+  "commons-codec:commons-codec:jar"[label=<commons-codec>]
+  "commons-lang:commons-lang:jar"[label=<commons-lang>]
+  "com.google.guava:guava:jar"[label=<guava>]
+  "com.google.code.findbugs:jsr305:jar"[label=<jsr305>]
+  "com.google.errorprone:error_prone_annotations:jar"[label=<error_prone_annotations>]
+  "com.google.j2objc:j2objc-annotations:jar"[label=<j2objc-annotations>]
+  "org.codehaus.mojo:animal-sniffer-annotations:jar"[label=<animal-sniffer-annotations>]
+  "com.github.ferstl:depgraph-maven-plugin:jar"[label=<depgraph-maven-plugin>]
+  "org.apache.maven:maven-model:jar"[label=<maven-model>]
+  "org.codehaus.plexus:plexus-utils:jar"[label=<plexus-utils>]
+  "org.apache.commons:commons-lang3:jar"[label=<commons-lang3>]
+  "org.apache.maven:maven-plugin-api:jar"[label=<maven-plugin-api>]
+  "org.apache.maven:maven-artifact:jar"[label=<maven-artifact>]
+  "javax.enterprise:cdi-api:jar"[label=<cdi-api>]
+  "javax.annotation:jsr250-api:jar"[label=<jsr250-api>]
+  "javax.inject:javax.inject:jar"[label=<javax.inject>]
+  "org.eclipse.sisu:org.eclipse.sisu.plexus:jar"[label=<org.eclipse.sisu.plexus>]
+  "org.eclipse.sisu:org.eclipse.sisu.inject:jar"[label=<org.eclipse.sisu.inject>]
+  "org.codehaus.plexus:plexus-component-annotations:jar"[label=<plexus-component-annotations>]
+  "org.codehaus.plexus:plexus-classworlds:jar"[label=<plexus-classworlds>]
+  "org.apache.maven.shared:maven-dependency-tree:jar"[label=<maven-dependency-tree>]
+  "org.apache.maven.shared:maven-common-artifact-filters:jar"[label=<maven-common-artifact-filters>]
+
+  // Edge Definitions:
+  "org.springframework.boot:spring-boot-starter:jar" -> "org.springframework.boot:spring-boot:jar"
+  "org.springframework.boot:spring-boot-starter:jar" -> "org.springframework.boot:spring-boot-autoconfigure:jar"
+  "ch.qos.logback:logback-classic:jar" -> "ch.qos.logback:logback-core:jar"
+  "org.springframework.boot:spring-boot-starter-logging:jar" -> "ch.qos.logback:logback-classic:jar"
+  "org.springframework.boot:spring-boot-starter-logging:jar" -> "org.slf4j:jul-to-slf4j:jar"
+  "org.springframework.boot:spring-boot-starter-logging:jar" -> "org.slf4j:log4j-over-slf4j:jar"
+  "org.springframework.boot:spring-boot-starter:jar" -> "org.springframework.boot:spring-boot-starter-logging:jar"
+  "org.springframework.boot:spring-boot-starter:jar" -> "org.yaml:snakeyaml:jar"
+  "org.springframework.boot:spring-boot-starter-data-jpa:jar" -> "org.springframework.boot:spring-boot-starter:jar"
+  "org.springframework.boot:spring-boot-starter-aop:jar" -> "org.springframework:spring-aop:jar"
+  "org.springframework.boot:spring-boot-starter-aop:jar" -> "org.aspectj:aspectjweaver:jar"
+  "org.springframework.boot:spring-boot-starter-data-jpa:jar" -> "org.springframework.boot:spring-boot-starter-aop:jar"
+  "org.hibernate:hibernate-core:jar" -> "org.jboss.logging:jboss-logging:jar"
+  "org.hibernate:hibernate-core:jar" -> "org.hibernate.javax.persistence:hibernate-jpa-2.1-api:jar"
+  "org.hibernate:hibernate-core:jar" -> "org.javassist:javassist:jar"
+  "org.hibernate:hibernate-core:jar" -> "antlr:antlr:jar"
+  "org.hibernate:hibernate-core:jar" -> "org.jboss:jandex:jar"
+  "org.hibernate:hibernate-core:jar" -> "dom4j:dom4j:jar"
+  "org.hibernate:hibernate-core:jar" -> "org.hibernate.common:hibernate-commons-annotations:jar"
+  "org.springframework.boot:spring-boot-starter-data-jpa:jar" -> "org.hibernate:hibernate-core:jar"
+  "org.springframework.boot:spring-boot-starter-data-jpa:jar" -> "org.hibernate:hibernate-entitymanager:jar"
+  "org.springframework.boot:spring-boot-starter-data-jpa:jar" -> "javax.transaction:javax.transaction-api:jar"
+  "org.springframework.data:spring-data-jpa:jar" -> "org.springframework.data:spring-data-commons:jar"
+  "org.springframework.data:spring-data-jpa:jar" -> "org.springframework:spring-orm:jar"
+  "org.springframework.data:spring-data-jpa:jar" -> "org.springframework:spring-context:jar"
+  "org.springframework.data:spring-data-jpa:jar" -> "org.springframework:spring-tx:jar"
+  "org.springframework.data:spring-data-jpa:jar" -> "org.springframework:spring-beans:jar"
+  "org.springframework.data:spring-data-jpa:jar" -> "org.slf4j:slf4j-api:jar"
+  "org.springframework.data:spring-data-jpa:jar" -> "org.slf4j:jcl-over-slf4j:jar"
+  "org.springframework.boot:spring-boot-starter-data-jpa:jar" -> "org.springframework.data:spring-data-jpa:jar"
+  "org.springframework.boot:spring-boot-starter-data-jpa:jar" -> "org.springframework:spring-aspects:jar"
+  "rizki.practicum:learning:jar" -> "org.springframework.boot:spring-boot-starter-data-jpa:jar"
+  "org.mongodb:mongodb-driver:jar" -> "org.mongodb:mongodb-driver-core:jar"
+  "org.mongodb:mongodb-driver:jar" -> "org.mongodb:bson:jar"
+  "org.springframework.boot:spring-boot-starter-data-mongodb:jar" -> "org.mongodb:mongodb-driver:jar"
+  "org.springframework.data:spring-data-mongodb:jar" -> "org.springframework:spring-expression:jar"
+  "org.springframework.boot:spring-boot-starter-data-mongodb:jar" -> "org.springframework.data:spring-data-mongodb:jar"
+  "rizki.practicum:learning:jar" -> "org.springframework.boot:spring-boot-starter-data-mongodb:jar"
+  "org.springframework.data:spring-data-redis:jar" -> "org.springframework.data:spring-data-keyvalue:jar"
+  "org.springframework.data:spring-data-redis:jar" -> "org.springframework:spring-oxm:jar"
+  "org.springframework.data:spring-data-redis:jar" -> "org.springframework:spring-context-support:jar"
+  "org.springframework.boot:spring-boot-starter-data-redis:jar" -> "org.springframework.data:spring-data-redis:jar"
+  "redis.clients:jedis:jar" -> "org.apache.commons:commons-pool2:jar"
+  "org.springframework.boot:spring-boot-starter-data-redis:jar" -> "redis.clients:jedis:jar"
+  "rizki.practicum:learning:jar" -> "org.springframework.boot:spring-boot-starter-data-redis:jar"
+  "org.springframework.boot:spring-boot-starter-data-rest:jar" -> "com.fasterxml.jackson.core:jackson-annotations:jar"
+  "com.fasterxml.jackson.core:jackson-databind:jar" -> "com.fasterxml.jackson.core:jackson-core:jar"
+  "org.springframework.boot:spring-boot-starter-data-rest:jar" -> "com.fasterxml.jackson.core:jackson-databind:jar"
+  "org.springframework.data:spring-data-rest-core:jar" -> "org.springframework.hateoas:spring-hateoas:jar"
+  "org.springframework.data:spring-data-rest-core:jar" -> "org.springframework.plugin:spring-plugin-core:jar"
+  "org.springframework.data:spring-data-rest-core:jar" -> "org.atteo:evo-inflector:jar"
+  "org.springframework.data:spring-data-rest-webmvc:jar" -> "org.springframework.data:spring-data-rest-core:jar"
+  "org.springframework.boot:spring-boot-starter-data-rest:jar" -> "org.springframework.data:spring-data-rest-webmvc:jar"
+  "rizki.practicum:learning:jar" -> "org.springframework.boot:spring-boot-starter-data-rest:jar"
+  "org.apache.tomcat:tomcat-jdbc:jar" -> "org.apache.tomcat:tomcat-juli:jar"
+  "org.springframework.boot:spring-boot-starter-jdbc:jar" -> "org.apache.tomcat:tomcat-jdbc:jar"
+  "org.springframework.boot:spring-boot-starter-jdbc:jar" -> "org.springframework:spring-jdbc:jar"
+  "rizki.practicum:learning:jar" -> "org.springframework.boot:spring-boot-starter-jdbc:jar"
+  "rizki.practicum:learning:jar" -> "org.springframework.session:spring-session:jar"
+  "org.springframework.boot:spring-boot-starter-validation:jar" -> "org.apache.tomcat.embed:tomcat-embed-el:jar"
+  "org.hibernate:hibernate-validator:jar" -> "javax.validation:validation-api:jar"
+  "org.hibernate:hibernate-validator:jar" -> "com.fasterxml:classmate:jar"
+  "org.springframework.boot:spring-boot-starter-validation:jar" -> "org.hibernate:hibernate-validator:jar"
+  "rizki.practicum:learning:jar" -> "org.springframework.boot:spring-boot-starter-validation:jar"
+  "org.apache.tomcat.embed:tomcat-embed-core:jar" -> "org.apache.tomcat:tomcat-annotations-api:jar"
+  "org.springframework.boot:spring-boot-starter-tomcat:jar" -> "org.apache.tomcat.embed:tomcat-embed-core:jar"
+  "org.springframework.boot:spring-boot-starter-tomcat:jar" -> "org.apache.tomcat.embed:tomcat-embed-websocket:jar"
+  "org.springframework.boot:spring-boot-starter-web:jar" -> "org.springframework.boot:spring-boot-starter-tomcat:jar"
+  "org.springframework.boot:spring-boot-starter-web:jar" -> "org.springframework:spring-web:jar"
+  "org.springframework.boot:spring-boot-starter-web:jar" -> "org.springframework:spring-webmvc:jar"
+  "rizki.practicum:learning:jar" -> "org.springframework.boot:spring-boot-starter-web:jar"
+  "rizki.practicum:learning:jar" -> "mysql:mysql-connector-java:jar"
+  "rizki.practicum:learning:jar" -> "org.projectlombok:lombok:jar"
+  "org.springframework.boot:spring-boot-starter-test:jar" -> "org.springframework.boot:spring-boot-test:jar"
+  "org.springframework.boot:spring-boot-starter-test:jar" -> "org.springframework.boot:spring-boot-test-autoconfigure:jar"
+  "net.minidev:accessors-smart:jar" -> "org.ow2.asm:asm:jar"
+  "net.minidev:json-smart:jar" -> "net.minidev:accessors-smart:jar"
+  "com.jayway.jsonpath:json-path:jar" -> "net.minidev:json-smart:jar"
+  "org.springframework.boot:spring-boot-starter-test:jar" -> "com.jayway.jsonpath:json-path:jar"
+  "org.springframework.boot:spring-boot-starter-test:jar" -> "junit:junit:jar"
+  "org.springframework.boot:spring-boot-starter-test:jar" -> "org.assertj:assertj-core:jar"
+  "org.mockito:mockito-core:jar" -> "org.objenesis:objenesis:jar"
+  "org.springframework.boot:spring-boot-starter-test:jar" -> "org.mockito:mockito-core:jar"
+  "org.springframework.boot:spring-boot-starter-test:jar" -> "org.hamcrest:hamcrest-core:jar"
+  "org.springframework.boot:spring-boot-starter-test:jar" -> "org.hamcrest:hamcrest-library:jar"
+  "org.skyscreamer:jsonassert:jar" -> "com.vaadin.external.google:android-json:jar"
+  "org.springframework.boot:spring-boot-starter-test:jar" -> "org.skyscreamer:jsonassert:jar"
+  "org.springframework.boot:spring-boot-starter-test:jar" -> "org.springframework:spring-core:jar"
+  "org.springframework.boot:spring-boot-starter-test:jar" -> "org.springframework:spring-test:jar"
+  "rizki.practicum:learning:jar" -> "org.springframework.boot:spring-boot-starter-test:jar"
+  "rizki.practicum:learning:jar" -> "commons-io:commons-io:jar"
+  "rizki.practicum:learning:jar" -> "commons-codec:commons-codec:jar"
+  "rizki.practicum:learning:jar" -> "commons-lang:commons-lang:jar"
+  "com.google.guava:guava:jar" -> "com.google.code.findbugs:jsr305:jar"
+  "com.google.guava:guava:jar" -> "com.google.errorprone:error_prone_annotations:jar"
+  "com.google.guava:guava:jar" -> "com.google.j2objc:j2objc-annotations:jar"
+  "com.google.guava:guava:jar" -> "org.codehaus.mojo:animal-sniffer-annotations:jar"
+  "com.github.ferstl:depgraph-maven-plugin:jar" -> "com.google.guava:guava:jar"
+  "org.apache.maven:maven-model:jar" -> "org.codehaus.plexus:plexus-utils:jar"
+  "org.apache.maven:maven-model:jar" -> "org.apache.commons:commons-lang3:jar"
+  "org.apache.maven:maven-plugin-api:jar" -> "org.apache.maven:maven-model:jar"
+  "org.apache.maven:maven-plugin-api:jar" -> "org.apache.maven:maven-artifact:jar"
+  "javax.enterprise:cdi-api:jar" -> "javax.annotation:jsr250-api:jar"
+  "javax.enterprise:cdi-api:jar" -> "javax.inject:javax.inject:jar"
+  "org.eclipse.sisu:org.eclipse.sisu.plexus:jar" -> "javax.enterprise:cdi-api:jar"
+  "org.eclipse.sisu:org.eclipse.sisu.plexus:jar" -> "org.eclipse.sisu:org.eclipse.sisu.inject:jar"
+  "org.eclipse.sisu:org.eclipse.sisu.plexus:jar" -> "org.codehaus.plexus:plexus-component-annotations:jar"
+  "org.eclipse.sisu:org.eclipse.sisu.plexus:jar" -> "org.codehaus.plexus:plexus-classworlds:jar"
+  "org.apache.maven:maven-plugin-api:jar" -> "org.eclipse.sisu:org.eclipse.sisu.plexus:jar"
+  "com.github.ferstl:depgraph-maven-plugin:jar" -> "org.apache.maven:maven-plugin-api:jar"
+  "com.github.ferstl:depgraph-maven-plugin:jar" -> "org.apache.maven.shared:maven-dependency-tree:jar"
+  "com.github.ferstl:depgraph-maven-plugin:jar" -> "org.apache.maven.shared:maven-common-artifact-filters:jar"
+  "rizki.practicum:learning:jar" -> "com.github.ferstl:depgraph-maven-plugin:jar"
+}

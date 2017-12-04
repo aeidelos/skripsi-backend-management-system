@@ -1,12 +1,17 @@
 package rizki.practicum.learning.controller.authentication;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import rizki.practicum.learning.service.user.UserServiceInterface;
+import org.springframework.web.bind.annotation.GetMapping;
+import rizki.practicum.learning.service.user.UserService;
 
 public class AuthenticationController {
 
     @Autowired
-    private UserServiceInterface userService;
+    private UserService userService;
 
+    @GetMapping("/")
+    public String hello(){
+        return "Hello";
+    }
 
 }
