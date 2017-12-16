@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import rizki.practicum.learning.configuration.RoutesConfig;
 import rizki.practicum.learning.entity.User;
+import rizki.practicum.learning.exception.ExceptionMessage;
 import rizki.practicum.learning.service.role.RoleDefinition;
 import rizki.practicum.learning.service.role.RoleService;
 import rizki.practicum.learning.service.storage.StorageService;
 import rizki.practicum.learning.service.user.UserService;
-import rizki.practicum.learning.util.Confirmation;
 import rizki.practicum.learning.util.response.ResponseWrapper;
 import java.util.Map;
 
@@ -42,21 +42,24 @@ public class UserController {
             @RequestParam("identity") String identity,
             @RequestParam(value="photo", required=false) MultipartFile photo
             ){
-
-        User newUser = new User();
-        newUser.setName(name);
-        newUser.setPhoto(null);
-        newUser.setPassword(password);
-        newUser.setEmail(email);
-        newUser.setIdentity(identity);
-        newUser.setRole(roleService.getRole(RoleDefinition.Practican.initial));
         try{
-            Confirmation confirmation = userService.createUser(newUser);
-            if(photo!=null) newUser.setPhoto(storageService.store(photo));
-            return responseWrapper.restResponseCollectionWrapper(HttpStatus.CREATED,null,
-                    RoutesConfig.UserRoutes.USER_REGISTER,1,confirmation.getMessage());
+            User newUser = new User();
+            newUser.setName(name);
+            newUser.setPhoto(null);
+            newUser.setPassword(password);
+            newUser.setEmail(email);
+            newUser.setIdentity(identity);
+            newUser.setRole(roleService.getRole(RoleDefinition.Practican.initial));
+            if(userService.createUser(newUser)){
+                if(photo!=null) newUser.setPhoto(storageService.store(photo));
+                return responseWrapper.restResponseWrapper(HttpStatus.CREATED,null,
+                        RoutesConfig.UserRoutes.USER_REGISTER,1, ExceptionMessage.User.USER_CREATED);
+            }else{
+                return null;
+            }
+
         }catch (Exception e){
-            return responseWrapper.restResponseCollectionWrapper(HttpStatus.NOT_ACCEPTABLE,null,
+            return responseWrapper.restResponseWrapper(HttpStatus.NOT_ACCEPTABLE,null,
                     RoutesConfig.UserRoutes.USER_REGISTER,0,null);
         }
     }
@@ -79,11 +82,14 @@ public class UserController {
             if(password!=null){
                 userEdit.setPassword(password);
             }
-            Confirmation confirmation = userService.updateUser(userEdit);
-            return responseWrapper.restResponseCollectionWrapper(HttpStatus.OK,
-                    null, RoutesConfig.UserRoutes.USER_UPDATE,1,confirmation.getMessage());
+            if(userService.updateUser(userEdit)){
+                return responseWrapper.restResponseWrapper(HttpStatus.OK,
+                        null, RoutesConfig.UserRoutes.USER_UPDATE,1, ExceptionMessage.User.USER_UPDATED);
+            }else{
+                return null;
+            }
         } catch (Exception e) {
-            return responseWrapper.restResponseCollectionWrapper(HttpStatus.OK,
+            return responseWrapper.restResponseWrapper(HttpStatus.OK,
                     null, RoutesConfig.UserRoutes.USER_UPDATE,0,null);
         }
     }

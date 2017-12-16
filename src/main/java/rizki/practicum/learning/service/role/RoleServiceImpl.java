@@ -23,4 +23,9 @@ public class RoleServiceImpl implements RoleService {
     public Role getRole(String initial) {
         return roleRepository.findByInitial(initial);
     }
+
+    @Override
+    public Role getRoleById(String idRole) throws Exception {
+        return roleRepository.findOne(idRole);
+    }
 }

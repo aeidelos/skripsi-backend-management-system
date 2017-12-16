@@ -4,10 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.List;
 
 @Entity
@@ -18,6 +15,14 @@ public class Practicum {
     @GenericGenerator(name = "uuid", strategy = "uuid2")
     private String id;
 
+    @OneToOne
+    private User coordinatorAssistance;
+
     @ElementCollection(targetClass=Classroom.class)
     private List<Classroom> classrooms;
+
+    @OneToOne
+    private Course course;
+
+    private boolean active = true;
 }

@@ -12,8 +12,8 @@ import java.util.Map;
 @Component
 public final class ResponseWrapper {
 
-    public ResponseEntity<Map<String,Object>> restResponseCollectionWrapper(HttpStatus statusCode, List<Object> body,
-                                                                        String location, int statusResponse,String... message){
+    public ResponseEntity<Map<String,Object>> restResponseWrapper(HttpStatus statusCode, Object body,
+                                                                  String location, int statusResponse, String... message){
 
         Map<String, Object> response = new HashMap<>();
         response.put("message", message);

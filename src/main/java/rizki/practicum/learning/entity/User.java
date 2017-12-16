@@ -41,11 +41,6 @@ public class User {
     @OnDelete(action = OnDeleteAction.NO_ACTION)
     private Role role;
 
-    @OneToOne
-    @ElementCollection(targetClass=Practicum.class)
-    private Practicum CoordinatorAssistance;
+    private boolean active = true;
 
-    @OneToMany
-    @ElementCollection(targetClass=Classroom.class)
-    private List<Classroom> Assistance;
 }

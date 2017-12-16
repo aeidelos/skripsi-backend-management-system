@@ -5,6 +5,7 @@ import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Setter @Getter
@@ -18,6 +19,6 @@ public class Classroom {
     @Column
     private String location;
 
-    @ManyToOne
-    private Course course;
+    @OneToMany
+    private List<User> assistance;
 }

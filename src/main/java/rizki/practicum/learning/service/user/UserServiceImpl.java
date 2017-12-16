@@ -2,6 +2,7 @@ package rizki.practicum.learning.service.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import rizki.practicum.learning.entity.Role;
 import rizki.practicum.learning.util.Confirmation;
 import rizki.practicum.learning.entity.User;
 import rizki.practicum.learning.repository.UserRepository;
@@ -14,19 +15,19 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public Confirmation createUser(User user) {
+    public boolean createUser(User user) {
         if(user.getPassword()!=null
                 && user.getEmail()!=null
                 && user.getName()!=null
                 && user.getIdentity()!=null){
             try{
                 userRepository.save(user);
-                return new Confirmation(true,UserServiceMessage.USER_CREATED);
+                return true;
             }catch (Exception e){
-                return new Confirmation(false,"Error : "+e);
+                return false;
             }
         }else{
-            return new Confirmation(false,UserServiceMessage.USER_NOT_COMPLETED);
+            return false;
         }
     }
 
@@ -34,30 +35,37 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByEmailAndPassword(email,password);
     }
 
-    public Confirmation updateUser(User user){
+    public boolean updateUser(User user) throws Exception{
         try{
             userRepository.save(user);
-            return new Confirmation(true,UserServiceMessage.USER_UPDATED);
+            return true;
         }catch(Exception e){
-            return new Confirmation(false, "Error = "+e.getMessage());
+            return false;
         }
     }
 
-    public Confirmation removeUser(String id){
+    public boolean removeUser(String id) throws Exception{
         if(id!=null){
             try{
                 userRepository.delete(id);
-                return new Confirmation(true, UserServiceMessage.USER_REMOVED);
+                return true;
             }catch (Exception e){
-                return new Confirmation(false,"Error : "+e);
+                return false;
             }
         }else{
-            return new Confirmation(false,UserServiceMessage.USER_NOT_FOUND);
+            return false;
         }
     }
 
     public List<User> getUser() throws Exception{
         return (List<User>) userRepository.findAll();
+    }
+
+    @Override
+    public User setRole(User idUser,Role idRole) throws Exception {
+        User user = getUser(idUser);
+        user.setRole(idRole);
+        return userRepository.save(user);
     }
 
     public User getUser(String id) throws Exception{
