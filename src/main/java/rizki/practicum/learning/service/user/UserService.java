@@ -17,4 +17,5 @@ public interface UserService {
     public User getUser(User user) throws Exception;
     public List<User> getUser() throws Exception;
     public User setRole(User user, Role id_role) throws Exception;
+    public User removeRole(User user, Role id_role) throws Exception;
 }

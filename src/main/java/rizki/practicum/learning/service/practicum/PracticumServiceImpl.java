@@ -1,18 +1,24 @@
 package rizki.practicum.learning.service.practicum;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import rizki.practicum.learning.entity.Classroom;
 import rizki.practicum.learning.entity.Practicum;
 import rizki.practicum.learning.entity.User;
 import rizki.practicum.learning.repository.PracticumRepository;
+import rizki.practicum.learning.service.user.UserService;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Service
 public class PracticumServiceImpl implements PracticumService {
 
     @Autowired
     private PracticumRepository practicumRepository;
+
+    @Autowired
+    private UserService userService;
 
     @Override
     public Practicum addPracticum(Practicum practicum) throws Exception {
@@ -41,17 +47,15 @@ public class PracticumServiceImpl implements PracticumService {
     }
 
     @Override
-    public Practicum setCoordinatorAssistance(String idPracticum, User user) throws Exception {
+    public Practicum setCoordinatorAssistance(String idPracticum, String user) throws Exception {
         Practicum practicum = this.getDetailPracticum(idPracticum);
-        practicum.setCoordinatorAssistance(user);
+        practicum.setCoordinatorAssistance(userService.getUser(user));
         return practicumRepository.save(practicum);
     }
 
     @Override
     public Practicum addNewClassroom(String idPracticum, Classroom classroom) throws Exception {
         Practicum practicum = this.getDetailPracticum(idPracticum);
-        List<Classroom> classroomList = practicum.getClassrooms();
-        classroomList.add(classroom);
         return practicumRepository.save(practicum);
     }
 

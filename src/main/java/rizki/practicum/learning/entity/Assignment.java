@@ -4,25 +4,23 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.*;
-import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
 @Entity
 @Setter @Getter
-public class Practicum {
+public class Assignment {
+
     @Id
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
     private String id;
 
     @Column
-    private String name;
+    private String description;
 
-    @OneToOne
-    private User coordinatorAssistance;
-
-    @OneToOne
-    private Course course;
-
-    private boolean active = true;
+    @Column
+    private String fileAllowed;
 }

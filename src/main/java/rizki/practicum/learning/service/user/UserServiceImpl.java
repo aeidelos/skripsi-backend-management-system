@@ -64,7 +64,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public User setRole(User idUser,Role idRole) throws Exception {
         User user = getUser(idUser);
-        user.setRole(idRole);
+        List<Role> newRole= user.getRole();
+        newRole.add(idRole);
+        user.setRole(newRole);
+        return userRepository.save(user);
+    }
+
+    public User removeRole(User idUser, Role idRole) throws Exception{
+        User user = getUser(idUser);
+        List<Role> newRole = user.getRole();
+        newRole.remove(idRole);
+        user.setRole(newRole);
         return userRepository.save(user);
     }
 

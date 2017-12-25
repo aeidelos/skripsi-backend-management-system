@@ -24,7 +24,7 @@ import rizki.practicum.learning.configuration.FilesLocationConfig;
 public class StorageServiceImpl implements StorageService {
 
     Logger log = LoggerFactory.getLogger(this.getClass().getName());
-    Path rootLocation = Paths.get(FilesLocationConfig.UserPhoto.LOCATION);;
+    Path rootLocation = Paths.get(FilesLocationConfig.Image.LOCATION);;
 
     @Override
     public void init() {
@@ -51,12 +51,12 @@ public class StorageServiceImpl implements StorageService {
     @Override
     public Stream<Path> loadAll() {
         return null;
-    }
+    } // to be implemented
 
     @Override
     public Path load(String filename) {
         return null;
-    }
+    } // to be implemented
 
     @Override
     public Resource loadAsResource(String filename) {

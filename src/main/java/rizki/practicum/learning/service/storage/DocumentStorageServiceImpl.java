@@ -9,15 +9,15 @@ import rizki.practicum.learning.configuration.FilesLocationConfig;
 import java.nio.file.Paths;
 
 @Service
-@Qualifier("UserPhotoStorageService")
-public class UserPhotoStorageServiceImpl extends StorageServiceImpl implements StorageService {
-    UserPhotoStorageServiceImpl(){
-        this.rootLocation = Paths.get(FilesLocationConfig.UserPhoto.LOCATION);
+@Qualifier("DocumentStorageService")
+public class DocumentStorageServiceImpl extends StorageServiceImpl implements StorageService {
+    DocumentStorageServiceImpl(){
+        this.rootLocation = Paths.get(FilesLocationConfig.Document.LOCATION);
     }
 
     @Override
     public String store(MultipartFile file) {
-        if(ArrayUtils.contains(FilesLocationConfig.UserPhoto.FILE_EXTENSION_ALLOWED,file.getContentType())){
+        if(ArrayUtils.contains(FilesLocationConfig.Document.FILE_EXTENSION_ALLOWED,file.getContentType())){
             return super.store(file);
         }else{
             return null;

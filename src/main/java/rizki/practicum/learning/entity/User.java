@@ -37,9 +37,9 @@ public class User {
 
     private String photo;
 
-    @OneToOne
     @OnDelete(action = OnDeleteAction.NO_ACTION)
-    private Role role;
+    @OneToMany(targetEntity=Role.class)
+    private List<Role> role;
 
     private boolean active = true;
 

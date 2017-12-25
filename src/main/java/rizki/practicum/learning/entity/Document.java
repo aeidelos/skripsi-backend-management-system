@@ -9,28 +9,20 @@ import java.util.List;
 
 @Entity
 @Setter @Getter
-public class Classroom {
+public class Document {
 
     @Id
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
     private String id;
 
-    @Column
-    private String name;
+    @ManyToOne(targetEntity = User.class)
+    private User practican;
+
+    @OneToOne
+    private Assignment assignment;
 
     @Column
-    private String location;
+    private String filename;
 
-    @Column
-    private String enrollmentKey;
-
-    @ManyToOne(targetEntity = Practicum.class)
-    private Practicum practicum;
-
-    @OneToMany
-    private List<User> assistance;
-
-    @OneToMany
-    private List<User> practican;
 }
