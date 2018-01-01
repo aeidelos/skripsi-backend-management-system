@@ -1,6 +1,7 @@
 package rizki.practicum.learning.service.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import rizki.practicum.learning.entity.Role;
 import rizki.practicum.learning.util.Confirmation;
@@ -13,6 +14,9 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
     private UserRepository userRepository;
 
     public boolean createUser(User user) {
@@ -21,6 +25,7 @@ public class UserServiceImpl implements UserService {
                 && user.getName()!=null
                 && user.getIdentity()!=null){
             try{
+                user.setPassword(passwordEncoder.encode(user.getPassword()));
                 userRepository.save(user);
                 return true;
             }catch (Exception e){

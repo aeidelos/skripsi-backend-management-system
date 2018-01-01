@@ -4,10 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import rizki.practicum.learning.configuration.RoutesConfig;
 import rizki.practicum.learning.entity.Role;
@@ -104,5 +101,10 @@ public class UserController {
             return responseWrapper.restResponseWrapper(HttpStatus.OK,
                     e.getMessage(), RoutesConfig.UserRoutes.USER_UPDATE,0,ExceptionMessage.User.USER_UPDATED_FAIL);
         }
+    }
+
+    @GetMapping(RoutesConfig.VALIDITY_TOKEN)
+    public boolean checkToken(){
+        return true;
     }
 }

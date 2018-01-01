@@ -44,7 +44,7 @@ public class TaskController {
     private ResponseWrapper responseWrapper;
 
     @PostMapping(RoutesConfig.PracticumRoutes.TaskRoutes.TASK_ADD)
-    public ResponseEntity<Map<String,Object>> addCourse
+    public ResponseEntity<Map<String,Object>> addTask
             (@RequestParam("title") String title,
              @RequestParam("creator") String idCreator,
              @RequestParam("allowLate") boolean allowLate,
@@ -91,7 +91,7 @@ public class TaskController {
     }
 
     @PostMapping(RoutesConfig.PracticumRoutes.TaskRoutes.TASK_UPDATE)
-    public ResponseEntity<Map<String,Object>> UpdateTask
+    public ResponseEntity<Map<String,Object>> updateTask
             (@PathVariable("id_task") String idTask,
              @RequestParam("title") String title,
              @RequestParam("creator") String idCreator,

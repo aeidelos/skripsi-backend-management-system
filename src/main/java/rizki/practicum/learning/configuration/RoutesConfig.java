@@ -1,7 +1,7 @@
 package rizki.practicum.learning.configuration;
 
 public interface RoutesConfig {
-
+    String VALIDITY_TOKEN = "/checkToken";
     interface AuthenticationRoutes {
         final String PREFIX = "/auth";
         final String LOGIN = PREFIX+"/login";
@@ -19,6 +19,7 @@ public interface RoutesConfig {
         final String PRACTICUM_UPDATE_COORDINATOR_ASSISTANCE = PREFIX+"/coordinator/{id_practicum}";
         interface ClassroomRoutes {
             final String PREFIX = PracticumRoutes.PREFIX+"/class";
+            final String CLASSROOM_DETAIL = PREFIX+"/{id_practicum}";
             final String CLASSROOM_ADD = PREFIX+"/add/practicum/{id_practicum}";
             final String CLASSROOM_UPDATE = PREFIX+"/add/practicum/{id_classroom}";
             final String CLASSROOM_DELETE = PREFIX+"/delete/{id_classroom}";

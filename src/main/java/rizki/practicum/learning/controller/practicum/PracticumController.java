@@ -140,7 +140,7 @@ public class PracticumController {
         }
     }
 
-    @PostMapping(RoutesConfig.PracticumRoutes.ClassroomRoutes.PREFIX)
+    @PostMapping(RoutesConfig.PracticumRoutes.ClassroomRoutes.CLASSROOM_DETAIL)
     public ResponseEntity<Map<String,Object>> getDetailClassroom(
             @PathVariable("id_classroom") String idClassroom
     )
