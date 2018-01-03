@@ -24,6 +24,9 @@ import rizki.practicum.learning.entity.MyUserDetails;
 import rizki.practicum.learning.repository.UserRepository;
 import rizki.practicum.learning.service.generator.RoleGeneratorServiceImpl;
 import rizki.practicum.learning.service.generator.UserGeneratorServiceImpl;
+import rizki.practicum.learning.service.storage.DocumentStorageServiceImpl;
+import rizki.practicum.learning.service.storage.ImageStorageServiceImpl;
+import rizki.practicum.learning.service.storage.SourceCodeStorageServiceImpl;
 import rizki.practicum.learning.service.storage.StorageServiceImpl;
 
 @SpringBootApplication
@@ -42,10 +45,19 @@ public class LearningManagementSystemApplication {
 	}
 
 	@Bean
-	CommandLineRunner init(StorageServiceImpl storageServiceImpl) {
+	CommandLineRunner init(StorageServiceImpl storageServiceImpl,
+						   SourceCodeStorageServiceImpl sourceCodeStorageService,
+						   DocumentStorageServiceImpl documentStorageService,
+						   ImageStorageServiceImpl imageStorageService) {
 		return (args) -> {
 			storageServiceImpl.deleteAll();
 			storageServiceImpl.init();
+			sourceCodeStorageService.deleteAll();
+			sourceCodeStorageService.init();
+			documentStorageService.deleteAll();
+			documentStorageService.init();
+			imageStorageService.deleteAll();
+			imageStorageService.init();
 		};
 	}
 

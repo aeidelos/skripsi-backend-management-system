@@ -38,7 +38,7 @@ public class User {
     private String photo;
 
     @OnDelete(action = OnDeleteAction.NO_ACTION)
-    @OneToMany(targetEntity=Role.class,fetch = FetchType.EAGER)
+    @ManyToMany(targetEntity=Role.class,fetch = FetchType.EAGER)
     private List<Role> role;
 
     private boolean active = true;

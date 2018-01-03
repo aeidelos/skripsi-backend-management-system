@@ -7,11 +7,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import rizki.practicum.learning.configuration.RoutesConfig;
 import rizki.practicum.learning.entity.Assignment;
+import rizki.practicum.learning.entity.Document;
 import rizki.practicum.learning.entity.Task;
 import rizki.practicum.learning.exception.ExceptionMessage;
 import rizki.practicum.learning.service.assignment.AssignmentService;
+import rizki.practicum.learning.service.authorization.AuthorizationService;
 import rizki.practicum.learning.service.classroom.ClassroomService;
 import rizki.practicum.learning.service.practicum.PracticumService;
 import rizki.practicum.learning.service.task.TaskService;
@@ -42,6 +45,9 @@ public class TaskController {
 
     @Autowired
     private ResponseWrapper responseWrapper;
+
+    @Autowired
+    private AuthorizationService authorizationService;
 
     @PostMapping(RoutesConfig.PracticumRoutes.TaskRoutes.TASK_ADD)
     public ResponseEntity<Map<String,Object>> addTask
@@ -239,6 +245,55 @@ public class TaskController {
             return responseWrapper.restResponseWrapper(HttpStatus.NOT_ACCEPTABLE,e.getMessage(),
                     RoutesConfig.PracticumRoutes.TaskRoutes.TASK_ADD_ASSIGNMENT,
                     0,null);
+        }
+    }
+
+    @PostMapping(RoutesConfig.PracticumRoutes.TaskRoutes.TASK_UPLOAD_ASSIGNMENT)
+    public ResponseEntity<Map<String, Object>> uploadAssignment(
+        @PathVariable("id_assignment") String idAssignment,
+        @RequestParam("file_upload") MultipartFile file
+    )
+    {
+        String idPractican = authorizationService.getUserDetails().getId();
+        Document upload = new Document();
+        try {
+            upload = assignmentService.documentAssignment(idAssignment,file,idPractican);
+        } catch (Exception e) {
+            return responseWrapper.restResponseWrapper(HttpStatus.OK,"",
+                    RoutesConfig.PracticumRoutes.TaskRoutes.TASK_UPLOAD_ASSIGNMENT,
+                    0,e.getMessage());
+        }
+        if(upload.getId() == null){
+            return responseWrapper.restResponseWrapper(HttpStatus.OK,"",
+                    RoutesConfig.PracticumRoutes.TaskRoutes.TASK_UPLOAD_ASSIGNMENT,
+                    0,"Gagal melakukan upload");
+        }else{
+            return responseWrapper.restResponseWrapper(HttpStatus.CREATED,"",
+                    RoutesConfig.PracticumRoutes.TaskRoutes.TASK_UPLOAD_ASSIGNMENT,
+                    1,"Berhasil melakukan upload");
+        }
+    }
+
+    @PostMapping(RoutesConfig.PracticumRoutes.TaskRoutes.TASK_DELETE_UPLOADED_ASSIGNMENT)
+    public ResponseEntity<Map<String,Object>> deleteUploadedAssignment(
+            @PathVariable("id_document") String idDocument
+    )
+    {
+        try {
+            if(assignmentService.documentAssignmentDelete(idDocument)){
+                return responseWrapper.restResponseWrapper(HttpStatus.OK,"",
+                        RoutesConfig.PracticumRoutes.TaskRoutes.TASK_DELETE_UPLOADED_ASSIGNMENT,
+                        1,"Berhasil menghapus dokumen");
+            }else{
+                return responseWrapper.restResponseWrapper(HttpStatus.OK,"",
+                        RoutesConfig.PracticumRoutes.TaskRoutes.TASK_DELETE_UPLOADED_ASSIGNMENT,
+                        0,"Gagal menghapus dokumen");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return responseWrapper.restResponseWrapper(HttpStatus.OK,"",
+                    RoutesConfig.PracticumRoutes.TaskRoutes.TASK_DELETE_UPLOADED_ASSIGNMENT,
+                    0,e.getMessage());
         }
     }
 

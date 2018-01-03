@@ -6,6 +6,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 @Setter @Getter
@@ -24,5 +25,8 @@ public class Document {
 
     @Column
     private String filename;
+
+    @OneToMany(targetEntity = Document.class)
+    private Map<Document, Float> plagiarism;
 
 }

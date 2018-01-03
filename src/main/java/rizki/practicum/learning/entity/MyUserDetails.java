@@ -15,6 +15,9 @@ public class MyUserDetails implements UserDetails {
 
     private String username;
     private String password;
+    private String id;
+    private String identity;
+    private String fullname;
     Collection<? extends GrantedAuthority> authorities = new ArrayList<>();
 
     public MyUserDetails(User byEmail) {
@@ -25,6 +28,9 @@ public class MyUserDetails implements UserDetails {
             grantedAuthorityList.add(new SimpleGrantedAuthority(role.getInitial().toUpperCase()));
         }
         this.authorities = grantedAuthorityList;
+        this.fullname = byEmail.getName();
+        this.id = byEmail.getId();
+        this.identity = byEmail.getIdentity();
     }
 
     @Override

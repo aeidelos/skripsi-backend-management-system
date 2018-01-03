@@ -1,6 +1,7 @@
 package rizki.practicum.learning.service.storage;
 
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
@@ -9,6 +10,7 @@ import java.nio.file.Paths;
 import java.util.stream.Stream;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -54,7 +56,7 @@ public class StorageServiceImpl implements StorageService {
     } // to be implemented
 
     @Override
-    public Path load(String filename) {
+    public String load(String filename) throws IOException, InvalidFormatException {
         return null;
     } // to be implemented
 
