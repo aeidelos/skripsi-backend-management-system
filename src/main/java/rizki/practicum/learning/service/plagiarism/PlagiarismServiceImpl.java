@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import rizki.practicum.learning.entity.Document;
 import rizki.practicum.learning.repository.DocumentRepository;
+import rizki.practicum.learning.service.assignment.AssignmentService;
 import rizki.practicum.learning.service.storage.StorageService;
 
 import java.io.IOException;
@@ -21,13 +22,16 @@ public class PlagiarismServiceImpl implements PlagiarismService {
     private DocumentRepository documentRepository;
 
     @Autowired
+    private AssignmentService assignmentService;
+
+    @Autowired
     @Qualifier("DocumentStorageService")
     private StorageService storageService;
 
     @Override
     public Document checkPlagiarism(String idDocument) throws Exception {
         Document document = documentRepository.findOne(idDocument);
-        List<Document> documents = (ArrayList) documentRepository.findAllByAssignment(document.getAssignment().getId());
+        List<Document> documents = documentRepository.findAllByAssignment(document.getAssignment());
         for(Document temp : documents){
             if(!document.getPlagiarism().containsKey(temp.getId())){
                 this.documentCheckPlagiarism(document,temp);
@@ -38,7 +42,7 @@ public class PlagiarismServiceImpl implements PlagiarismService {
 
     @Override
     public void BatchProcessing(String idAssignment) throws Exception {
-        List<Document> documents = documentRepository.findAllByAssignment(idAssignment);
+        List<Document> documents = documentRepository.findAllByAssignment(assignmentService.getAssignment(idAssignment));
         for(Document document : documents){
             for(Document temp: documents){
                 if(!document.getPlagiarism().containsKey(temp.getId())){

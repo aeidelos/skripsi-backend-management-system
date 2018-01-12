@@ -40,12 +40,7 @@ public class AssignmentServiceImpl implements AssignmentService {
 
     @Override
     public Assignment addAssignment(String idTask, Assignment assignment) throws Exception {
-        Task task = taskService.getTask(idTask);
-        List<Assignment> assignments = task.getAssignments();
-        Assignment assignmentResult = assignmentRepository.save(assignment);
-        assignments.add(assignmentResult);
-        taskService.updateTask(task);
-        return assignmentResult;
+        return assignmentRepository.save(assignment);
     }
 
     @Override
@@ -78,5 +73,10 @@ public class AssignmentServiceImpl implements AssignmentService {
     public boolean documentAssignmentDelete(String idDocument) throws Exception {
         documentRepository.delete(idDocument);
         return documentRepository.findOne(idDocument) == null;
+    }
+
+    @Override
+    public List<Assignment> getAssignmentByTask(String idTask) throws Exception {
+        return assignmentRepository.findAllByTask(idTask);
     }
 }

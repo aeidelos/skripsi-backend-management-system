@@ -1,6 +1,8 @@
 package rizki.practicum.learning.service.practicum;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import rizki.practicum.learning.entity.Classroom;
 import rizki.practicum.learning.entity.Practicum;
@@ -21,13 +23,23 @@ public class PracticumServiceImpl implements PracticumService {
     private UserService userService;
 
     @Override
-    public Practicum addPracticum(Practicum practicum) throws Exception {
+    public Practicum addPracticum(Practicum practicum){
         return practicumRepository.save(practicum);
     }
 
     @Override
-    public Practicum updatePracticum(Practicum practicum) throws Exception {
+    public Practicum getPracticum(String idPracticum) {
+        return practicumRepository.findOne(idPracticum);
+    }
+
+    @Override
+    public Practicum updatePracticum(Practicum practicum){
         return practicumRepository.save(practicum);
+    }
+
+    @Override
+    public void deletePracticum(Practicum practicum) {
+        practicumRepository.delete(practicum);
     }
 
     @Override
@@ -67,5 +79,10 @@ public class PracticumServiceImpl implements PracticumService {
     @Override
     public Practicum getDetailPracticum(String idPracticum) throws Exception {
         return practicumRepository.findOne(idPracticum);
+    }
+
+    @Override
+    public Page<Practicum> getAllPracticum(Pageable pageable) {
+        return practicumRepository.findAll(pageable);
     }
 }

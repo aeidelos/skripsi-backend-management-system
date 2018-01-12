@@ -1,13 +1,21 @@
 package rizki.practicum.learning.service.course;
 
+import org.hibernate.validator.constraints.NotBlank;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.validation.annotation.Validated;
 import rizki.practicum.learning.entity.Course;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
+@Validated
 public interface CourseService {
-    Course addCourse(Course course) throws Exception;
-    boolean removeCourse(String course) throws Exception;
-    Course updateCourse(Course course) throws Exception;
-    Course getCourse(String course) throws Exception;
-    List<Course> getAllCourse() throws Exception;
+    Course addCourse(@Valid Course course);
+    boolean removeCourse(@NotNull @NotBlank String course);
+    Course updateCourse(@Valid Course course);
+    Course getCourse(@NotNull @NotBlank String course);
+    Page<Course> getAllCourse(Pageable pageable);
+    List<Course> getSearchCourse(String query);
 }

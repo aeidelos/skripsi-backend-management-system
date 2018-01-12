@@ -1,11 +1,12 @@
 package rizki.practicum.learning.service.course;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import rizki.practicum.learning.entity.Course;
 import rizki.practicum.learning.repository.CourseRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -15,32 +16,33 @@ public class CourseServiceImpl implements CourseService {
     CourseRepository courseRepository;
 
     @Override
-    public Course addCourse(Course course) throws Exception {
+    public Course addCourse(Course course) {
         return courseRepository.save(course);
     }
 
     @Override
-    public boolean removeCourse(String course) throws Exception {
+    public boolean removeCourse(String course){
         courseRepository.delete(course);
-        if(courseRepository.findOne(course).equals(null)){
-            return true;
-        }else{
-            return false;
-        }
+        return true;
     }
 
     @Override
-    public Course updateCourse(Course course) throws Exception {
+    public Course updateCourse(Course course){
         return courseRepository.save(course);
     }
 
     @Override
-    public Course getCourse(String course) throws Exception {
+    public Course getCourse(String course) {
         return courseRepository.findOne(course);
     }
 
     @Override
-    public List<Course> getAllCourse() throws Exception {
-        return (ArrayList<Course>) courseRepository.findAll();
+    public Page<Course> getAllCourse(Pageable pageable) {
+        return courseRepository.findAll(pageable);
+    }
+
+    @Override
+    public List<Course> getSearchCourse(String query) {
+        return courseRepository.findAllByCourseNameContainsOrCourseCodeContains(query,query);
     }
 }

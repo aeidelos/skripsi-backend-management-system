@@ -20,7 +20,7 @@ public class Document {
     @ManyToOne(targetEntity = User.class)
     private User practican;
 
-    @OneToOne
+    @ManyToOne
     private Assignment assignment;
 
     @Column

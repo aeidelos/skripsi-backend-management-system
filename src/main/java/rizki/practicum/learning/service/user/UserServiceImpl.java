@@ -1,8 +1,11 @@
 package rizki.practicum.learning.service.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 import rizki.practicum.learning.entity.Role;
 import rizki.practicum.learning.util.Confirmation;
 import rizki.practicum.learning.entity.User;
@@ -11,10 +14,11 @@ import rizki.practicum.learning.repository.UserRepository;
 import java.util.List;
 
 @Service
+@Validated
 public class UserServiceImpl implements UserService {
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordencoder;
 
     @Autowired
     private UserRepository userRepository;
@@ -25,7 +29,7 @@ public class UserServiceImpl implements UserService {
                 && user.getName()!=null
                 && user.getIdentity()!=null){
             try{
-                user.setPassword(passwordEncoder.encode(user.getPassword()));
+                user.setPassword(passwordencoder.encode(user.getPassword()));
                 userRepository.save(user);
                 return true;
             }catch (Exception e){
@@ -35,65 +39,34 @@ public class UserServiceImpl implements UserService {
             return false;
         }
     }
-
-    public User login(String email, String password) throws Exception {
-        return userRepository.findByEmailAndPassword(email,password);
+    @Override
+    public boolean updateUser(User user) {
+        return false;
     }
-
-    public boolean updateUser(User user) throws Exception{
-        try{
-            userRepository.save(user);
-            return true;
-        }catch(Exception e){
-            return false;
-        }
-    }
-
-    public boolean removeUser(String id) throws Exception{
-        if(id!=null){
-            try{
-                userRepository.delete(id);
-                return true;
-            }catch (Exception e){
-                return false;
-            }
-        }else{
-            return false;
-        }
-    }
-
-    public List<User> getUser() throws Exception{
-        return (List<User>) userRepository.findAll();
+    @Override
+    public User getUserByEmail(String email){
+        return userRepository.findByEmail(email);
     }
 
     @Override
-    public User setRole(User idUser,Role idRole) throws Exception {
-        User user = getUser(idUser);
-        List<Role> newRole= user.getRole();
-        newRole.add(idRole);
-        user.setRole(newRole);
-        return userRepository.save(user);
+    public List<User> getCandidateCoordinatorAssistance(String query) {
+        return userRepository.findCandidateCoordinatorAssistance(query);
     }
 
-    public User removeRole(User idUser, Role idRole) throws Exception{
-        User user = getUser(idUser);
-        List<Role> newRole = user.getRole();
-        newRole.remove(idRole);
-        user.setRole(newRole);
-        return userRepository.save(user);
+    @Override
+    public List<User> getUserByName(String query) {
+        return userRepository.findByName(query);
     }
 
-    public User getUser(String id) throws Exception{
-        if(id!=null){
-            return userRepository.findOne(id);
-        }else{
-            return null;
-        }
+    @Override
+    public User getUser(String id){
+        return userRepository.findOne(id);
     }
-
     public User getUser(User user){
         return userRepository.findOne(user.getId());
     }
-
-
+    @Override
+    public Page<User> getUser(Pageable pageable) {
+        return userRepository.findAll(pageable);
+    }
 }

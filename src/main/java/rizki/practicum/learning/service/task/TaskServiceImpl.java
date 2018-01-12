@@ -49,4 +49,9 @@ public class TaskServiceImpl implements TaskService {
     public List<Task> getTaskByCreator(String idCreator) throws Exception {
         return (ArrayList<Task>) taskRepository.findAllByCreatedBy(idCreator);
     }
+
+    @Override
+    public List<Task> getTask() throws Exception {
+        return (List<Task>) taskRepository.findAll();
+    }
 }

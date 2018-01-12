@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.stream.Stream;
 
+import lombok.Getter;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.slf4j.Logger;
@@ -26,7 +27,7 @@ import rizki.practicum.learning.configuration.FilesLocationConfig;
 public class StorageServiceImpl implements StorageService {
 
     Logger log = LoggerFactory.getLogger(this.getClass().getName());
-    Path rootLocation = Paths.get(FilesLocationConfig.Image.LOCATION);;
+    @Getter Path rootLocation = Paths.get(FilesLocationConfig.Image.LOCATION);;
 
     @Override
     public void init() {

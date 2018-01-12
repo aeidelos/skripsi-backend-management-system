@@ -6,8 +6,11 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
 
@@ -20,12 +23,14 @@ public class User {
     @Id
     private String id;
 
-    @Column(nullable=false, unique = false)
+    @Column(nullable=false)
     @Size(max = 40)
     private String name;
 
     @Column(nullable = false, unique = true)
     @Size(max=20)
+    @NotNull
+    @NotBlank
     private String identity;
 
     @Column(nullable = false)

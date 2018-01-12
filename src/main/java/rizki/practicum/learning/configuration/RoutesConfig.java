@@ -1,11 +1,14 @@
 package rizki.practicum.learning.configuration;
 
 public interface RoutesConfig {
-    String VALIDITY_TOKEN = "/checkToken";
+    String VALIDITY_TOKEN = "/check/user";
     interface UserRoutes {
         String PREFIX = "/user";
         String USER_REGISTER = PREFIX+"/add";
         String USER_UPDATE = PREFIX+"/update/{id}";
+        String USER_UPDATE_NAME = PREFIX+"/updateName/{id}";
+        String USER_UPDATE_PASSWORD = PREFIX+"/changePassword/{id}";
+        String USER_UPDATE_PHOTO = PREFIX+"/updatePhoto/{id}";
         String USER_REMOVE = PREFIX+"/delete";
     }
     interface PracticumRoutes {
@@ -36,6 +39,7 @@ public interface RoutesConfig {
             String TASK_CREATOR = PREFIX+"/creator/{id_creator}";
             String TASK_CLASSROOM = PREFIX+"/classroom/{id_classroom}";
             String TASK_UPDATE = PREFIX+"/update/{id_task}";
+            String TASK_LIST_ASSIGNMENT_BY_TASK = PREFIX+"/assignment/list/{id_task}";
             String TASK_ADD_ASSIGNMENT = PREFIX+"/assignment/add/task/{id_task}";
             String TASK_DELETE_ASSIGNMENT = PREFIX+"/assignment/delete/{id_assignment}";
             String TASK_UPLOAD_ASSIGNMENT = PREFIX+"/assignment/upload/{id_assignment}";

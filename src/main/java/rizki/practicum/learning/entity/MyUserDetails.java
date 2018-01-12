@@ -5,12 +5,14 @@ import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 @Setter @Getter
+@Component
 public class MyUserDetails implements UserDetails {
 
     private String username;
@@ -18,7 +20,10 @@ public class MyUserDetails implements UserDetails {
     private String id;
     private String identity;
     private String fullname;
+    private String name;
     Collection<? extends GrantedAuthority> authorities = new ArrayList<>();
+
+    public MyUserDetails(){}
 
     public MyUserDetails(User byEmail) {
         this.username = byEmail.getEmail();
@@ -28,7 +33,7 @@ public class MyUserDetails implements UserDetails {
             grantedAuthorityList.add(new SimpleGrantedAuthority(role.getInitial().toUpperCase()));
         }
         this.authorities = grantedAuthorityList;
-        this.fullname = byEmail.getName();
+        this.name = byEmail.getName();
         this.id = byEmail.getId();
         this.identity = byEmail.getIdentity();
     }

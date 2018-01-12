@@ -1,21 +1,27 @@
 package rizki.practicum.learning.service.user;
 
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.NotBlank;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.validation.annotation.Validated;
 import rizki.practicum.learning.entity.Role;
 import rizki.practicum.learning.entity.User;
 import rizki.practicum.learning.exception.ExceptionMessage;
 import rizki.practicum.learning.util.Confirmation;
 
+import javax.validation.Valid;
 import java.util.List;
 
+@Validated
 public interface UserService {
 
-    public boolean createUser(User user) throws Exception;
-    public User login(String email, String password) throws Exception;
-    public boolean updateUser(User user) throws Exception;
-    public boolean removeUser(String id) throws Exception;
-    public User getUser(String id) throws Exception;
-    public User getUser(User user) throws Exception;
-    public List<User> getUser() throws Exception;
-    public User setRole(User user, Role id_role) throws Exception;
-    public User removeRole(User user, Role id_role) throws Exception;
+    boolean createUser(@Valid User user);
+    boolean updateUser(@Valid User user);
+    User getUser(@NotBlank String id);
+    User getUser(@Valid User user);
+    Page<User> getUser(Pageable pageable) ;
+    User getUserByEmail(@NotBlank @Email String email);
+    List<User> getCandidateCoordinatorAssistance(String query);
+    List<User> getUserByName(String query);
 }

@@ -3,10 +3,7 @@ package rizki.practicum.learning.controller.task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import rizki.practicum.learning.configuration.RoutesConfig;
 import rizki.practicum.learning.entity.Assignment;
@@ -16,6 +13,7 @@ import rizki.practicum.learning.exception.ExceptionMessage;
 import rizki.practicum.learning.service.assignment.AssignmentService;
 import rizki.practicum.learning.service.authorization.AuthorizationService;
 import rizki.practicum.learning.service.classroom.ClassroomService;
+import rizki.practicum.learning.service.plagiarism.PlagiarismService;
 import rizki.practicum.learning.service.practicum.PracticumService;
 import rizki.practicum.learning.service.task.TaskService;
 import rizki.practicum.learning.service.user.UserService;
@@ -48,6 +46,9 @@ public class TaskController {
 
     @Autowired
     private AuthorizationService authorizationService;
+
+    @Autowired
+    private PlagiarismService plagiarismService;
 
     @PostMapping(RoutesConfig.PracticumRoutes.TaskRoutes.TASK_ADD)
     public ResponseEntity<Map<String,Object>> addTask
@@ -184,7 +185,7 @@ public class TaskController {
         }
     }
 
-    @PostMapping(RoutesConfig.PracticumRoutes.TaskRoutes.TASK_DETAIL)
+    @GetMapping(RoutesConfig.PracticumRoutes.TaskRoutes.TASK_DETAIL)
     public ResponseEntity<Map<String,Object>> getTaskDetails
             (@PathVariable("id_task") String idTask)
     {
@@ -200,6 +201,23 @@ public class TaskController {
                     0, "");
         }
     }
+
+    @GetMapping(RoutesConfig.PracticumRoutes.TaskRoutes.PREFIX)
+    public ResponseEntity<Map<String,Object>> getAllTask()
+    {
+        try{
+            List<Task> task = taskService.getTask();
+            return responseWrapper.restResponseWrapper(HttpStatus.OK,task,
+                    RoutesConfig.PracticumRoutes.TaskRoutes.TASK_DETAIL,
+                    1, "");
+        }catch(Exception e){
+            e.printStackTrace();
+            return responseWrapper.restResponseWrapper(HttpStatus.OK,null,
+                    RoutesConfig.PracticumRoutes.TaskRoutes.TASK_DETAIL,
+                    0, "");
+        }
+    }
+
 
     @PostMapping(RoutesConfig.PracticumRoutes.TaskRoutes.TASK_ADD_ASSIGNMENT)
     public ResponseEntity<Map<String,Object>> addAssignment
@@ -230,7 +248,34 @@ public class TaskController {
         }
     }
 
-    @PostMapping(RoutesConfig.PracticumRoutes.TaskRoutes.TASK_DELETE_ASSIGNMENT)
+
+
+    @GetMapping(RoutesConfig.PracticumRoutes.TaskRoutes.TASK_LIST_ASSIGNMENT_BY_TASK)
+    public ResponseEntity<Map<String,Object>> addAssignment
+            (@PathVariable("id_task") String idTask
+            )
+    {
+        try{
+            List<Assignment> result = assignmentService.getAssignmentByTask(idTask);
+            if(result!=null){
+                return responseWrapper.restResponseWrapper(HttpStatus.OK,result,
+                        RoutesConfig.PracticumRoutes.TaskRoutes.TASK_LIST_ASSIGNMENT_BY_TASK,
+                        1, "");
+            }else{
+                return responseWrapper.restResponseWrapper(HttpStatus.OK,null,
+                        RoutesConfig.PracticumRoutes.TaskRoutes.TASK_LIST_ASSIGNMENT_BY_TASK,
+                        0, "");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return responseWrapper.restResponseWrapper(HttpStatus.NOT_ACCEPTABLE,e.getMessage(),
+                    RoutesConfig.PracticumRoutes.TaskRoutes.TASK_LIST_ASSIGNMENT_BY_TASK,
+                    0,null);
+        }
+    }
+
+
+    @GetMapping(RoutesConfig.PracticumRoutes.TaskRoutes.TASK_DELETE_ASSIGNMENT)
     public ResponseEntity<Map<String,Object>> deleteAssignment
             (@PathVariable("id_assignment") String idAssignment
             )
@@ -268,6 +313,11 @@ public class TaskController {
                     RoutesConfig.PracticumRoutes.TaskRoutes.TASK_UPLOAD_ASSIGNMENT,
                     0,"Gagal melakukan upload");
         }else{
+            try {
+                plagiarismService.checkPlagiarism(upload.getId());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             return responseWrapper.restResponseWrapper(HttpStatus.CREATED,"",
                     RoutesConfig.PracticumRoutes.TaskRoutes.TASK_UPLOAD_ASSIGNMENT,
                     1,"Berhasil melakukan upload");

@@ -12,4 +12,5 @@ public interface TaskService {
     List<Task> getTaskByClassroom(String idClassroom) throws Exception;
     List<Task> getTaskByPracticum(String idPracticum) throws Exception;
     List<Task> getTaskByCreator(String idCreator) throws Exception;
+    List<Task> getTask() throws Exception;
 }

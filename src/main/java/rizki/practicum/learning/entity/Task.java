@@ -44,7 +44,4 @@ public class Task {
     @ManyToOne
     private Practicum practicum;
 
-    @OneToMany
-    private List<Assignment> assignments;
-
 }

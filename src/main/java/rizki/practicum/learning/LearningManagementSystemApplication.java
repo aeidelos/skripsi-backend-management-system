@@ -11,7 +11,6 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.cors.CorsConfiguration;
@@ -22,8 +21,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import rizki.practicum.learning.entity.MyUserDetails;
 import rizki.practicum.learning.repository.UserRepository;
-import rizki.practicum.learning.service.generator.RoleGeneratorServiceImpl;
-import rizki.practicum.learning.service.generator.UserGeneratorServiceImpl;
+import rizki.practicum.learning.service.generator.GeneratorService;
 import rizki.practicum.learning.service.storage.DocumentStorageServiceImpl;
 import rizki.practicum.learning.service.storage.ImageStorageServiceImpl;
 import rizki.practicum.learning.service.storage.SourceCodeStorageServiceImpl;
@@ -39,8 +37,7 @@ public class LearningManagementSystemApplication {
 	@Bean
 	InitializingBean prepareData(){
 		return() -> {
-			roleGeneratorServiceImpl.populate();
-			userGeneratorServiceImpl.populate();
+			generatorService.populate();
 		};
 	}
 
@@ -62,17 +59,20 @@ public class LearningManagementSystemApplication {
 	}
 
 	@Autowired
-	private RoleGeneratorServiceImpl roleGeneratorServiceImpl;
-
-	@Autowired
-	private UserGeneratorServiceImpl userGeneratorServiceImpl;
+	private GeneratorService generatorService;
 
 	@Autowired
 	public void authenticationManager(AuthenticationManagerBuilder authenticationManagerBuilder,
 									  UserRepository userRepository) throws Exception {
 		authenticationManagerBuilder
-				.userDetailsService(s -> new MyUserDetails(userRepository.findByEmail(s)));
+				.userDetailsService(new UserDetailsService() {
+					@Override
+					public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
+						return new MyUserDetails(userRepository.findByEmail(s));
+					}
+				});
 	}
+
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {
