@@ -1,8 +1,12 @@
 package rizki.practicum.learning.service.classroom;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.hibernate.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.crossstore.ChangeSetPersister;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import rizki.practicum.learning.entity.Classroom;
 import rizki.practicum.learning.entity.User;
@@ -11,7 +15,6 @@ import rizki.practicum.learning.service.user.UserService;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 @Service
 public class ClassroomServiceImpl implements ClassroomService {
@@ -63,8 +66,8 @@ public class ClassroomServiceImpl implements ClassroomService {
     }
 
     @Override
-    public List<Classroom> getAllClassroom() throws Exception {
-        return (ArrayList<Classroom>) classroomRepository.findAll();
+    public Page<Classroom> getAllClassroom(Pageable pageable){
+        return classroomRepository.findAll(pageable);
     }
 
     @Override
@@ -83,5 +86,28 @@ public class ClassroomServiceImpl implements ClassroomService {
     @Override
     public List<Classroom> getByPracticum(String idPracticum) {
         return classroomRepository.findAllByPracticum(idPracticum);
+    }
+
+    @Override
+    public void enrollmentPractican(String enrollmentKey, String idUser) throws ClassNotFoundException{
+        Classroom classroom = classroomRepository.findByEnrollmentKey(enrollmentKey);
+        if(classroom == null) throw new ClassNotFoundException("Classroom Not Found");
+        List<User> practicans = classroom.getPractican();
+        User user = userService.getUser(idUser);
+        if(user == null) throw new ClassNotFoundException("User not Found");
+        practicans.add(user);
+        classroom.setPractican(practicans);
+    }
+
+    @Override
+    public void unEnrollPractican(String idClassroom, String idPractican) throws ClassNotFoundException {
+        Classroom classroom = classroomRepository.findOne(idClassroom);
+        if(classroom == null) throw new ClassNotFoundException("Classroom Not Found");
+        List<User> practicans = classroom.getPractican();
+        User user = userService.getUser(idPractican);
+        if(user == null) throw new ClassNotFoundException("User not Found");
+        practicans.remove(user);
+        classroom.setPractican(practicans);
+        classroomRepository.save(classroom);
     }
 }

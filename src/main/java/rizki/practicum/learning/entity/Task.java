@@ -1,5 +1,6 @@
 package rizki.practicum.learning.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
@@ -8,7 +9,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
-import java.util.List;
 
 @Entity
 @Setter @Getter
@@ -26,10 +26,10 @@ public class Task {
     @Column
     private String description;
 
-    @DateTimeFormat
+    @DateTimeFormat @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
     private Date createdDate;
 
-    @DateTimeFormat
+    @DateTimeFormat @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
     private Date dueDate;
 
     @Column

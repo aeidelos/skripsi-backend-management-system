@@ -6,8 +6,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import rizki.practicum.learning.entity.Classroom;
 import rizki.practicum.learning.entity.Practicum;
+import rizki.practicum.learning.entity.Role;
 import rizki.practicum.learning.entity.User;
 import rizki.practicum.learning.repository.PracticumRepository;
+import rizki.practicum.learning.service.role.RoleDefinition;
 import rizki.practicum.learning.service.user.UserService;
 
 import java.util.ArrayList;
@@ -40,6 +42,20 @@ public class PracticumServiceImpl implements PracticumService {
     @Override
     public void deletePracticum(Practicum practicum) {
         practicumRepository.delete(practicum);
+    }
+
+    @Override
+    public List<Practicum> getPracticumByCoordinatorAssistance(String idUser) {
+        User user = userService.getUser(idUser);
+        List<Role> roles = user.getRole();
+        for (Role role : roles){
+            if(role.getInitial().equalsIgnoreCase(RoleDefinition.HeadLaboratory.initial)){
+                return (List<Practicum>) practicumRepository.findAll();
+            }else if(role.getInitial().equalsIgnoreCase(RoleDefinition.CoordinatorAssistance.initial)){
+                return practicumRepository.findByCoordinatorAssistance(user);
+            }
+        }
+        return null;
     }
 
     @Override

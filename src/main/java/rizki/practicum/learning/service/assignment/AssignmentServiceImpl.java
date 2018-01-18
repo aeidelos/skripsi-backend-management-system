@@ -9,6 +9,7 @@ import rizki.practicum.learning.entity.Document;
 import rizki.practicum.learning.entity.Task;
 import rizki.practicum.learning.repository.AssignmentRepository;
 import rizki.practicum.learning.repository.DocumentRepository;
+import rizki.practicum.learning.repository.UserRepository;
 import rizki.practicum.learning.service.storage.StorageService;
 import rizki.practicum.learning.service.task.TaskService;
 import rizki.practicum.learning.service.user.UserService;
@@ -18,11 +19,9 @@ import java.util.List;
 @Service
 public class AssignmentServiceImpl implements AssignmentService {
 
-    @Autowired
-    private TaskService taskService;
 
     @Autowired
-    private UserService userService;
+    private UserRepository userRepository;
 
     @Autowired
     @Qualifier("DocumentStorageService")
@@ -57,7 +56,7 @@ public class AssignmentServiceImpl implements AssignmentService {
     @Override
     public Document documentAssignment(String idAssignment, MultipartFile file, String idPractican) throws Exception {
         Document document = new Document();
-        document.setPractican(userService.getUser(idPractican));
+        document.setPractican(userRepository.findOne(idPractican));
         document.setAssignment(assignmentRepository.findOne(idAssignment));
         String uploaded = null;
         if(document.getAssignment().getFileAllowed().toUpperCase().equals("DOCUMENT")){
@@ -76,7 +75,7 @@ public class AssignmentServiceImpl implements AssignmentService {
     }
 
     @Override
-    public List<Assignment> getAssignmentByTask(String idTask) throws Exception {
+    public List<Assignment> getAssignmentByTask(String idTask){
         return assignmentRepository.findAllByTask(idTask);
     }
 }

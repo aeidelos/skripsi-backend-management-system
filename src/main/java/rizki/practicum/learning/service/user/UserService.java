@@ -21,7 +21,7 @@ public interface UserService {
     User getUser(@NotBlank String id);
     User getUser(@Valid User user);
     Page<User> getUser(Pageable pageable) ;
-    User getUserByEmail(@NotBlank @Email String email);
+    User getUserByEmail(@NotBlank String email);
     List<User> getCandidateCoordinatorAssistance(String query);
     List<User> getUserByName(String query);
 }

@@ -7,14 +7,14 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.util.List;
 
-@Entity
-@Setter @Getter
-public class Classroom {
+    @Entity
+    @Setter @Getter
+    public class Classroom {
 
-    @Id
-    @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid", strategy = "uuid2")
-    private String id;
+        @Id
+        @GeneratedValue(generator = "uuid")
+        @GenericGenerator(name = "uuid", strategy = "uuid2")
+        private String id;
 
     @Column
     private String name;

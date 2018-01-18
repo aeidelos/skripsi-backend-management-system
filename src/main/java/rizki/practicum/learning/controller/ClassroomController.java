@@ -2,6 +2,9 @@ package rizki.practicum.learning.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +15,7 @@ import rizki.practicum.learning.service.practicum.PracticumService;
 import rizki.practicum.learning.service.user.UserService;
 import rizki.practicum.learning.util.response.ResponseBuilder;
 
+import javax.xml.ws.Response;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,6 +77,24 @@ public class ClassroomController {
         return this.response();
     }
 
+    @GetMapping("/classroom")
+    public ResponseEntity<Map<String,Object>> getAllClassrooms(
+            @PathVariable(required = false, value = "page") Integer page,
+            @PathVariable(required = false,value = "limit") Integer limit,
+            @PathVariable(required = false, value = "sort") String sort
+    ){
+        this.init();
+        if(page == null) page = 0;
+        if(limit == null) limit = 100;
+        Pageable pageable = new PageRequest(page,limit);
+        Page<Classroom> classrooms = classroomService.getAllClassroom(pageable);
+        Map<String, Object> map = new HashMap<>();
+        map.put("classrooms", classrooms);
+        body = map;
+        statusResponse = 1;
+        return this.response();
+    }
+
 
     @PostMapping("/classroom")
     public ResponseEntity<Map<String,Object>> addClassroom(
@@ -111,12 +133,14 @@ public class ClassroomController {
     @PostMapping("/classroom/name/{idclassroom}")
     public ResponseEntity<Map<String, Object>> updateClassroom(
             @PathVariable("idclassroom") String idClassroom,
-            @RequestParam("classroomname") String classroomName
+            @RequestParam("classroomname") String classroomName,
+            @RequestParam("classroomlocation") String classroomLocation
     ){
         this.init();
         try{
             Classroom classroom = classroomService.getClassroom(idClassroom);
             classroom.setName(classroomName);
+            classroom.setLocation(classroomLocation);
             Classroom result = classroomService.updateClassroom(classroom);
             if(result!=null){
                 message = "Data kelas berhasil diubah";
@@ -151,6 +175,44 @@ public class ClassroomController {
         }catch(DataIntegrityViolationException e){
             e.printStackTrace();
             message = e.getMessage().toString();
+        }
+        return this.response();
+    }
+
+    @GetMapping("/classroom/enroll/{key}/{iduser}")
+    public ResponseEntity<Map<String, Object>> enrollmentClassroom(
+            @PathVariable("key") String enrollmentKey,
+            @PathVariable("iduser") String idUser
+    ){
+        this.init();
+        try{
+            classroomService.enrollmentPractican(enrollmentKey, idUser);
+            message = "Data kelas berhasil diubah";
+            statusResponse = 1;
+        }catch(IllegalArgumentException e){
+            message = "Gagal menambahkan praktikan :" +e.getMessage().toString();
+        }catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            message = "Gagal menambahkan praktikan :" +e.getMessage().toString();
+        }
+        return this.response();
+    }
+
+    @PostMapping("/classroom/remove/{idclassroom}")
+    public ResponseEntity<Map<String, Object>> unenrollPractican(
+            @PathVariable("idclassroom") String idClassroom,
+            @RequestParam("idpractican") String idPractican
+    ){
+        this.init();
+        try{
+            statusResponse = 1;
+            classroomService.unEnrollPractican(idClassroom, idPractican);
+        }catch(IllegalArgumentException e){
+            e.printStackTrace();
+            message = "Gagal menghapus praktikan dari kelas :" +e.getMessage().toString();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            message = "Gagal menghapus praktikan dari kelas :" +e.getMessage().toString();
         }
         return this.response();
     }

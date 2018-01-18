@@ -14,7 +14,9 @@ import rizki.practicum.learning.service.practicum.PracticumService;
 import rizki.practicum.learning.service.user.UserService;
 import rizki.practicum.learning.util.response.ResponseBuilder;
 
+import javax.validation.ConstraintViolationException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -73,7 +75,7 @@ public class PracticumController {
     }
 
     @PostMapping("/practicum")
-    public ResponseEntity<Map<String,Object>> addCourse(
+    public ResponseEntity<Map<String,Object>> addPracticum(
             @RequestParam("practicumname") String practicumName,
             @RequestParam("idcourse") String idCourse
     ){
@@ -95,6 +97,9 @@ public class PracticumController {
         }catch(IllegalArgumentException e){
             e.printStackTrace();
             message = e.getMessage();
+        }catch(ConstraintViolationException e){
+            e.printStackTrace();
+            message = "Lengkapi data praktikum :"+e.getMessage().toString();
         }
         return this.response();
     }
@@ -180,6 +185,29 @@ public class PracticumController {
             e.printStackTrace();
             message = e.getMessage();
         }
+        return this.response();
+    }
+
+    @GetMapping("/practicum/coordinator/{iduser}")
+    public ResponseEntity<Map<String, Object>> getPracticumByCoordinatorAssistance(
+            @PathVariable("iduser") String idUser
+    ){
+        this.init();
+            try{
+                List<Practicum> practicums = practicumService.getPracticumByCoordinatorAssistance(idUser);
+                Map<String,Object> map = new HashMap<>();
+                if(practicums == null){
+                    message = "Praktikum tidak terdefinisi";
+                    map.put("practicums",false);
+                }else{
+                    map.put("practicums",practicums);
+                    statusResponse = 1;
+                }
+                body = map;
+            }catch(IllegalArgumentException e) {
+                e.printStackTrace();
+                message = e.getMessage();
+            }
         return this.response();
     }
 }

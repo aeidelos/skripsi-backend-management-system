@@ -11,8 +11,10 @@ import java.util.List;
 
 @Repository
 public interface ClassroomRepository extends PagingAndSortingRepository<Classroom, String> {
+
     Classroom findByEnrollmentKey(String enrollmentKey);
 
     @Query("SELECT classroom FROM Classroom classroom WHERE classroom.practicum.id = ?1")
     List<Classroom> findAllByPracticum(String practicum);
+
 }

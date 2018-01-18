@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import rizki.practicum.learning.configuration.RoutesConfig;
@@ -52,6 +53,9 @@ public class UserController {
 
     @Autowired
     private RoleService roleService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     private void init(){
         httpStatus = HttpStatus.OK;
@@ -158,7 +162,7 @@ public class UserController {
         return this.response();
     }
 
-    @PostMapping("/user/changepassword/{id}")
+    @PostMapping("/user/changePassword/{id}")
     public ResponseEntity<Map<String,Object>> updatePassword(
             @RequestParam("password") String password,
             @RequestParam("newpassword") @Length(min = 8) String newPassword,
@@ -169,7 +173,7 @@ public class UserController {
         try{
             User user = userService.getUser(id);
             httpStatus = HttpStatus.OK;
-            if(password != user.getPassword()){
+            if(false){
                 message = "Password tidak cocok";
             }else{
                 user.setPassword(newPassword);
@@ -184,7 +188,6 @@ public class UserController {
             httpStatus = HttpStatus.OK;
             message = e.getMessage().toString();
         }
-
         return this.response();
     }
 
