@@ -25,9 +25,9 @@ public class DocumentStorageServiceImpl extends StorageServiceImpl implements St
     }
 
     @Override
-    public String store(MultipartFile file) {
+    public String store(MultipartFile file, String filename) {
         if(ArrayUtils.contains(FilesLocationConfig.Document.FILE_EXTENSION_ALLOWED,file.getContentType())){
-            return super.store(file);
+            return super.store(file, filename);
         }else{
             return null;
         }

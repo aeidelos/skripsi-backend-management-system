@@ -1,6 +1,7 @@
 package rizki.practicum.learning.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -8,10 +9,9 @@ import rizki.practicum.learning.entity.Task;
 import rizki.practicum.learning.service.task.TaskService;
 import rizki.practicum.learning.util.response.ResponseBuilder;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @RestController
 public class TaskController {
@@ -84,8 +84,8 @@ public class TaskController {
     public ResponseEntity<Map<String, Object>> addTask(
             @RequestParam("title") String title,
             @RequestParam("description") String description,
-            @RequestParam("startdate") Date startDate,
-            @RequestParam("duedate") Date dueDate,
+            @RequestParam("startdate") String startDate ,
+            @RequestParam("duedate") String dueDate,
             @RequestParam("allowlate") boolean allowLate,
             @RequestParam("iduser") String idUser,
             @RequestParam("idclassroom") String idClassroom,
@@ -96,7 +96,10 @@ public class TaskController {
         try{
             httpStatus = HttpStatus.CREATED;
             statusResponse = 1;
-            Task task = taskService.addTask(title, description, startDate, dueDate, allowLate, idUser, idClassroom, idPracticum);
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("EEE MMM dd yyyy HH:mm:ss Z ", Locale.ENGLISH);
+            Date actualStartDate = simpleDateFormat.parse(startDate);
+            Date actualEndDate = simpleDateFormat.parse(dueDate);
+            Task task = taskService.addTask(title, description, actualStartDate, actualEndDate, allowLate, idUser, idClassroom, idPracticum);
             Map<String, Object> map = new HashMap<>();
             map.put("task",task);
             message = "Tugas berhasil ditambahkan";
@@ -104,6 +107,9 @@ public class TaskController {
         }catch (IllegalArgumentException e){
             e.printStackTrace();
             message =  "Tugas gagal ditambahkan, cek input parameter :"+e.getMessage().toString();
+        } catch (ParseException e) {
+            message =  "Gagal parsing date :"+e.getMessage().toString();
+            e.printStackTrace();
         }
         return this.response();
     }
@@ -121,28 +127,39 @@ public class TaskController {
             e.printStackTrace();
             message = "Pastikan id sudah ada :"+e.getMessage().toString();
         }
-
         return this.response();
     }
 
-    @PutMapping("/task/{idtask}")
+    @PostMapping("/task/{idtask}")
     public ResponseEntity<Map<String,Object>> updateTask(
             @PathVariable("idtask") String idTask,
-            @RequestBody Task task
+            @RequestParam("title") String title,
+            @RequestParam("description") String description,
+            @RequestParam("startdate") String startDate ,
+            @RequestParam("duedate") String dueDate,
+            @RequestParam("allowlate") boolean allowLate
     ){
         this.init();
         try{
             statusResponse = 1;
+            Task task = taskService.getTask(idTask);
+            task.setTitle(title);
+            task.setDescription(description);
+            task.setAllowLate(allowLate);
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("EEE MMM dd yyyy HH:mm:ss Z ", Locale.ENGLISH);
+            task.setCreatedDate(simpleDateFormat.parse(startDate));
+            task.setDueDate(simpleDateFormat.parse(dueDate));
             Task updatedTask = taskService.updateTask(task);
             Map<String, Object> map = new HashMap<>();
-            map.put("task",task);
+            map.put("task",updatedTask);
             message = "Tugas berhasil diubah";
         }catch(IllegalArgumentException e){
             e.printStackTrace();
             message =  "Tugas gagal diubah, cek input parameter :"+e.getMessage().toString();
+        } catch (ParseException e) {
+            e.printStackTrace();
+            message =  "Tugas gagal diubah, parsing error :"+e.getMessage().toString();
         }
         return this.response();
     }
-
-
 }

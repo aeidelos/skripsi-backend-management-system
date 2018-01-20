@@ -95,7 +95,7 @@ public class UserController {
             List<Role> newRole = new ArrayList<>();
             newRole.add(roleService.getRole(RoleDefinition.Practican.initial));
             newUser.setRole(newRole);
-            if(photo!=null) newUser.setPhoto(storageService.store(photo));
+            if(photo!=null) newUser.setPhoto(storageService.store(photo, email));
             if(userService.createUser(newUser)){
                 httpStatus = HttpStatus.CREATED;
                 message = "Pengguna berhasil terdaftar";
@@ -199,7 +199,7 @@ public class UserController {
         this.init();
         location = "/user/updatephoto";
         try{
-            String imageName = storageService.store(photo);
+            String imageName = storageService.store(photo, id);
             if(imageName != null || imageName != ""){
                 User user = userService.getUser(id);
                 user.setPhoto(imageName);

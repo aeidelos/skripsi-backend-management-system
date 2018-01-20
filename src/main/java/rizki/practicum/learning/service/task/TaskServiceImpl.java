@@ -41,7 +41,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public Task getTask(String idTask) throws Exception {
+    public Task getTask(String idTask){
         return taskRepository.findOne(idTask);
     }
 

@@ -28,30 +28,30 @@ public class PlagiarismServiceImpl implements PlagiarismService {
     @Qualifier("DocumentStorageService")
     private StorageService storageService;
 
-    @Override
-    public Document checkPlagiarism(String idDocument) throws Exception {
-        Document document = documentRepository.findOne(idDocument);
-        List<Document> documents = documentRepository.findAllByAssignment(document.getAssignment());
-        for(Document temp : documents){
-            if(!document.getPlagiarism().containsKey(temp.getId())){
-                this.documentCheckPlagiarism(document,temp);
-            }
-        }
-        return document;
-    }
-
-    @Override
-    public void BatchProcessing(String idAssignment) throws Exception {
-        List<Document> documents = documentRepository.findAllByAssignment(assignmentService.getAssignment(idAssignment));
-        for(Document document : documents){
-            for(Document temp: documents){
-                if(!document.getPlagiarism().containsKey(temp.getId())){
-                    this.documentCheckPlagiarism(document,temp);
-                }
-            }
-            documents.remove(document);
-        }
-    }
+//    @Override
+//    public Document checkPlagiarism(String idDocument) throws Exception {
+//        Document document = documentRepository.findOne(idDocument);
+//        List<Document> documents = documentRepository.findAllByAssignment(document.getAssignment());
+//        for(Document temp : documents){
+//            if(!document.getPlagiarism().containsKey(temp.getId())){
+//                this.documentCheckPlagiarism(document,temp);
+//            }
+//        }
+//        return document;
+//    }
+//
+//    @Override
+//    public void BatchProcessing(String idAssignment) throws Exception {
+//        List<Document> documents = documentRepository.findAllByAssignment(assignmentService.getAssignment(idAssignment));
+//        for(Document document : documents){
+//            for(Document temp: documents){
+//                if(!document.getPlagiarism().containsKey(temp.getId())){
+//                    this.documentCheckPlagiarism(document,temp);
+//                }
+//            }
+//            documents.remove(document);
+//        }
+//    }
 
     private void documentCheckPlagiarism(Document document, Document temp){
         if(!document.getPlagiarism().containsKey(temp.getId())){
@@ -79,5 +79,15 @@ public class PlagiarismServiceImpl implements PlagiarismService {
             e.printStackTrace();
         }
         return ((jaroWinkler.distance(file1,file2))*100);
+    }
+
+    @Override
+    public Document checkPlagiarism(String idDocument) throws Exception {
+        return null;
+    }
+
+    @Override
+    public void BatchProcessing(String idAssignment) throws Exception {
+
     }
 }

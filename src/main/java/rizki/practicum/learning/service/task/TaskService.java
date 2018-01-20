@@ -14,7 +14,7 @@ import java.util.List;
 public interface TaskService {
     Task updateTask(@Valid Task task);
     void deleteTask(@NotNull @NotBlank String idTask);
-    Task getTask(String idTask) throws Exception;
+    Task getTask(@NotNull @NotBlank String idTask);
 
     Task addTask(@NotBlank String title, @NotNull String description,@Nullable Date startDate,
                  @NotNull Date endDate, @NotNull boolean allowLate, @NotNull @NotBlank String idUser,

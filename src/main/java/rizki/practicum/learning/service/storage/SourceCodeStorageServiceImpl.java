@@ -16,9 +16,9 @@ public class SourceCodeStorageServiceImpl extends StorageServiceImpl implements 
     }
 
     @Override
-    public String store(MultipartFile file) {
+    public String store(MultipartFile file, String filename) {
         if(ArrayUtils.contains(FilesLocationConfig.SourceCode.FILE_EXTENSION_ALLOWED,file.getContentType())){
-            return super.store(file);
+            return super.store(file, filename);
         }else{
             return null;
         }

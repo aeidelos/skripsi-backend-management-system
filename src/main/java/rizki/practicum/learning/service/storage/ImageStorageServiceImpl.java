@@ -16,9 +16,9 @@ public class ImageStorageServiceImpl extends StorageServiceImpl implements Stora
     }
 
     @Override
-    public String store(MultipartFile file) {
+    public String store(MultipartFile file, String filename) {
         if(ArrayUtils.contains(FilesLocationConfig.Image.FILE_EXTENSION_ALLOWED,file.getContentType())){
-            return super.store(file);
+            return super.store(file, filename);
         }else{
             return null;
         }

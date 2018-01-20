@@ -9,5 +9,6 @@ import java.util.List;
 
 @Repository
 public interface DocumentRepository extends PagingAndSortingRepository<Document, String> {
-    List<Document> findAllByAssignment(Assignment idAssignment);
+    List<Document> findAllByAssignment(String idAssignment);
+    List<Document> findAllByAssignmentAndPractican(String assignment, String practican);
 }

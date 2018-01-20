@@ -1,6 +1,7 @@
 package rizki.practicum.learning.service.storage;
 
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -39,16 +40,18 @@ public class StorageServiceImpl implements StorageService {
     }
 
     @Override
-    public String store(MultipartFile file) {
-        String filename;
+    public String store(MultipartFile file, String filename) {
         try {
-            filename = rizki.practicum.learning.util.hash.MD5.generate(file.getOriginalFilename())+"."+
-                    FilenameUtils.getExtension(file.getOriginalFilename());
+            File fileCheck = new File(this.rootLocation+"/"+filename+"."
+                    +FilenameUtils.getExtension(file.getOriginalFilename()));
+            if(fileCheck.isFile()){
+                fileCheck.delete();
+            }
             Files.copy(file.getInputStream(), this.rootLocation.resolve(filename));
         } catch (Exception e) {
             throw new RuntimeException(StorageServiceMessage.SAVE_RESOURCE_FAIL);
         }
-        return filename;
+        return this.rootLocation+"/"+filename+"."+FilenameUtils.getExtension(file.getOriginalFilename());
     }
 
     @Override
