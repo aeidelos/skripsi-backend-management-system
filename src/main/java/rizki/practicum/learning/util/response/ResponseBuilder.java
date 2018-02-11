@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,6 +29,12 @@ public class ResponseBuilder{
 
     public ResponseBuilder setBody(Object body){
         this.body = body;
+        return this;
+    }
+
+    public ResponseBuilder setFile(File file){
+        String filename = file.getPath();
+
         return this;
     }
 

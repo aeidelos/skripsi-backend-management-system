@@ -26,7 +26,4 @@ public class Document {
     @Column
     private String filename;
 
-    @OneToMany(targetEntity = Document.class)
-    private Map<Document, Float> plagiarism;
-
 }

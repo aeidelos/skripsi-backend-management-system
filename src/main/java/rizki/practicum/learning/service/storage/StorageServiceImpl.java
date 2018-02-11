@@ -13,6 +13,7 @@ import java.util.stream.Stream;
 import lombok.Getter;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.xmlbeans.impl.piccolo.io.FileFormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -40,18 +41,19 @@ public class StorageServiceImpl implements StorageService {
     }
 
     @Override
-    public String store(MultipartFile file, String filename) {
+    public String store(MultipartFile file, String filename) throws FileFormatException {
+        String file_location = this.rootLocation+"/"+filename+"."+FilenameUtils.getExtension(file.getOriginalFilename());
         try {
-            File fileCheck = new File(this.rootLocation+"/"+filename+"."
-                    +FilenameUtils.getExtension(file.getOriginalFilename()));
+            File fileCheck = new File(file_location);
             if(fileCheck.isFile()){
                 fileCheck.delete();
             }
+            filename+="."+FilenameUtils.getExtension(file.getOriginalFilename());
             Files.copy(file.getInputStream(), this.rootLocation.resolve(filename));
         } catch (Exception e) {
-            throw new RuntimeException(StorageServiceMessage.SAVE_RESOURCE_FAIL);
+            e.printStackTrace();
         }
-        return this.rootLocation+"/"+filename+"."+FilenameUtils.getExtension(file.getOriginalFilename());
+        return file_location;
     }
 
     @Override

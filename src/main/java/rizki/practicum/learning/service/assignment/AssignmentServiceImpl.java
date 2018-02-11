@@ -8,16 +8,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import rizki.practicum.learning.configuration.FilesLocationConfig;
-import rizki.practicum.learning.entity.Assignment;
-import rizki.practicum.learning.entity.Document;
-import rizki.practicum.learning.repository.AssignmentRepository;
-import rizki.practicum.learning.repository.DocumentRepository;
-import rizki.practicum.learning.repository.TaskRepository;
-import rizki.practicum.learning.repository.UserRepository;
+import rizki.practicum.learning.entity.*;
+import rizki.practicum.learning.repository.*;
 import rizki.practicum.learning.service.storage.StorageService;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class AssignmentServiceImpl implements AssignmentService {
@@ -31,7 +27,14 @@ public class AssignmentServiceImpl implements AssignmentService {
     private StorageService sourceCodeStorageService;
 
     @Autowired
+    @Qualifier("ImageStorageService")
+    private StorageService imageStorageService;
+
+    @Autowired
     private AssignmentRepository assignmentRepository;
+
+    @Autowired
+    private PlagiarismContentRepository plagiarismContentRepository;
 
     @Autowired
     private TaskRepository taskRepository;
@@ -42,13 +45,16 @@ public class AssignmentServiceImpl implements AssignmentService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private ClassroomRepository classroomRepository;
+
     @Override
     public Assignment addAssignment(String idTask, Assignment assignment) throws Exception {
         return assignmentRepository.save(assignment);
     }
 
     @Override
-    public Assignment getAssignment(String idAssigment) throws Exception {
+    public Assignment getAssignment(String idAssigment) {
         return assignmentRepository.findOne(idAssigment);
     }
 
@@ -58,27 +64,51 @@ public class AssignmentServiceImpl implements AssignmentService {
     }
 
     @Override
-    public void fulfillAssignment(String idAssignment, String idPractican, MultipartFile file) throws FileFormatException, FileUploadException {
+    public Document fulfillAssignment(String idAssignment, String idPractican, MultipartFile file) throws FileFormatException, FileUploadException {
         String extension = FilenameUtils.getExtension(file.getOriginalFilename());
         String doc = null;
-        if(Arrays.asList(FilesLocationConfig.Document.FILE_EXTENSION_ALLOWED).contains(extension)){
-            doc = documentStorageService.store(file, idAssignment+"_"+idPractican);
-        }else if(Arrays.asList(FilesLocationConfig.SourceCode.FILE_EXTENSION_ALLOWED).contains(extension)){
-            doc = sourceCodeStorageService.store(file,idAssignment+"_"+idPractican);
-        }
+        doc = documentStorageService.store(file, idAssignment+"_"+idPractican);
         if(doc!=null || !doc.equalsIgnoreCase("")){
-            documentCreator(doc,idPractican,idAssignment);
+            return documentCreator(doc,idPractican,idAssignment);
+        }else{
+            return null;
         }
     }
 
     @Override
-    public List<Document> getAssignmentByTaskPractican(String idTask, String idPractican) {
-        return documentRepository.findAllByAssignmentAndPractican(idTask,idPractican);
+    public List<Document> getAssignmentByTaskPractican(String assignment, String idPractican) {
+        return documentRepository.findAllByAssignmentAndPractican(assignmentRepository.findOne(assignment),
+                userRepository.findOne(idPractican));
     }
 
     @Override
     public List<Document> getAssignmentByTaskPractican(String idTask) {
-        return documentRepository.findAllByAssignment(idTask);
+        Task task = taskRepository.findOne(idTask);
+        return documentRepository.findAllByAssignment_Task(task);
+    }
+
+    @Override
+    public Map<String, List<Document>> getDocumentByClassroom(String idTask, String idClassroom) {
+        Task task = taskRepository.findOne(idTask);
+        Classroom classroom = classroomRepository.findOne(idClassroom);
+        List<Document> documents = documentRepository.findAllByAssignment_Task(task);
+        List<Document> filtered =
+                documents.stream()
+                        .filter(document -> document.getAssignment().getTask().getClassroom().equals(classroom))
+                        .collect(Collectors.toList());
+        Map<String, List<Document>> result = new HashMap<>();
+        for(Document filter: filtered){
+            ArrayList<Document> temp = null;
+            if(result==null || !result.containsKey(filter.getPractican().getId())){
+                temp = new ArrayList<>();
+                temp.add(filter);
+            }else{
+                temp = (ArrayList<Document>) result.get(filter.getPractican().getId());
+                temp.add(filter);
+            }
+            result.put(filter.getPractican().getId(), temp);
+        }
+        return result;
     }
 
     private Document documentCreator(String filename, String idPractican, String idAssignment){
@@ -91,14 +121,25 @@ public class AssignmentServiceImpl implements AssignmentService {
 
     @Override
     public Document documentAssignment(String idAssignment, MultipartFile file, String idPractican) throws Exception {
-        Document document = new Document();
-        document.setPractican(userRepository.findOne(idPractican));
-        document.setAssignment(assignmentRepository.findOne(idAssignment));
+        Assignment assignment = assignmentRepository.findOne(idAssignment);
+        User practican = userRepository.findOne(idPractican);
+        Document document = documentRepository.findByAssignmentAndPractican(assignment, practican);
+        if(document == null) {
+            document = new Document();
+            document.setAssignment(assignment);
+            document.setPractican(practican);
+        }else{
+            plagiarismContentRepository.deleteAllByDocument1OrDocument2(document, document);
+        }
         String uploaded = null;
-        if(document.getAssignment().getFileAllowed().toUpperCase().equals("DOCUMENT")){
+        if(assignment.getFileAllowed().equalsIgnoreCase(FilesLocationConfig.Document.INITIAL)){
             uploaded = documentStorageService.store(file,idAssignment+"_"+idPractican);
-        }else if(document.getAssignment().getFileAllowed().toUpperCase().equals("SOURCECODE")){
+        }else if(assignment.getFileAllowed().equalsIgnoreCase(FilesLocationConfig.SourceCode.INITIAL)){
             uploaded = sourceCodeStorageService.store(file,idAssignment+"_"+idPractican);
+        }else if(assignment.getFileAllowed().equalsIgnoreCase(FilesLocationConfig.Image.INITIAL)){
+            uploaded = imageStorageService.store(file,idAssignment+"_"+idPractican);
+        }else{
+            throw new FileFormatException();
         }
         document.setFilename(uploaded);
         return documentRepository.save(document);

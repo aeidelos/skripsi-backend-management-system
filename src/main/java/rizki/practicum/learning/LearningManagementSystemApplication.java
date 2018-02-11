@@ -22,15 +22,30 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import rizki.practicum.learning.entity.MyUserDetails;
 import rizki.practicum.learning.repository.UserRepository;
 import rizki.practicum.learning.service.generator.GeneratorService;
+import rizki.practicum.learning.service.plagiarism.PlagiarismServiceRunners;
 import rizki.practicum.learning.service.storage.DocumentStorageServiceImpl;
 import rizki.practicum.learning.service.storage.ImageStorageServiceImpl;
 import rizki.practicum.learning.service.storage.SourceCodeStorageServiceImpl;
 import rizki.practicum.learning.service.storage.StorageServiceImpl;
 
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.LinkedBlockingQueue;
+
 @SpringBootApplication
 public class LearningManagementSystemApplication {
 
 	public static void main(String[] args) {
+		Thread t = new Thread(() -> {
+			while(true){
+				try {
+					plagiarismServiceRunnersQueue.take().run();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		t.start();
 		SpringApplication.run(LearningManagementSystemApplication.class, args);
 	}
 
@@ -40,6 +55,9 @@ public class LearningManagementSystemApplication {
 			generatorService.populate();
 		};
 	}
+
+	public static BlockingQueue<PlagiarismServiceRunners> plagiarismServiceRunnersQueue = new LinkedBlockingDeque<>();
+
 
 	@Bean
 	CommandLineRunner init(StorageServiceImpl storageServiceImpl,

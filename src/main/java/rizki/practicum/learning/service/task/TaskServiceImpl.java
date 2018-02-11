@@ -12,8 +12,10 @@ import rizki.practicum.learning.repository.TaskRepository;
 import rizki.practicum.learning.repository.UserRepository;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TaskServiceImpl implements TaskService {
@@ -51,11 +53,8 @@ public class TaskServiceImpl implements TaskService {
         User creator = userRepository.findOne(idUser);
         Practicum practicum = null;
         Classroom classroom = null;
-        if(idPracticum!=null || idPracticum!="null"){
-            practicum = practicumRepository.findOne(idPracticum);
-        }else if(idClassroom != null || idClassroom != null){
-            classroom = classroomRepository.findOne(idClassroom);
-        }
+        practicum = practicumRepository.findOne(idPracticum);
+        classroom = classroomRepository.findOne(idClassroom);
         Task task = new Task();
         task.setTitle(title);
         task.setDescription(description);
@@ -77,14 +76,22 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public List<Task> getTaskByPractican(String idPractican, String status) {
         List<Task> tasks = new ArrayList<>();
-        List<Task> byPracticums;
-        List<Task> byClassrooms;
+        List<Task> byPracticums = null;
+        List<Task> byClassrooms = null;
+        List<Classroom> classrooms = classroomRepository.findAllByPracticanContains
+                                        (userRepository.findOne(idPractican));
         if(status.equalsIgnoreCase("past")){
-            byPracticums = taskRepository.findAllPastByPracticumOfPractican(idPractican, new Date());
-            byClassrooms = taskRepository.findAllPastByClassroomOfPractican(idPractican,new Date());
+            byClassrooms = taskRepository.findAllByClassroomInAndDueDateIsBefore(classrooms, new Date());
+            byPracticums = taskRepository.findAllByPracticumInAndDueDateIsBefore(classrooms
+                    .stream()
+                    .map(Classroom::getPracticum)
+                    .collect(Collectors.toList()), new Date());
         }else{
-            byPracticums = taskRepository.findAllByPracticumOfPractican(idPractican, new Date());
-            byClassrooms = taskRepository.findAllByClassroomOfPractican(idPractican, new Date());
+            byClassrooms = taskRepository.findAllByClassroomInAndDueDateIsAfter(classrooms, new Date());
+            byPracticums = taskRepository.findAllByPracticumInAndDueDateIsAfter(classrooms
+                    .stream()
+                    .map(Classroom::getPracticum)
+                    .collect(Collectors.toList()), new Date());
         }
         if(byPracticums != null) tasks.addAll(byPracticums);
         if(byClassrooms != null) tasks.addAll(byClassrooms);
@@ -105,18 +112,18 @@ public class TaskServiceImpl implements TaskService {
         }else if(mode.equalsIgnoreCase("classroom")){
             Classroom classroom = classroomRepository.findOne(id);
             if(time.equalsIgnoreCase("past")){
-                tasks = taskRepository.findAllByClassroomAndDueDateIsAfter(classroom, date);
-            }else{
                 tasks = taskRepository.findAllByClassroomAndDueDateIsBefore(classroom, date);
+            }else{
+                tasks = taskRepository.findAllByClassroomAndDueDateIsAfter(classroom, date);
             }
         }else if(mode.equalsIgnoreCase("mix")){
             Classroom classroom = classroomRepository.findOne(id);
             if(time.equalsIgnoreCase("past")){
-                tasks = taskRepository.findAllByClassroomAndDueDateIsAfter(classroom, date);
-                tasks.addAll(taskRepository.findAllByPracticumAndDueDateIsAfter(classroom.getPracticum(),date));
-            }else{
                 tasks = taskRepository.findAllByClassroomAndDueDateIsBefore(classroom, date);
                 tasks.addAll(taskRepository.findAllByPracticumAndDueDateIsBefore(classroom.getPracticum(),date));
+            }else{
+                tasks = taskRepository.findAllByClassroomAndDueDateIsAfter(classroom, date);
+                tasks.addAll(taskRepository.findAllByPracticumAndDueDateIsAfter(classroom.getPracticum(),date));
             }
         }else{
             throw new IllegalArgumentException();

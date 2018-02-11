@@ -76,14 +76,6 @@ public class ClassroomServiceImpl implements ClassroomService {
     }
 
     @Override
-    public Classroom enrollment(String enrollkey, String idUser) throws Exception {
-        Classroom classroom = classroomRepository.findByEnrollmentKey(enrollkey);
-        List<User> practican = classroom.getPractican();
-        practican.add(userService.getUser(idUser));
-        return classroom;
-    }
-
-    @Override
     public List<Classroom> getByPracticum(String idPracticum) {
         return classroomRepository.findAllByPracticum(idPracticum);
     }
@@ -109,5 +101,15 @@ public class ClassroomServiceImpl implements ClassroomService {
         practicans.remove(user);
         classroom.setPractican(practicans);
         classroomRepository.save(classroom);
+    }
+
+    @Override
+    public List<Classroom> getByAssistance(String idUser) {
+        return classroomRepository.findAllByAssistanceContains(userService.getUser(idUser));
+    }
+
+    @Override
+    public List<Classroom> getByPractican(String idUser) {
+        return classroomRepository.findAllByPracticanContains(userService.getUser(idUser));
     }
 }

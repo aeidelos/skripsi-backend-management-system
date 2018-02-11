@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.annotation.Nullable;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
@@ -38,10 +39,10 @@ public class Task {
     @ManyToOne
     private User createdBy;
 
-    @ManyToOne
+    @ManyToOne @Nullable
     private Classroom classroom;
 
-    @ManyToOne
+    @ManyToOne @Nullable
     private Practicum practicum;
 
 }

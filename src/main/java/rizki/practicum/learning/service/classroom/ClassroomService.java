@@ -17,8 +17,11 @@ public interface ClassroomService {
     void deleteClassroom(@NotBlank String idClassroom);
     Page<Classroom> getAllClassroom(Pageable pageable);
     Classroom getClassroom(@NotBlank String idClassroom);
-    Classroom enrollment(String enrollkey, String idUser) throws Exception;
     List<Classroom> getByPracticum(@NotBlank String idPracticum);
     void enrollmentPractican(String enrollmentKey, String idUser) throws ClassNotFoundException;
     void unEnrollPractican(@NotBlank String idClassroom, @NotBlank String idPractican) throws ClassNotFoundException;
+
+    List<Classroom> getByAssistance(@NotBlank String idUser);
+
+    List<Classroom> getByPractican(@NotBlank String idUser);
 }

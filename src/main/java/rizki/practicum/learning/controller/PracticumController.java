@@ -111,10 +111,8 @@ public class PracticumController {
     ){
         this.init();
         location = "/practicum";
-        Practicum old = practicumService.getPracticum(id);
         try{
-            old.setName(practicum.getName());
-            Practicum result = practicumService.updatePracticum(old);
+            Practicum result = practicumService.updatePracticum(practicum);
             statusResponse = 1;
             message = "Data praktikum berhasil diubah";
             Map<String,Object> map = new HashMap<>();

@@ -22,7 +22,7 @@ public interface TaskService {
 
     Task addTask(Task task);
 
-    List<Task> getTaskByPractican(@NotBlank String idPractican,@NotBlank String status);
+    List<Task> getTaskByPractican(@NotBlank String idPractican, @NotBlank String status);
 
     List<Task> getTask(@NotBlank @NotNull String mode, @NotBlank @NotNull String id, @NotBlank @NotNull String time);
 }

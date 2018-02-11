@@ -30,15 +30,6 @@ public class ClassroomController {
     private Object body = null;
 
     @Autowired
-    private PracticumService practicumService;
-
-    @Autowired
-    private CourseService courseService;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
     private ClassroomService classroomService;
 
     private void init(){
@@ -213,6 +204,41 @@ public class ClassroomController {
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
             message = "Gagal menghapus praktikan dari kelas :" +e.getMessage().toString();
+        }
+        return this.response();
+    }
+
+    @GetMapping("/classroom/assistance/{iduser}")
+    public ResponseEntity<Map<String, Object>> getClassroomByAssistance(
+            @PathVariable("iduser") String idUser
+    ){
+        this.init();
+        try{
+            List<Classroom> classrooms = classroomService.getByAssistance(idUser);
+            statusResponse = 1;
+            Map<String, Object> map = new HashMap<>();
+            map.put("classrooms", classrooms);
+            body = map;
+        }catch(Exception e){
+
+        }
+        return this.response();
+    }
+
+
+    @GetMapping("/classroom/practican/{iduser}")
+    public ResponseEntity<Map<String, Object>> getClassroomByPractican(
+            @PathVariable("iduser") String idUser
+    ){
+        this.init();
+        try{
+            List<Classroom> classrooms = classroomService.getByPractican(idUser);
+            statusResponse = 1;
+            Map<String, Object> map = new HashMap<>();
+            map.put("classrooms", classrooms);
+            body = map;
+        }catch(Exception e){
+
         }
         return this.response();
     }

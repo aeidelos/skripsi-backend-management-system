@@ -6,6 +6,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 import rizki.practicum.learning.entity.Classroom;
 import rizki.practicum.learning.entity.Practicum;
+import rizki.practicum.learning.entity.User;
 
 import java.util.List;
 
@@ -17,4 +18,7 @@ public interface ClassroomRepository extends PagingAndSortingRepository<Classroo
     @Query("SELECT classroom FROM Classroom classroom WHERE classroom.practicum.id = ?1")
     List<Classroom> findAllByPracticum(String practicum);
 
+    List<Classroom> findAllByAssistanceContains(User user);
+
+    List<Classroom> findAllByPracticanContains(User user);
 }

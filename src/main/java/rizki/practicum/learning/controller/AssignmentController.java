@@ -1,5 +1,6 @@
 package rizki.practicum.learning.controller;
 
+import com.sun.org.apache.xpath.internal.operations.Mult;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.apache.xmlbeans.impl.piccolo.io.FileFormatException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import rizki.practicum.learning.entity.Assignment;
 import rizki.practicum.learning.entity.Document;
 import rizki.practicum.learning.service.assignment.AssignmentService;
-import rizki.practicum.learning.service.task.TaskService;
+import rizki.practicum.learning.service.plagiarism.PlagiarismService;
 import rizki.practicum.learning.util.response.ResponseBuilder;
 
 import java.util.HashMap;
@@ -19,6 +20,7 @@ import java.util.Map;
 
 @RestController
 public class AssignmentController {
+
     private HttpStatus httpStatus = null;
     private String location = "";
     private int statusResponse = 0;
@@ -34,10 +36,10 @@ public class AssignmentController {
     }
 
     @Autowired
-    private TaskService taskService;
+    private AssignmentService assignmentService;
 
     @Autowired
-    private AssignmentService assignmentService;
+    private PlagiarismService plagiarismService;
 
     private ResponseEntity<Map<String,Object>> response(){
         return new ResponseBuilder()
@@ -130,12 +132,13 @@ public class AssignmentController {
             @PathVariable("idtask") String idTask,
             @PathVariable("idpractican") String idPractican,
             @RequestParam("file") MultipartFile file
-    ){
+            ){
         this.init();
         try{
-            assignmentService.fulfillAssignment(idTask, idPractican, file);
+            Document document = assignmentService.fulfillAssignment(idTask, idPractican, file);
             statusResponse = 1;
             httpStatus = HttpStatus.CREATED;
+            plagiarismService.checkPlagiarism(document.getId());
         }catch(IllegalArgumentException e){
             message = "Gagal melakukan upload file :"+e.getMessage().toString();
             e.printStackTrace();
@@ -163,5 +166,41 @@ public class AssignmentController {
         }
         return this.response();
     }
+
+    @GetMapping("/assignment/document/{idtask}/{iduser}")
+    public ResponseEntity<Map<String, Object>> checkDocumentAssigned(
+            @PathVariable("idassignment") String idTask,
+            @PathVariable("iduser") String idUser
+    ){
+        this.init();
+        try{
+            List<Document> documents = assignmentService.getAssignmentByTaskPractican(idTask,idUser);
+            statusResponse = 1;
+            Map<String, Object> map = new HashMap<>();
+            map.put("assignment",documents);
+            body = map;
+        }catch(Exception e){
+        }
+        return this.response();
+    }
+
+    @GetMapping("/assignment/classroom/{idtask}/{idclassroom}")
+    public ResponseEntity<Map<String, Object>> checkDocumentClassroom(
+            @PathVariable("idassignment") String idTask,
+            @PathVariable("idclassroom") String idClassroom
+    ){
+        this.init();
+        try{
+            Map<String,List<Document>> assignments = assignmentService.getDocumentByClassroom(idTask, idClassroom);
+            statusResponse = 1;
+            httpStatus = HttpStatus.CREATED;
+            Map<String, Object> map = new HashMap<>();
+            map.put("assignments",assignments);
+            body = map;
+        }catch(Exception e){
+        }
+        return this.response();
+    }
+
 
 }

@@ -1,9 +1,6 @@
 package rizki.practicum.learning.controller;
 
-import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
-import org.bouncycastle.openssl.PasswordException;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -12,12 +9,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import rizki.practicum.learning.configuration.RoutesConfig;
 import rizki.practicum.learning.entity.Role;
 import rizki.practicum.learning.entity.User;
 import rizki.practicum.learning.exception.ExceptionMessage;
@@ -26,11 +20,7 @@ import rizki.practicum.learning.service.role.RoleService;
 import rizki.practicum.learning.service.storage.StorageService;
 import rizki.practicum.learning.service.user.UserService;
 import rizki.practicum.learning.util.response.ResponseBuilder;
-import rizki.practicum.learning.util.response.ResponseWrapper;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

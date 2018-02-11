@@ -1,6 +1,7 @@
 package rizki.practicum.learning.service.storage;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.xmlbeans.impl.piccolo.io.FileFormatException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileNotFoundException;
@@ -12,7 +13,7 @@ public interface StorageService {
 
         void init();
 
-        String store(MultipartFile file, String filename);
+        String store(MultipartFile file, String filename) throws FileFormatException;
 
         Stream<Path> loadAll();
 
