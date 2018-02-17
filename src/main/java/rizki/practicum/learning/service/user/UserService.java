@@ -24,4 +24,6 @@ public interface UserService {
     User getUserByEmail(@NotBlank String email);
     List<User> getCandidateCoordinatorAssistance(String query);
     List<User> getUserByName(String query);
+
+    List<User> getCandidateAssistance(String idClassroom, String query);
 }

@@ -1,5 +1,6 @@
 package rizki.practicum.learning.entity;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
@@ -9,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 @Entity
-@Setter @Getter
+@Data
 public class Document {
 
     @Id

@@ -1,14 +1,17 @@
 package rizki.practicum.learning.entity;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
+import javax.annotation.Nullable;
 import javax.persistence.*;
+import javax.validation.constraints.Null;
 import java.util.List;
 
 @Entity
-@Setter @Getter
+@Data
 public class Classroom {
 
     @Id
@@ -25,10 +28,14 @@ public class Classroom {
     @Column
     private String enrollmentKey;
 
+    @Column
+    @Nullable
+    private String date;
+
     @ManyToOne(targetEntity = Practicum.class)
     private Practicum practicum;
 
-    @OneToMany
+    @ManyToMany
     private List<User> assistance;
 
     @OneToMany

@@ -10,5 +10,5 @@ import java.util.List;
 
 @Repository
 public interface PracticumRepository extends PagingAndSortingRepository<Practicum, String> {
-    List<Practicum> findByCoordinatorAssistance(User user);
+    Practicum findByCoordinatorAssistance(User user);
 }

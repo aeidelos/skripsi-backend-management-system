@@ -24,4 +24,6 @@ public interface ClassroomService {
     List<Classroom> getByAssistance(@NotBlank String idUser);
 
     List<Classroom> getByPractican(@NotBlank String idUser);
+
+    Classroom searchByEnrollmentKey(@NotBlank String enrollmentKey);
 }

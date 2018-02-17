@@ -18,4 +18,5 @@ public interface UserRepository extends PagingAndSortingRepository<User,String>{
     @Query("SELECT DISTINCT user FROM User user, Practicum practicum " +
             "WHERE user.name LIKE %?1%")
     List<User> findByName(String query);
+
 }

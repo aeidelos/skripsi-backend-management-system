@@ -112,49 +112,18 @@ public class PracticumController {
         this.init();
         location = "/practicum";
         try{
-            Practicum result = practicumService.updatePracticum(practicum);
-            statusResponse = 1;
-            message = "Data praktikum berhasil diubah";
-            Map<String,Object> map = new HashMap<>();
-            map.put("practicum",result);
-            body = map;
-        }catch(IllegalArgumentException e){
-            e.printStackTrace();
-            message = e.getMessage();
-        }
-        return this.response();
-    }
-
-    @PostMapping("/practicum/{id}")
-    public ResponseEntity<Map<String,Object>> assignOrRemoveCoordinatorAssistance(
-            @PathVariable("id") String id,
-            @RequestParam("idcoordinator") String idCoordinator
-    ){
-        this.init();
-        location = "/practicum";
-        Practicum old = practicumService.getPracticum(id);
-        try{
-            if(idCoordinator==null || idCoordinator=="" || idCoordinator=="null"){
-                old.setCoordinatorAssistance(null);
-                message = "Data koordinator asisten berhasil dihapus";
-            }else{
-                User coordinatorAssistance = userService.getUser(idCoordinator);
-                if(coordinatorAssistance!=null){
-                    old.setCoordinatorAssistance(coordinatorAssistance);
-                    message = "Data koordinator asisten praktikum berhasil diubah";
-                }else{
-                    message = "Koordinator asisten tidak valid";
-                }
+            Practicum temp = practicumService.getPracticum(id);
+            if ( temp == null ) {
+                message = "Praktikum tidak ditemukan";
+            } else {
+                Practicum result = practicumService.updatePracticum(practicum);
+                statusResponse = 1;
+                message = "Data praktikum berhasil diubah";
+                Map<String,Object> map = new HashMap<>();
+                map.put("practicum",result);
+                body = map;
             }
-            Practicum result = practicumService.updatePracticum(old);
-            statusResponse = 1;
-            Map<String,Object> map = new HashMap<>();
-            map.put("practicum",result);
-            body = map;
         }catch(IllegalArgumentException e){
-            e.printStackTrace();
-            message = e.getMessage();
-        } catch (Exception e) {
             e.printStackTrace();
             message = e.getMessage();
         }
@@ -192,13 +161,13 @@ public class PracticumController {
     ){
         this.init();
             try{
-                List<Practicum> practicums = practicumService.getPracticumByCoordinatorAssistance(idUser);
+                Practicum practicum = practicumService.getPracticumByCoordinatorAssistance(idUser);
                 Map<String,Object> map = new HashMap<>();
-                if(practicums == null){
+                if(practicum == null){
                     message = "Praktikum tidak terdefinisi";
-                    map.put("practicums",false);
+                    map.put("practicum",false);
                 }else{
-                    map.put("practicums",practicums);
+                    map.put("practicum",practicum);
                     statusResponse = 1;
                 }
                 body = map;

@@ -1,5 +1,6 @@
 package rizki.practicum.learning.entity;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
@@ -11,8 +12,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 
-@Setter @Getter
 @Entity
+@Data
 public class Course {
 
     public Course(){}

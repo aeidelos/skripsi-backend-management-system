@@ -86,15 +86,11 @@ public class ClassroomController {
         return this.response();
     }
 
-
     @PostMapping("/classroom")
     public ResponseEntity<Map<String,Object>> addClassroom(
-        @RequestParam("idpracticum") String idPracticum,
-        @RequestParam("classroomname") String classroomName
+        @RequestBody Classroom classroom
     ){
         this.init();
-        Classroom classroom = new Classroom();
-        classroom.setName(classroomName);
         Classroom result = classroomService.addClassroom(classroom);
         if(result!=null){
             Map<String, Object> map = new HashMap<>();
@@ -121,19 +117,17 @@ public class ClassroomController {
         return this.response();
     }
 
-    @PostMapping("/classroom/name/{idclassroom}")
+    @PutMapping("/classroom/{idclassroom}")
     public ResponseEntity<Map<String, Object>> updateClassroom(
-            @PathVariable("idclassroom") String idClassroom,
-            @RequestParam("classroomname") String classroomName,
-            @RequestParam("classroomlocation") String classroomLocation
+            @PathVariable("idclassroom") String id,
+            @RequestBody Classroom classroom
     ){
         this.init();
         try{
-            Classroom classroom = classroomService.getClassroom(idClassroom);
-            classroom.setName(classroomName);
-            classroom.setLocation(classroomLocation);
-            Classroom result = classroomService.updateClassroom(classroom);
-            if(result!=null){
+
+            Classroom temp = classroomService.getClassroom(id);
+            if(temp!=null){
+                Classroom result = classroomService.updateClassroom(classroom);
                 message = "Data kelas berhasil diubah";
                 Map<String, Object> map = new HashMap<>();
                 map.put("classroom", result);
@@ -141,7 +135,7 @@ public class ClassroomController {
                 httpStatus = HttpStatus.CREATED;
                 statusResponse = 1;
             }else{
-                message = "Data kelas gagal diubah";
+                message = "Data kelas tidak ada";
             }
         }catch(IllegalArgumentException e){
             e.printStackTrace();
@@ -150,60 +144,21 @@ public class ClassroomController {
         return this.response();
     }
 
-    @PostMapping("/classroom/assign/{idclassroom}")
-    public ResponseEntity<Map<String,Object>> assignAssistance(
-            @PathVariable("idclassroom") String idClassroom,
-            @RequestParam("idassistance") String idAssistance
-    ){
-        this.init();
-        try{
-            classroomService.addAssistance(idClassroom,idAssistance);
-            message = "Data kelas berhasil diubah";
-            statusResponse = 1;
-        }catch(IllegalArgumentException e){
-            e.printStackTrace();
-            message = "Parameter tidak lengkap : "+e.getMessage().toString();
-        }catch(DataIntegrityViolationException e){
-            e.printStackTrace();
-            message = e.getMessage().toString();
-        }
-        return this.response();
-    }
-
-    @GetMapping("/classroom/enroll/{key}/{iduser}")
+    @GetMapping("/classroom/enroll/{key}")
     public ResponseEntity<Map<String, Object>> enrollmentClassroom(
-            @PathVariable("key") String enrollmentKey,
-            @PathVariable("iduser") String idUser
+            @PathVariable("key") String enrollmentKey
     ){
         this.init();
         try{
-            classroomService.enrollmentPractican(enrollmentKey, idUser);
-            message = "Data kelas berhasil diubah";
-            statusResponse = 1;
+            Classroom result = classroomService.searchByEnrollmentKey(enrollmentKey);
+            Map<String, Object> map = new HashMap<>();
+            map.put("classroom", result);
+            body = map;
+            if(result != null){
+                statusResponse = 1;
+            }
         }catch(IllegalArgumentException e){
-            message = "Gagal menambahkan praktikan :" +e.getMessage().toString();
-        }catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            message = "Gagal menambahkan praktikan :" +e.getMessage().toString();
-        }
-        return this.response();
-    }
-
-    @PostMapping("/classroom/remove/{idclassroom}")
-    public ResponseEntity<Map<String, Object>> unenrollPractican(
-            @PathVariable("idclassroom") String idClassroom,
-            @RequestParam("idpractican") String idPractican
-    ){
-        this.init();
-        try{
-            statusResponse = 1;
-            classroomService.unEnrollPractican(idClassroom, idPractican);
-        }catch(IllegalArgumentException e){
-            e.printStackTrace();
-            message = "Gagal menghapus praktikan dari kelas :" +e.getMessage().toString();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            message = "Gagal menghapus praktikan dari kelas :" +e.getMessage().toString();
+            message = "Kode entrollment tidak boleh kosong";
         }
         return this.response();
     }
@@ -224,7 +179,6 @@ public class ClassroomController {
         }
         return this.response();
     }
-
 
     @GetMapping("/classroom/practican/{iduser}")
     public ResponseEntity<Map<String, Object>> getClassroomByPractican(

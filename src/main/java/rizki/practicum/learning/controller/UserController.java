@@ -242,6 +242,21 @@ public class UserController {
         return this.response();
     }
 
+    @GetMapping("/user/search/assistance/{idclassroom}/{query}")
+    public ResponseEntity<Map<String, Object>> searchCandidateAssistance(
+            @PathVariable(name ="idclassroom") String idClassroom,
+            @PathVariable(name = "query") String query
+    ){
+        this.init();
+        location = "/user/search/assistance/";
+        List<User> users = userService.getCandidateAssistance(idClassroom,query);
+        Map<String, Object> map = new HashMap<>();
+        map.put("users",users);
+        body = map;
+        statusResponse = 1;
+        return this.response();
+    }
+
     @GetMapping("/user/search/byname/{query}")
     public ResponseEntity<Map<String, Object>> getSearchedUser(
             @PathVariable(name = "query") String query

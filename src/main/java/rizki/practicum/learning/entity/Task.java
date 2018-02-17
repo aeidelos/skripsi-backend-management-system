@@ -1,6 +1,7 @@
 package rizki.practicum.learning.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
@@ -12,7 +13,7 @@ import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Entity
-@Setter @Getter
+@Data
 public class Task {
 
     @Id

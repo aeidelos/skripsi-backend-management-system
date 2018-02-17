@@ -34,7 +34,6 @@ public class ResponseBuilder{
 
     public ResponseBuilder setFile(File file){
         String filename = file.getPath();
-
         return this;
     }
 

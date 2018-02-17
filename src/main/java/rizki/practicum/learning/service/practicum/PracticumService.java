@@ -6,7 +6,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 import rizki.practicum.learning.entity.Classroom;
 import rizki.practicum.learning.entity.Practicum;
-import rizki.practicum.learning.entity.User;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -26,5 +25,5 @@ public interface PracticumService {
     Practicum updatePracticum(@Valid Practicum practicum);
     void deletePracticum(@Valid Practicum practicum);
 
-    List<Practicum> getPracticumByCoordinatorAssistance(@NotBlank String idUser);
+    Practicum getPracticumByCoordinatorAssistance(@NotBlank String idUser);
 }

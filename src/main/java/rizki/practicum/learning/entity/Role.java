@@ -1,5 +1,6 @@
 package rizki.practicum.learning.entity;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
@@ -11,7 +12,7 @@ import javax.persistence.Id;
 import javax.validation.constraints.Size;
 
 @Entity
-@Setter @Getter
+@Data
 public class Role {
 
     @Id

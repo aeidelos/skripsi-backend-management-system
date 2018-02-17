@@ -29,8 +29,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
         String MHS = RoleDefinition.Practican.initial.toUpperCase();
         String ASSISTAN = RoleDefinition.Assistance.initial.toUpperCase();
         String KOAS = RoleDefinition.CoordinatorAssistance.initial.toUpperCase();
-        http.
-                anonymous().disable()
+        http.anonymous().disable()
                 .authorizeRequests()
                 .antMatchers("/").permitAll()
                 .antMatchers("/practicum/**").authenticated()

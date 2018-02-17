@@ -12,7 +12,6 @@ import rizki.practicum.learning.repository.PracticumRepository;
 import rizki.practicum.learning.service.role.RoleDefinition;
 import rizki.practicum.learning.service.user.UserService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -45,13 +44,11 @@ public class PracticumServiceImpl implements PracticumService {
     }
 
     @Override
-    public List<Practicum> getPracticumByCoordinatorAssistance(String idUser) {
+    public Practicum getPracticumByCoordinatorAssistance(String idUser) {
         User user = userService.getUser(idUser);
         List<Role> roles = user.getRole();
         for (Role role : roles){
-            if(role.getInitial().equalsIgnoreCase(RoleDefinition.HeadLaboratory.initial)){
-                return (List<Practicum>) practicumRepository.findAll();
-            }else if(role.getInitial().equalsIgnoreCase(RoleDefinition.CoordinatorAssistance.initial)){
+            if(role.getInitial().equalsIgnoreCase(RoleDefinition.CoordinatorAssistance.initial)){
                 return practicumRepository.findByCoordinatorAssistance(user);
             }
         }

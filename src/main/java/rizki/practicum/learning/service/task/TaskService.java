@@ -20,7 +20,7 @@ public interface TaskService {
                  @NotNull Date endDate, @NotNull boolean allowLate, @NotNull @NotBlank String idUser,
                  @Nullable @NotBlank String idClassroom, @Nullable @NotBlank String idPracticum);
 
-    Task addTask(Task task);
+    Task addTask(@Valid Task task);
 
     List<Task> getTaskByPractican(@NotBlank String idPractican, @NotBlank String status);
 

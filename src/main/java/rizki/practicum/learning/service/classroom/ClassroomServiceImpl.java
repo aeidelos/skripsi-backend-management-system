@@ -1,10 +1,8 @@
 package rizki.practicum.learning.service.classroom;
 
 import org.apache.commons.lang3.RandomStringUtils;
-import org.hibernate.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -13,7 +11,6 @@ import rizki.practicum.learning.entity.User;
 import rizki.practicum.learning.repository.ClassroomRepository;
 import rizki.practicum.learning.service.user.UserService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -111,5 +108,10 @@ public class ClassroomServiceImpl implements ClassroomService {
     @Override
     public List<Classroom> getByPractican(String idUser) {
         return classroomRepository.findAllByPracticanContains(userService.getUser(idUser));
+    }
+
+    @Override
+    public Classroom searchByEnrollmentKey(String enrollmentKey) {
+        return classroomRepository.findByEnrollmentKey(enrollmentKey);
     }
 }

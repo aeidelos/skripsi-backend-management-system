@@ -1,5 +1,6 @@
 package rizki.practicum.learning.entity;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
@@ -11,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-@Setter @Getter
+@Data
 @Component
 public class MyUserDetails implements UserDetails {
 

@@ -1,5 +1,6 @@
 package rizki.practicum.learning.entity;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
@@ -8,7 +9,7 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Setter @Getter
+@Data
 public class Practicum {
     @Id
     @GeneratedValue(generator = "uuid")
