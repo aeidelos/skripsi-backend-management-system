@@ -270,8 +270,6 @@ public class GeneratorServiceImpl implements GeneratorService {
         Assignment assignment = new Assignment();
         assignment.setFileAllowed("document");
         assignment.setDescription("Dokumen Laporan");
-        assignment.setTask(task);
-
         ArrayList<Assignment> assignmentList = new ArrayList<>();
         try {
             assignment = assignmentService.addAssignment(task.getId(),assignment);
@@ -281,6 +279,7 @@ public class GeneratorServiceImpl implements GeneratorService {
         }
 
         assignmentList.add(assignment);
+        task.setAssignments(assignmentList);
         try {
             taskService.updateTask(task);
         } catch (Exception e) {

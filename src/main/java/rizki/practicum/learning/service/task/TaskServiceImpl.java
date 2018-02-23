@@ -2,19 +2,10 @@ package rizki.practicum.learning.service.task;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import rizki.practicum.learning.entity.Classroom;
-import rizki.practicum.learning.entity.Practicum;
-import rizki.practicum.learning.entity.Task;
-import rizki.practicum.learning.entity.User;
-import rizki.practicum.learning.repository.ClassroomRepository;
-import rizki.practicum.learning.repository.PracticumRepository;
-import rizki.practicum.learning.repository.TaskRepository;
-import rizki.practicum.learning.repository.UserRepository;
+import rizki.practicum.learning.entity.*;
+import rizki.practicum.learning.repository.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,10 +23,8 @@ public class TaskServiceImpl implements TaskService {
     @Autowired
     private PracticumRepository practicumRepository;
 
-    @Override
-    public Task updateTask(Task task) {
-        return taskRepository.save(task);
-    }
+    @Autowired
+    private AssignmentRepository assignmentRepository;
 
     @Override
     public void deleteTask(String idTask){
@@ -69,7 +58,27 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    public Task updateTask(Task task) {
+        for(Assignment assignment: task.getAssignments()) {
+            List<Assignment> result = task.getAssignments();
+            if(assignment.getId()==null) {
+                result.remove(assignment);
+                result.add(assignmentRepository.save(assignment));
+                task.setAssignments(result);
+            }
+        }
+        return taskRepository.save(task);
+    }
+
+    @Override
     public Task addTask(Task task) {
+        if(task.getAssignments()!=null && task.getAssignments().size() > 0) {
+            List<Assignment> result = new ArrayList<>();
+            for(Assignment assignment : task.getAssignments()) {
+                result.add(assignmentRepository.save(assignment));
+            }
+            task.setAssignments(result);
+        }
         return taskRepository.save(task);
     }
 

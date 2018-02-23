@@ -11,6 +11,7 @@ import javax.annotation.Nullable;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Data
@@ -25,7 +26,7 @@ public class Task {
     @NotNull
     private String title;
 
-    @Column
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     @DateTimeFormat @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
@@ -45,5 +46,8 @@ public class Task {
 
     @ManyToOne @Nullable
     private Practicum practicum;
+
+    @OneToMany @Nullable
+    List<Assignment> assignments;
 
 }
