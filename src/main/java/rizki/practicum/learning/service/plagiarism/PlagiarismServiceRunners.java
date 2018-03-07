@@ -45,27 +45,29 @@ public class PlagiarismServiceRunners implements Runnable {
     @Qualifier("SourceCodeStorageService")
     private StorageService sourceCodeStorageService;
 
-    private Document document;
+    private List<Document> document;
 
     public PlagiarismServiceRunners(){}
 
-    public PlagiarismServiceRunners(Document document){
+    public PlagiarismServiceRunners(List<Document> document){
         this.document = document;
     }
 
     @Override
     public void run() {
-        List<Document> documentsList = documentRepository.findAllByAssignment(document.getAssignment());
-        if(documentsList== null || documentsList.size()>0){
-            for(Document temp: documentsList){
-                if(temp.getId()!=document.getId()){
-                    try {
-                        this.documentCheckPlagiarism(this.document, temp);
-                        System.out.println("Executed - Finished");
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } catch (InvalidFormatException e) {
-                        e.printStackTrace();
+        List<Document> documentsList = documentRepository.findAllByAssignment(document.get(0).getAssignment());
+        for (Document doc : document) {
+            if(documentsList== null || documentsList.size()>0){
+                for(Document temp: documentsList){
+                    if(!temp.getId().equalsIgnoreCase(doc.getId()) &&
+                            !temp.getPractican().getId().equals(doc.getPractican().getId())){
+                        try {
+                            this.documentCheckPlagiarism(doc, temp);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } catch (InvalidFormatException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             }
@@ -93,7 +95,7 @@ public class PlagiarismServiceRunners implements Runnable {
             }
 
             JaroWinkler jaroWinkler = new JaroWinkler();
-            result = (jaroWinkler.distance(content_file_1,content_file_2))*100;
+            result = 100 - ((jaroWinkler.distance(content_file_1,content_file_2))*100);
 
             PlagiarismContent plagiarismContent = new PlagiarismContent();
             plagiarismContent.setDocument1(document);

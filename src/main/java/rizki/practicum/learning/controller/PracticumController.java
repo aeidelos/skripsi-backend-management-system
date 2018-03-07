@@ -1,5 +1,8 @@
 package rizki.practicum.learning.controller;
 
+import com.netflix.ribbon.proxy.annotation.Http;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -7,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import rizki.practicum.learning.dto.ResponseObject;
 import rizki.practicum.learning.entity.Practicum;
 import rizki.practicum.learning.entity.User;
 import rizki.practicum.learning.service.course.CourseService;
@@ -21,11 +25,6 @@ import java.util.Map;
 
 @RestController
 public class PracticumController {
-    private HttpStatus httpStatus = null;
-    private String location = "";
-    private int statusResponse = 0;
-    private String message = "";
-    private Object body = null;
 
     @Autowired
     private PracticumService practicumService;
@@ -33,148 +32,76 @@ public class PracticumController {
     @Autowired
     private CourseService courseService;
 
-    @Autowired
-    private UserService userService;
-
-    private void init(){
-        httpStatus = HttpStatus.OK;
-        location = "";
-        statusResponse = 0;
-        message = "";
-        body = null;
-    }
-
-    private ResponseEntity<Map<String,Object>> response(){
-        return new ResponseBuilder()
-                .setMessage(message)
-                .setLocation(location)
-                .setStatusCode(httpStatus)
-                .setStatusResponse(statusResponse)
-                .setBody(body)
-                .build();
-    }
-
-    @GetMapping("/practicum")
-    public ResponseEntity<Map<String,Object>> getPracticum(
+    @ApiOperation("mendapatkan list dari praktikum yang ada")
+    @GetMapping(value= "/practicum", produces = {"application/json"})
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Page<Practicum> getPracticum(
             @PathVariable(required = false, value = "page") Integer page,
             @PathVariable(required = false,value = "limit") Integer limit,
             @PathVariable(required = false, value = "sort") String sort
     ){
-        if(page == null) page = 0;
-        if(limit == null) limit = 100;
+        page = WebResponse.DEFAULT_PAGE_NUM;
+        limit = WebResponse.DEFAULT_PAGE_SIZE;
         Pageable pageable = new PageRequest(page,limit);
-        this.init();
         Page<Practicum> practicums = practicumService.getAllPracticum(pageable);
-        Map<String, Object> map = new HashMap<>();
-        map.put("practicums",practicums);
-        httpStatus = HttpStatus.OK;
-        location = "/practicum";
-        statusResponse = 1;
-        body = map;
-        return this.response();
+        WebResponse.checkNullObject(practicums);
+        return practicums;
     }
 
+    @ApiOperation("menambahkan praktikum baru")
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/practicum")
-    public ResponseEntity<Map<String,Object>> addPracticum(
-            @RequestParam("practicumname") String practicumName,
-            @RequestParam("idcourse") String idCourse
+    public @ResponseBody Practicum addPracticum(
+            @ApiParam("Judul praktikum") @RequestParam("practicumname") String practicumName,
+            @ApiParam("ID Course dalam String") @RequestParam("idcourse") String idCourse
     ){
-        this.init();
-        location = "/practicum";
         Practicum practicum = new Practicum();
         practicum.setName(practicumName);
         practicum.setCourse(courseService.getCourse(idCourse));
-        try{
-            Practicum result = practicumService.addPracticum(practicum);
-            if(result.getId()!=null){
-                httpStatus = HttpStatus.CREATED;
-                statusResponse = 1;
-                message = "Praktikum berhasil ditambahkan";
-                Map<String,Object> map = new HashMap<>();
-                map.put("practicum",result);
-                body = map;
-            }
-        }catch(IllegalArgumentException e){
-            e.printStackTrace();
-            message = e.getMessage();
-        }catch(ConstraintViolationException e){
-            e.printStackTrace();
-            message = "Lengkapi data praktikum :"+e.getMessage().toString();
-        }
-        return this.response();
+        Practicum result = practicumService.addPracticum(practicum);
+        WebResponse.checkNullObject(result);
+        return result;
     }
 
+    @ApiOperation("Merubah data praktikum tertentu")
     @PutMapping("/practicum/{id}")
-    public ResponseEntity<Map<String,Object>> updatePracticum(
-            @PathVariable("id") String id,
-            @RequestBody Practicum practicum
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody Practicum updatePracticum(
+            @ApiParam("ID praktikum dalam string") @PathVariable("id") String id,
+            @ApiParam("Objek praktikum dalam json") @RequestBody Practicum practicum
     ){
-        this.init();
-        location = "/practicum";
-        try{
-            Practicum temp = practicumService.getPracticum(id);
-            if ( temp == null ) {
-                message = "Praktikum tidak ditemukan";
-            } else {
-                Practicum result = practicumService.updatePracticum(practicum);
-                statusResponse = 1;
-                message = "Data praktikum berhasil diubah";
-                Map<String,Object> map = new HashMap<>();
-                map.put("practicum",result);
-                body = map;
-            }
-        }catch(IllegalArgumentException e){
-            e.printStackTrace();
-            message = e.getMessage();
-        }
-        return this.response();
+        Practicum temp = practicumService.getPracticum(id);
+        WebResponse.checkNullObject(temp);
+        Practicum result = practicumService.updatePracticum(practicum);
+        WebResponse.checkNullObject(result);
+        return result;
     }
 
+    @ApiOperation("Menghapus praktikum tertentu")
     @DeleteMapping("/practicum/{id}")
-    public ResponseEntity<Map<String,Object>> deleteCourse(
-            @PathVariable("id") String id
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody
+    ResponseObject deleteCourse(
+            @ApiParam("Id praktikum dalam string") @PathVariable("id") String id
     ){
-        this.init();
-        location = "/practicum/{id}";
-        try{
-            Practicum practicum = practicumService.getPracticum(id);
-            Map<String,Object> map = new HashMap<>();
-            if(practicum == null){
-                message = "Praktikum tidak terdefinisi";
-                map.put("delete",false);
-            }else{
-                practicumService.deletePracticum(practicum);
-                statusResponse = 1;
-                message = "Praktikum berhasil dihapus";
-            }
-            body = map;
-        }catch(IllegalArgumentException e){
-            e.printStackTrace();
-            message = e.getMessage();
-        }
-        return this.response();
+        Practicum practicum = practicumService.getPracticum(id);
+        WebResponse.checkNullObject(practicum);
+        practicumService.deletePracticum(practicum);
+        return ResponseObject.builder()
+                .status(HttpStatus.OK.getReasonPhrase())
+                .code(HttpStatus.OK.value())
+                .message("Praktikum berhasil dihapus")
+                .build();
     }
 
-    @GetMapping("/practicum/coordinator/{iduser}")
-    public ResponseEntity<Map<String, Object>> getPracticumByCoordinatorAssistance(
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation("Mendapatkan praktikum yang dibawahi koordinator tertentu")
+    @GetMapping(value = "/practicum/coordinator/{iduser}" , produces = {"application/json"})
+    public @ResponseBody Practicum getPracticumByCoordinatorAssistance(
             @PathVariable("iduser") String idUser
     ){
-        this.init();
-            try{
-                Practicum practicum = practicumService.getPracticumByCoordinatorAssistance(idUser);
-                Map<String,Object> map = new HashMap<>();
-                if(practicum == null){
-                    message = "Praktikum tidak terdefinisi";
-                    map.put("practicum",false);
-                }else{
-                    map.put("practicum",practicum);
-                    statusResponse = 1;
-                }
-                body = map;
-            }catch(IllegalArgumentException e) {
-                e.printStackTrace();
-                message = e.getMessage();
-            }
-        return this.response();
+        Practicum practicum = practicumService.getPracticumByCoordinatorAssistance(idUser);
+        WebResponse.checkNullObject(practicum);
+        return practicum;
     }
 }

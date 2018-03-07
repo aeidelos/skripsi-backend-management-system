@@ -135,7 +135,7 @@ public class TaskServiceImpl implements TaskService {
                 tasks.addAll(taskRepository.findAllByPracticumAndDueDateIsAfter(classroom.getPracticum(),date));
             }
         }else{
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Kategori tidak ditemukan");
         }
         return tasks;
     }

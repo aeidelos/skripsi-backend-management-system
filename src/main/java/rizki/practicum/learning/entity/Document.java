@@ -27,4 +27,7 @@ public class Document {
     @Column
     private String filename;
 
+    @Column
+    private double grade = 0;
+
 }

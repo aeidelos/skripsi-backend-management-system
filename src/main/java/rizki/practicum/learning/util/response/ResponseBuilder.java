@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
+// @Builder
 public class ResponseBuilder{
 
     HttpStatus statusCode;

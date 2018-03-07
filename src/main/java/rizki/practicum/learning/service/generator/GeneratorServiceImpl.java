@@ -42,7 +42,7 @@ public class GeneratorServiceImpl implements GeneratorService {
     private TaskService taskService;
 
     @Autowired
-    AssignmentService assignmentService;
+    private AssignmentService assignmentService;
 
 
     @Override

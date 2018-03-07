@@ -10,7 +10,7 @@ public interface FilesLocationConfig {
     interface Document {
         String LOCATION = ROOT+"/document";
         String INITIAL = "document";
-        String[] FILE_EXTENSION_ALLOWED = {"docx","pdf","doc","odt"};
+        String [] FILE_EXTENSION_ALLOWED = {"docx","pdf","doc","odt"};
     }
     interface SourceCode {
         String LOCATION = ROOT+"/sourcecode";

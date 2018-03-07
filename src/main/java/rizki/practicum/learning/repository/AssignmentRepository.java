@@ -9,5 +9,4 @@ import java.util.List;
 
 @Repository
 public interface AssignmentRepository extends CrudRepository<Assignment, String> {
-    List<Assignment> findAllByTask(Task task);
 }

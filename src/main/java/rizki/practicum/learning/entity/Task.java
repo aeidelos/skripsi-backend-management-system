@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.annotation.ManagedBean;
 import javax.annotation.Nullable;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -14,6 +15,7 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
+@ManagedBean
 @Data
 public class Task {
 

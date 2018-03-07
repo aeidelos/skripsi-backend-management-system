@@ -1,16 +1,23 @@
 package rizki.practicum.learning.util.hash;
 
 import org.springframework.stereotype.Component;
-import org.springframework.util.DigestUtils;
 
-import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
+import java.util.Date;
 
 @Component
 public class MD5 {
-    public static String generate(String text){
-        return Base64.getEncoder().encodeToString(DigestUtils.md5Digest(text.getBytes()));
+    public static String generate(String md5) {
+        md5 += new Date().getTime();
+        try {
+            java.security.MessageDigest md = java.security.MessageDigest.getInstance("MD5");
+            byte[] array = md.digest(md5.getBytes());
+            StringBuffer sb = new StringBuffer();
+            for (int i = 0; i < array.length; ++i) {
+                sb.append(Integer.toHexString((array[i] & 0xFF) | 0x100).substring(1,3));
+            }
+            return sb.toString();
+        } catch (java.security.NoSuchAlgorithmException e) {
+        }
+        return null;
     }
 }

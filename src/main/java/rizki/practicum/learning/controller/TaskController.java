@@ -1,160 +1,105 @@
 package rizki.practicum.learning.controller;
 
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import rizki.practicum.learning.dto.ResponseObject;
 import rizki.practicum.learning.entity.Task;
 import rizki.practicum.learning.service.task.TaskService;
-import rizki.practicum.learning.util.response.ResponseBuilder;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 @RestController
 public class TaskController {
-    private HttpStatus httpStatus = null;
-    private String location = "";
-    private int statusResponse = 0;
-    private String message = "";
-    private Object body = null;
-
-    private void init(){
-        httpStatus = HttpStatus.OK;
-        location = "";
-        statusResponse = 0;
-        message = "";
-        body = null;
-    }
 
     @Autowired
     private TaskService taskService;
 
-    private ResponseEntity<Map<String,Object>> response(){
-        return new ResponseBuilder()
-                .setMessage(message)
-                .setLocation(location)
-                .setStatusCode(httpStatus)
-                .setStatusResponse(statusResponse)
-                .setBody(body)
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value="/task/practican/{idpractican}/{status}", produces = {"application/json"})
+    @ApiOperation(notes = "", value = "Mengambil data tugas praktikan tertentu")
+    public @ResponseBody List<Task> getAllTaskPractican(
+            @PathVariable("idpractican") String idPractican,
+            @PathVariable("status") String status
+    ) {
+        List<Task> tasks = taskService.getTaskByPractican(idPractican, status);
+        WebResponse.checkNullObject(tasks);
+        return tasks;
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value= "/task/{mode}/{id}/{time}",  produces = {"application/json"})
+    @ApiOperation(notes = "", value = "Mengambil data tugas dengan filter masukan yang diinginkan")
+    public @ResponseBody List<Task> getTask(
+            @PathVariable("mode") String mode,
+            @PathVariable("id") String id,
+            @PathVariable("time") String time
+    ) {
+        List<Task> tasks = taskService.getTask(mode, id, time);
+        WebResponse.checkNullObject(tasks);
+        return tasks;
+    }
+
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping(value = "/task", produces = {"application/json"}, consumes = {"application/json"})
+    @ApiOperation(notes = "", value = "Melakukan penambahan tugas baru")
+    public @ResponseBody ResponseObject addTask(
+            @ApiParam(name = "Task", value = "Tugas dalam format json", type = "Task")
+            @RequestBody Task task
+    ) {
+        Task result = taskService.addTask(task);
+        String category = new Date().before(result.getDueDate()) ? "current" : "past";
+        Map<String, Object> map = new HashMap<>();
+        map.put("task", result);
+        WebResponse.checkNullObject(result);
+        map.put("category", category);
+        return ResponseObject
+                .builder()
+                .code(HttpStatus.CREATED.value())
+                .message("Tugas berhasil ditambahkan")
+                .status(HttpStatus.CREATED.getReasonPhrase())
+                .object(map)
                 .build();
     }
 
-    @GetMapping("/task/practican/{idpractican}/{status}")
-    public ResponseEntity<Map<String, Object>> getAllTaskPractican(
-            @PathVariable("idpractican") String idPractican,
-            @PathVariable("status") String status
-    ){
-        this.init();
-        try{
-            statusResponse = 1;
-            List<Task> tasks = taskService.getTaskByPractican(idPractican, status);
-            Map<String, Object> map = new HashMap<>();
-            map.put("tasks",tasks);
-            body = map;
-        }catch(IllegalArgumentException e){
-            message = "Id praktikan tidak boleh kosong :"+e.getMessage().toString();
-        }
-        return this.response();
-    }
-
-    @GetMapping("/task/{mode}/{id}/{time}")
-    public ResponseEntity<Map<String,Object>> getTask(
-        @PathVariable("mode") String mode,
-        @PathVariable("id") String id,
-        @PathVariable("time") String time
-    ){
-        this.init();
-        try{
-            statusResponse = 1;
-            List <Task> tasks = taskService.getTask(mode, id, time);
-            Map<String, Object> map = new HashMap<>();
-            map.put("tasks",tasks);
-            body = map;
-        }catch(IllegalArgumentException e){
-            e.printStackTrace();
-            message = "Parameter tidak valid :"+e.getMessage().toString();
-        }
-        return this.response();
-    }
-
-    @PostMapping("/task")
-    public ResponseEntity<Map<String, Object>> addTask(
-            @RequestBody Task task
-    )
-    {
-        this.init();
-        try{
-            httpStatus = HttpStatus.CREATED;
-            statusResponse = 1;
-
-//            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("EEE MMM dd yyyy HH:mm:ss Z ", Locale.ENGLISH);
-//            Date actualStartDate = simpleDateFormat.parse(startDate);
-//            Date actualEndDate = simpleDateFormat.parse(dueDate);
-//            Task task = taskService.addTask(title, description, actualStartDate, actualEndDate, allowLate, idUser, idClassroom, idPracticum);
-//
-            Task result = taskService.addTask(task);
-
-            Map<String, Object> map = new HashMap<>();
-            map.put("task",result);
-            message = "Tugas berhasil ditambahkan";
-            body = map;
-        }catch (IllegalArgumentException e){
-            e.printStackTrace();
-            message =  "Tugas gagal ditambahkan, cek input parameter :"+e.getMessage().toString();
-        }
-//        catch (ParseException e) {
-//            message =  "Gagal parsing date :"+e.getMessage().toString();
-//            e.printStackTrace();
-//        }
-        return this.response();
-    }
-
+    @ResponseStatus(HttpStatus.OK)
     @DeleteMapping("/task/{idtask}")
-    public ResponseEntity<Map<String, Object>> deleteTask(
+    @ApiOperation(notes = "", value = "Menghapus Tugas Tertentu")
+    public @ResponseBody
+    ResponseObject deleteTask(
+            @ApiParam(name = "idtask", value = "String (id_task) dalam format UUID", type = "String")
             @PathVariable("idtask") String idTask
-    ){
-        this.init();
-        try{
-            taskService.deleteTask(idTask);
-            statusResponse = 1;
-            message = "Task berhasil dihapus";
-        }catch(IllegalArgumentException e){
-            e.printStackTrace();
-            message = "Pastikan id sudah ada :"+e.getMessage().toString();
-        }
-        return this.response();
+    ) {
+        taskService.deleteTask(idTask);
+        return ResponseObject
+                .builder()
+                .code(HttpStatus.OK.value())
+                .message("Tugas berhasil dihapus")
+                .status(HttpStatus.OK.getReasonPhrase())
+                .build();
     }
 
-    @PutMapping("/task/{idtask}")
-    public ResponseEntity<Map<String,Object>> updateTask(
-            @RequestBody Task task
-    ){
-        this.init();
-        try{
-            statusResponse = 1;
-            Task result = taskService.updateTask(task);
-//            Task task = taskService.getTask(idTask);
-//            task.setTitle(title);
-//            task.setDescription(description);
-//            task.setAllowLate(allowLate);
-//            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("EEE MMM dd yyyy HH:mm:ss Z ", Locale.ENGLISH);
-//            task.setCreatedDate(simpleDateFormat.parse(startDate));
-//            task.setDueDate(simpleDateFormat.parse(dueDate));
-//            Task updatedTask = taskService.updateTask(task);
-            Map<String, Object> map = new HashMap<>();
-            map.put("task",result);
-            message = "Tugas berhasil diubah";
-        }catch(IllegalArgumentException e){
-            e.printStackTrace();
-            message =  "Tugas gagal diubah, cek input parameter :"+e.getMessage().toString();
-        }
-//        catch (ParseException e) {
-//            e.printStackTrace();
-//            message =  "Tugas gagal diubah, parsing error :"+e.getMessage().toString();
-//        }
-        return this.response();
+    @ResponseStatus(HttpStatus.OK)
+    @PutMapping(value = "/task/{idtask}", produces = {"application/json"}, consumes = {"application/json"})
+    @ApiOperation(notes = "Object yang dikirim berupa json", value = "Mengubah tugas tertentu")
+    public @ResponseBody
+    ResponseObject<Object> updateTask(
+            @ApiParam(name = "task", value = "Object tugas", type = "Task") @RequestBody Task task
+    ) {
+        Task result = taskService.updateTask(task);
+        String category = new Date().before(result.getDueDate()) ? "current" : "past";
+        Map<String, Object> map = new HashMap<>();
+        WebResponse.checkNullObject(result);
+        map.put("task", result);
+        map.put("category", category);
+        return ResponseObject
+                .builder()
+                .code(HttpStatus.OK.value())
+                .message("Tugas berhasil diubah")
+                .status(HttpStatus.OK.getReasonPhrase())
+                .object(map)
+                .build();
     }
 }

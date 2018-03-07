@@ -1,5 +1,8 @@
 package rizki.practicum.learning.controller;
 
+import com.netflix.ribbon.proxy.annotation.Http;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -64,7 +67,6 @@ public class UserController {
                 .setBody(body)
                 .build();
     }
-
     @PostMapping("/user")
     public ResponseEntity<Map<String,Object>> register_user(
             @RequestParam("email") String email,
@@ -85,7 +87,7 @@ public class UserController {
             List<Role> newRole = new ArrayList<>();
             newRole.add(roleService.getRole(RoleDefinition.Practican.initial));
             newUser.setRole(newRole);
-            if(photo!=null) newUser.setPhoto(storageService.store(photo, email));
+            if(photo!=null) newUser.setPhoto(null);
             if(userService.createUser(newUser)){
                 httpStatus = HttpStatus.CREATED;
                 message = "Pengguna berhasil terdaftar";
@@ -181,34 +183,34 @@ public class UserController {
         return this.response();
     }
 
-    @PostMapping("/user/updatephoto/{id}")
-    public ResponseEntity<Map<String,Object>> updatePhoto(
-            @RequestParam("photo") MultipartFile photo,
-            @PathVariable("id") String id
-    ){
-        this.init();
-        location = "/user/updatephoto";
-        try{
-            String imageName = storageService.store(photo, id);
-            if(imageName != null || imageName != ""){
-                User user = userService.getUser(id);
-                user.setPhoto(imageName);
-                boolean result = userService.updateUser(user);
-                if(result){
-                    message = "Foto berhasil diubah";
-                    statusResponse = 1;
-                    Map<String,String> map = new HashMap<>();
-                    String path = "media/photo/"+imageName;
-                    map.put("path",path);
-                    body = map;
-                }
-            }
-        } catch(Exception e){
-            e.printStackTrace();
-            message = e.getMessage().toString();
-        }
-        return this.response();
-    }
+//    @PostMapping("/user/updatephoto/{id}")
+//    public ResponseEntity<Map<String,Object>> updatePhoto(
+//            @PathVariable("id") String id,
+//            @RequestParam("photo") MultipartFile ...photo
+//    ){
+//        this.init();
+//        location = "/user/updatephoto";
+//        try{
+//            String imageName = storageService.store(photo, id);
+//            if(imageName != null || imageName != ""){
+//                User user = userService.getUser(id);
+//                user.setPhoto(imageName);
+//                boolean result = userService.updateUser(user);
+//                if(result){
+//                    message = "Foto berhasil diubah";
+//                    statusResponse = 1;
+//                    Map<String,String> map = new HashMap<>();
+//                    String path = "media/photo/"+imageName;
+//                    map.put("path",path);
+//                    body = map;
+//                }
+//            }
+//        } catch(Exception e){
+//            e.printStackTrace();
+//            message = e.getMessage().toString();
+//        }
+//        return this.response();
+//    }
 
 
     @GetMapping("/user")
@@ -228,33 +230,27 @@ public class UserController {
         return this.response();
     }
 
-    @GetMapping("/user/search/coordinator/{query}")
-    public ResponseEntity<Map<String,Object>> getCoordinateAssistanceCandidate(
-            @PathVariable(name = "query") String query
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation("Mendapatkan kandidat koordinator asisten")
+    @GetMapping(value = "/user/search/coordinator/{query}", produces = {"application/json"})
+    public @ResponseBody List<User> getCoordinateAssistanceCandidate(
+           @ApiParam("Query search") @PathVariable(name = "query") String query
     ){
-        this.init();
-        location = "/user/search/coordinator";
         List<User> users = userService.getCandidateCoordinatorAssistance(query);
-        Map<String, Object> map = new HashMap<>();
-        map.put("users",users);
-        body = map;
-        statusResponse = 1;
-        return this.response();
+        WebResponse.checkNullObject(users);
+        return users;
     }
 
-    @GetMapping("/user/search/assistance/{idclassroom}/{query}")
-    public ResponseEntity<Map<String, Object>> searchCandidateAssistance(
-            @PathVariable(name ="idclassroom") String idClassroom,
-            @PathVariable(name = "query") String query
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation("Mendapatkan kandidat asisten")
+    @GetMapping(value = "/user/search/assistance/{idclassroom}/{query}", produces = {"application/json"})
+    public @ResponseBody List<User> searchCandidateAssistance(
+            @ApiParam("ID classroom dalam format string")@PathVariable(name ="idclassroom") String idClassroom,
+            @ApiParam("Query pencarian") @PathVariable(name = "query") String query
     ){
-        this.init();
-        location = "/user/search/assistance/";
         List<User> users = userService.getCandidateAssistance(idClassroom,query);
-        Map<String, Object> map = new HashMap<>();
-        map.put("users",users);
-        body = map;
-        statusResponse = 1;
-        return this.response();
+        WebResponse.checkNullObject(users);
+        return users;
     }
 
     @GetMapping("/user/search/byname/{query}")

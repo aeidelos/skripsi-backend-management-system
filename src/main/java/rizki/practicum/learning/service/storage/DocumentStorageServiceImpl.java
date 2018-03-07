@@ -1,6 +1,5 @@
 package rizki.practicum.learning.service.storage;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -14,12 +13,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import rizki.practicum.learning.configuration.FilesLocationConfig;
 
-import javax.activation.MimetypesFileTypeMap;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 @Service
@@ -30,8 +28,8 @@ public class DocumentStorageServiceImpl extends StorageServiceImpl implements St
     }
 
     @Override
-    public String store(MultipartFile file, String filename) throws FileFormatException {
-        String file_ext = FileUtils.getExtension(file.getOriginalFilename());
+    public ArrayList<String> store(MultipartFile[] file, String filename) throws FileFormatException {
+        String file_ext = FileUtils.getExtension(file[0].getOriginalFilename());
         if(Arrays.asList(FilesLocationConfig.Document.FILE_EXTENSION_ALLOWED).contains(file_ext)){
             return super.store(file, filename);
         }else{
@@ -46,7 +44,11 @@ public class DocumentStorageServiceImpl extends StorageServiceImpl implements St
             FileInputStream fis = new FileInputStream(filename);
             XWPFDocument xdoc = new XWPFDocument(OPCPackage.open(fis));
             XWPFWordExtractor extractor = new XWPFWordExtractor(xdoc);
-            return extractor.getText();
+            try {
+                return extractor.getText();
+            }finally {
+                extractor.close();
+            }
         }else if(file_ext.equalsIgnoreCase("pdf")){
             File file = new File(filename);
             PDDocument document = PDDocument.load(file);

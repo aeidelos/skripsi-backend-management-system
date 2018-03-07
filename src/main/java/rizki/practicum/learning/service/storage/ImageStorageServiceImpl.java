@@ -1,7 +1,6 @@
 package rizki.practicum.learning.service.storage;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.xmlbeans.impl.piccolo.io.FileFormatException;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -9,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 import rizki.practicum.learning.configuration.FilesLocationConfig;
 
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 @Service
@@ -19,8 +19,8 @@ public class ImageStorageServiceImpl extends StorageServiceImpl implements Stora
     }
 
     @Override
-    public String store(MultipartFile file, String filename) throws FileFormatException {
-        String file_ext = FilenameUtils.getExtension(file.getOriginalFilename());
+    public ArrayList<String> store(MultipartFile[] file, String filename) throws FileFormatException {
+        String file_ext = FilenameUtils.getExtension(file[0].getOriginalFilename());
         if(Arrays.asList(FilesLocationConfig.Image.FILE_EXTENSION_ALLOWED).contains(file_ext)){
             return super.store(file, filename);
         }else{

@@ -89,28 +89,8 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
                 .tokenServices(tokenServices())
                 .tokenStore(tokenStore())
                 .accessTokenConverter(accessTokenConverter())
-                .authenticationManager(authenticationManager);
+                .authenticationManager(this.authenticationManager);
     }
 
-    @Bean
-    public TokenEnhancer tokenEnhancer() {
-        return new CustomTokenEnhancer();
-    }
 
-    @Component
-    class CustomTokenEnhancer implements TokenEnhancer {
-
-        @Override
-        public OAuth2AccessToken enhance(OAuth2AccessToken accessToken, OAuth2Authentication authentication) {
-            UserDetails user = (UserDetails) authentication.getPrincipal();
-            final Map<String, Object> additionalInfo = new HashMap<>();
-
-            additionalInfo.put("user", user);
-
-            ((DefaultOAuth2AccessToken) accessToken).setAdditionalInformation(additionalInfo);
-
-            return accessToken;
-        }
-
-    }
 }
