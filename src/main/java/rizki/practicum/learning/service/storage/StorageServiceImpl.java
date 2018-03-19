@@ -36,7 +36,9 @@ public class StorageServiceImpl implements StorageService {
     @Override
     public void init() {
         try {
-            Files.createDirectory(rootLocation);
+            if (!Files.isDirectory(rootLocation) ) {
+                Files.createDirectory(rootLocation);
+            }
         } catch (IOException e) {
             throw new RuntimeException(StorageServiceMessage.COULDNT_INITIALIZE_STORAGE);
         }
@@ -48,7 +50,7 @@ public class StorageServiceImpl implements StorageService {
         String folder_location = this.rootLocation+"/"+filename_folder;
         ArrayList<String> filenames = new ArrayList<>();
         for (MultipartFile filex : file) {
-            String file_location = folder_location+"/"+filex.getOriginalFilename()+"."+FilenameUtils.getExtension(filex.getOriginalFilename());
+            String file_location = folder_location+"/"+filex.getOriginalFilename();
             try {
                 File fileCheck = new File(folder_location);
                 if(!fileCheck.isDirectory()){

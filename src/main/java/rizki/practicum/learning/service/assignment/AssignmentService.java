@@ -3,6 +3,7 @@ package rizki.practicum.learning.service.assignment;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.multipart.MultipartFile;
+import rizki.practicum.learning.dto.DocumentPlagiarism;
 import rizki.practicum.learning.entity.Assignment;
 import rizki.practicum.learning.entity.Document;
 
@@ -25,9 +26,15 @@ public interface AssignmentService {
 
     List<Document> getAssignmentByTaskPractican(String idTask);
 
-    Map<String, List<Document>> getDocumentByClassroom(@NotNull String idTask, @Nullable String idClassroom);
+    Map<String, Map<String, List<DocumentPlagiarism>>> getDocumentByClassroom(@NotNull String idTask, @Nullable String idClassroom);
 
     List<Document> getDocumentByAssignmentAndPractican(String assignment, String practican);
 
     Document getDocument(String idDocument);
+
+    List<Document> getAllDocumentsWithinSameAssignment(@NotNull String idDocument);
+
+    void setGradeAssignment(String idDocument, int grade);
+
+    Map<String, Object> getDashboardState(String idUser);
 }

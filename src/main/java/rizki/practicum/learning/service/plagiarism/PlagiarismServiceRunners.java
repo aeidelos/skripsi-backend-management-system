@@ -4,6 +4,7 @@ package rizki.practicum.learning.service.plagiarism;
 */
 
 import info.debatty.java.stringsimilarity.JaroWinkler;
+import info.debatty.java.stringsimilarity.NormalizedLevenshtein;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.io.FilenameUtils;
@@ -94,15 +95,20 @@ public class PlagiarismServiceRunners implements Runnable {
                 throw new FileFormatException("File tidak didukung atau format file yang dibandingkan tidak sama");
             }
 
-            JaroWinkler jaroWinkler = new JaroWinkler();
-            result = 100 - ((jaroWinkler.distance(content_file_1,content_file_2))*100);
+            NormalizedLevenshtein distance = new NormalizedLevenshtein();
+            result = 100 - ((distance.distance(content_file_1,content_file_2))*100);
 
             PlagiarismContent plagiarismContent = new PlagiarismContent();
             plagiarismContent.setDocument1(document);
             plagiarismContent.setDocument2(temp);
-            plagiarismContent.setPlagiasrism_rate(result);
+            plagiarismContent.setRate(result);
             plagiarismContent.setAssignment(document.getAssignment());
-
+            if (result > 80) {
+                document.setMarkAsPlagiarized(true);
+                temp.setMarkAsPlagiarized(true);
+                documentRepository.save(document);
+                documentRepository.save(temp);
+            }
             plagiarismContentRepository.save(plagiarismContent);
     }
 

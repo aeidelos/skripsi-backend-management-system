@@ -30,4 +30,7 @@ public class Document {
     @Column
     private double grade = 0;
 
+    @Column
+    private boolean markAsPlagiarized = false;
+
 }

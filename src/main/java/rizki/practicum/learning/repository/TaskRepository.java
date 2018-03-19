@@ -30,4 +30,6 @@ public interface TaskRepository extends PagingAndSortingRepository<Task, String>
 
     List<Task> findAllByClassroomInAndDueDateIsBefore(Collection<Classroom> classrooms, Date date);
 
+    int countTasksByDueDateIsAfterAndClassroom_PracticanContainsOrPracticumIsIn(Date date, User user, List<Practicum> practicums);
+
 }

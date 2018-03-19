@@ -1,28 +1,18 @@
 package rizki.practicum.learning.controller;
 
-import com.netflix.ribbon.proxy.annotation.Http;
-import com.sun.org.apache.xpath.internal.operations.Mult;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.apache.tomcat.util.http.fileupload.FileUploadException;
-import org.apache.xmlbeans.impl.piccolo.io.FileFormatException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import rizki.practicum.learning.dto.DocumentPlagiarism;
 import rizki.practicum.learning.dto.ResponseObject;
 import rizki.practicum.learning.entity.Assignment;
 import rizki.practicum.learning.entity.Document;
 import rizki.practicum.learning.service.assignment.AssignmentService;
 import rizki.practicum.learning.service.plagiarism.PlagiarismService;
-import rizki.practicum.learning.util.response.ResponseBuilder;
 
-import javax.print.Doc;
-import javax.xml.ws.Response;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -91,7 +81,7 @@ public class AssignmentController {
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Melakukan upload pengerjaan assignment")
     @PostMapping("/assignment/p/{idassignment}/{idpractican}")
-    public @ResponseBody List<Document> addAssignmentPractican(
+    public @ResponseBody List<Document> addAssignmentFile(
             @ApiParam("Id assignment dalam format string")@PathVariable("idassignment") String idAssignment,
             @ApiParam("Id praktikan dalam url")@PathVariable("idpractican") String idPractican,
             @ApiParam("Id dokumen yang digunakan untuk pengecekan duplikasi upload")
@@ -120,6 +110,21 @@ public class AssignmentController {
     }
 
     @ResponseStatus(HttpStatus.OK)
+    @PostMapping("/assignment/grade/set")
+    @ApiOperation("Memberi nilai pada suatu dokumen")
+    public @ResponseBody ResponseObject addGradeDocument (
+            @ApiParam("Id document dalam string") @RequestParam("idDocument") String idDocument,
+            @ApiParam("Nilai") @RequestParam("grade") int grade
+    ){
+        assignmentService.setGradeAssignment(idDocument,grade);
+        return ResponseObject.builder()
+                .code(HttpStatus.OK.value())
+                .message("Nilai berhasil ditambahkan")
+                .status(HttpStatus.OK.getReasonPhrase())
+                .build();
+    }
+
+    @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "melakukan pengecekan dokumen yang sudah diunggah")
     @GetMapping(value = "/assignment/document/{idtask}/{iduser}", produces = {"application/json"})
     public @ResponseBody List<Document> checkDocumentAssigned(
@@ -134,13 +139,24 @@ public class AssignmentController {
     @ApiOperation(value = "mengambil data dokumen tugas yang diunggah per kelas")
     @GetMapping(value = "/assignment/classroom/{idtask}/{idclassroom}", produces = {"application/json"})
     @ResponseStatus(HttpStatus.OK)
-    public @ResponseBody Map<String, List<Document>> checkDocumentClassroom(
+    public @ResponseBody
+    Map<String, Map<String, List<DocumentPlagiarism>>> checkDocumentClassroom(
            @ApiParam("id task dalam format String") @PathVariable("idtask") String idTask,
            @ApiParam("id classroom dalam format String")@PathVariable(value = "idclassroom", required = false) String idClassroom
     ) {
-            Map<String, List<Document>> assignments = assignmentService.getDocumentByClassroom(idTask, idClassroom);
+            Map<String, Map<String, List<DocumentPlagiarism>>> assignments = assignmentService.getDocumentByClassroom(idTask, idClassroom);
             WebResponse.checkNullObject(assignments);
             return assignments;
+    }
+
+    @ApiOperation(value = "mengambil data untuk dashboard")
+    @GetMapping(value = "/assignment/dashboard/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody
+    Object getDashboardState (
+            @PathVariable("id") String idUser
+    ) {
+        return WebResponse.checkNullObject(assignmentService.getDashboardState(idUser));
     }
 
 

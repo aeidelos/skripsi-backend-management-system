@@ -6,6 +6,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.cloud.netflix.feign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,7 +22,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import rizki.practicum.learning.dto.MyUserDetails;
 import rizki.practicum.learning.repository.UserRepository;
-import rizki.practicum.learning.service.generator.GeneratorService;
 import rizki.practicum.learning.service.plagiarism.PlagiarismServiceRunners;
 import rizki.practicum.learning.service.storage.DocumentStorageServiceImpl;
 import rizki.practicum.learning.service.storage.ImageStorageServiceImpl;
@@ -32,6 +32,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 
 @SpringBootApplication
+@EnableFeignClients
 public class LearningManagementSystemApplication {
 
 	public static void main(String[] args) {
@@ -51,7 +52,7 @@ public class LearningManagementSystemApplication {
 	@Bean
 	InitializingBean prepareData(){
 		return() -> {
-			generatorService.populate();
+			// generatorService.populate();
 		};
 	}
 
@@ -64,19 +65,16 @@ public class LearningManagementSystemApplication {
 						   DocumentStorageServiceImpl documentStorageService,
 						   ImageStorageServiceImpl imageStorageService) {
 		return (args) -> {
-			storageServiceImpl.deleteAll();
+			// storageServiceImpl.deleteAll();
 			storageServiceImpl.init();
-			sourceCodeStorageService.deleteAll();
+			// sourceCodeStorageService.deleteAll();
 			sourceCodeStorageService.init();
-			documentStorageService.deleteAll();
+			// documentStorageService.deleteAll();
 			documentStorageService.init();
-			imageStorageService.deleteAll();
+			// imageStorageService.deleteAll();
 			imageStorageService.init();
 		};
 	}
-
-	@Autowired
-	private GeneratorService generatorService;
 
 	@Autowired
 	public void authenticationManager(AuthenticationManagerBuilder authenticationManagerBuilder,

@@ -5,31 +5,25 @@ package rizki.practicum.learning.controller;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.codehaus.plexus.util.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.*;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
-import rizki.practicum.learning.dto.CompilerIO;
-import rizki.practicum.learning.entity.Assignment;
+import org.springframework.web.client.RestTemplate;
 import rizki.practicum.learning.entity.Document;
-import rizki.practicum.learning.entity.User;
 import rizki.practicum.learning.proxy.CompilerProxy;
 import rizki.practicum.learning.service.assignment.AssignmentService;
-import rizki.practicum.learning.util.response.ResponseBuilder;
 
-import javax.print.Doc;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 public class FileController {
@@ -46,34 +40,48 @@ public class FileController {
         File file = new File(temp.getFilename());
         Path path = Paths.get(file.getAbsolutePath());
         ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes(path));
-        HttpHeaders headers = new HttpHeaders(); headers.add(HttpHeaders.CONTENT_DISPOSITION,
-                "attachment; filename="+temp.getFilename());
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION,
+                "attachment; filename=" + temp.getFilename());
         return ResponseEntity.ok()
                 .headers(headers)
                 .contentLength(file.length())
                 .contentType(MediaType.parseMediaType("application/octet-stream"))
                 .body(resource);
     }
+
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/file/information/{assignment}/{practican}", produces = {"application/json"})
     @ApiOperation("Mendapatkan informasi file dalam suatu assignment milik praktikan tertentu")
-    public @ResponseBody List<Document> fileInformation(
+    public @ResponseBody
+    List<Document> fileInformation(
             @ApiParam("id assignment dalam format string")
-            @PathVariable("assignment")  String assignment,
-            @ApiParam("id praktikan dalam format string")@PathVariable("practican") String practican
-    ){
+            @PathVariable("assignment") String assignment,
+            @ApiParam("id praktikan dalam format string") @PathVariable("practican") String practican
+    ) {
         List<Document> document = assignmentService.getDocumentByAssignmentAndPractican(assignment, practican);
         WebResponse.checkNullObject(document);
         return document;
     }
+
     @ApiOperation("Compile & Jalankan file kode program")
-    @GetMapping("file/compile/{id_document}")
+    @GetMapping("file/compile/{idDocument}")
     @ResponseStatus(HttpStatus.OK)
-    public @ResponseBody CompilerIO compileFile(@PathVariable String idDocument){
-                // to be implemented
-        CompilerIO result = null;
-        result.setIdDocument(idDocument);
-        return result;
+    public @ResponseBody
+    ResponseEntity<String> compileFile(@PathVariable String idDocument) throws IOException {
+        List<Document> documents = assignmentService.getAllDocumentsWithinSameAssignment(idDocument);
+        MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+        RestTemplate restTemplate = new RestTemplate();
+        for (Document document : documents) {
+            Resource resource = new FileSystemResource(
+                    document.getFilename());
+            map.add("sourcecode", resource);
+        }
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+        HttpEntity<MultiValueMap<String, Object>> request =
+                new HttpEntity<>(map, headers);
+        return restTemplate.postForEntity("http://localhost:8080/api/v2/compile", request, String.class);
     }
 
 }

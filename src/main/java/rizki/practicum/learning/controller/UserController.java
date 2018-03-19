@@ -183,36 +183,6 @@ public class UserController {
         return this.response();
     }
 
-//    @PostMapping("/user/updatephoto/{id}")
-//    public ResponseEntity<Map<String,Object>> updatePhoto(
-//            @PathVariable("id") String id,
-//            @RequestParam("photo") MultipartFile ...photo
-//    ){
-//        this.init();
-//        location = "/user/updatephoto";
-//        try{
-//            String imageName = storageService.store(photo, id);
-//            if(imageName != null || imageName != ""){
-//                User user = userService.getUser(id);
-//                user.setPhoto(imageName);
-//                boolean result = userService.updateUser(user);
-//                if(result){
-//                    message = "Foto berhasil diubah";
-//                    statusResponse = 1;
-//                    Map<String,String> map = new HashMap<>();
-//                    String path = "media/photo/"+imageName;
-//                    map.put("path",path);
-//                    body = map;
-//                }
-//            }
-//        } catch(Exception e){
-//            e.printStackTrace();
-//            message = e.getMessage().toString();
-//        }
-//        return this.response();
-//    }
-
-
     @GetMapping("/user")
     public ResponseEntity<Map<String,Object>> getUsers(
             @PathVariable(required = false, value = "page") Integer page,

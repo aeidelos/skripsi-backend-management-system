@@ -18,4 +18,15 @@ public interface DocumentRepository extends PagingAndSortingRepository<Document,
     List<Document> findAllByAssignment(Assignment assignment);
 
     List<Document> findAllByAssignmentIsIn(List<Assignment> assignments);
+
+    int countDocumentsByMarkAsPlagiarizedIsTrue();
+
+    int countDocumentsByMarkAsPlagiarizedIsTrueAndPractican(User user);
+
+    int countDocumentsByGradeEquals(Double grade);
+
+    int countDistinctByMarkAsPlagiarizedIsTrue();
+
+    @Query("SELECT AVG(d.grade) from Document d")
+    int averagePlagiarismRates();
 }

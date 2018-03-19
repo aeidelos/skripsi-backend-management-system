@@ -28,5 +28,5 @@ public class PlagiarismContent {
     @ManyToOne
     private Document document2;
 
-    private Double plagiasrism_rate;
+    private Double rate;
 }
