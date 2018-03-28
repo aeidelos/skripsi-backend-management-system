@@ -96,13 +96,14 @@ public class ClassroomController {
         return result;
     }
 
-    @GetMapping("/classroom/enroll/{key}")
+    @GetMapping("/classroom/enroll/{key}/{idUser}")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation("Mencari kelas berdasarkan kode enroll")
     public @ResponseBody Classroom enrollmentClassroom(
-            @ApiParam("Kode enroll berupa String") @PathVariable("key") String enrollmentKey
+            @ApiParam("Kode enroll berupa String") @PathVariable("key") String enrollmentKey,
+            @ApiParam("ID User") @PathVariable("idUser") String idUser
     ){
-        Classroom result = classroomService.searchByEnrollmentKey(enrollmentKey);
+        Classroom result = classroomService.searchByEnrollmentKey(enrollmentKey, idUser);
         WebResponse.checkNullObject(result);
         return result;
     }

@@ -1,3 +1,4 @@
+
 package rizki.practicum.learning;
 
 import org.junit.Assert;
@@ -8,11 +9,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class LearningManagementSystemApplicationTests {
+public class LearningManagementSystemApplicationTest {
 
-	@Test
-	public void contextLoads() {
+    @Test
+    public void contextLoads() {
 
-	}
+    }
 
 }

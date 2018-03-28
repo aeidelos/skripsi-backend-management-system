@@ -20,11 +20,6 @@ public class ImageStorageServiceImpl extends StorageServiceImpl implements Stora
 
     @Override
     public ArrayList<String> store(MultipartFile[] file, String filename) throws FileFormatException {
-        String file_ext = FilenameUtils.getExtension(file[0].getOriginalFilename());
-        if(Arrays.asList(FilesLocationConfig.Image.FILE_EXTENSION_ALLOWED).contains(file_ext)){
             return super.store(file, filename);
-        }else{
-            throw new FileFormatException();
-        }
     }
 }

@@ -17,6 +17,8 @@ public interface DocumentRepository extends PagingAndSortingRepository<Document,
     List<Document> findAllByAssignmentIsInAndPracticanIsIn(List<Assignment> assignment, List<User> practican);
     List<Document> findAllByAssignment(Assignment assignment);
 
+    List<Document> findAllByAssignmentAndPracticanIsNot(Assignment assignment, User user);
+
     List<Document> findAllByAssignmentIsIn(List<Assignment> assignments);
 
     int countDocumentsByMarkAsPlagiarizedIsTrue();
@@ -27,6 +29,5 @@ public interface DocumentRepository extends PagingAndSortingRepository<Document,
 
     int countDistinctByMarkAsPlagiarizedIsTrue();
 
-    @Query("SELECT AVG(d.grade) from Document d")
-    int averagePlagiarismRates();
+    List<Document> findAllByPracticanIn(List<User> users);
 }

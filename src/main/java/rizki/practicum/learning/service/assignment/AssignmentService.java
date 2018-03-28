@@ -1,6 +1,8 @@
 package rizki.practicum.learning.service.assignment;
 
+import org.apache.xmlbeans.impl.piccolo.io.FileFormatException;
 import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.multipart.MultipartFile;
 import rizki.practicum.learning.dto.DocumentPlagiarism;
@@ -20,7 +22,7 @@ public interface AssignmentService {
     Assignment addAssignment(@NotBlank @NotNull String idTask, @NotBlank @NotNull String description,@NotBlank @NotNull String fileAllowed);
     void deleteAssignment(@NotNull @NotBlank String idAssignment);
     List<Document> fulfillAssignment(@NotNull @NotBlank String idAssignment, @NotNull String idPractican,
-                                     MultipartFile[] file, @Nullable String idDocument);
+                                     MultipartFile[] file, @Nullable String idDocument) throws FileFormatException;
 
     List<Document> getAssignmentByTaskPractican(String idTask, String idPractican);
 
@@ -34,7 +36,10 @@ public interface AssignmentService {
 
     List<Document> getAllDocumentsWithinSameAssignment(@NotNull String idDocument);
 
-    void setGradeAssignment(String idDocument, int grade);
+    void setGradeAssignment(@NotNull @NotBlank String idDocument, @NotNull @NotEmpty int grade);
 
-    Map<String, Object> getDashboardState(String idUser);
+    Map<String, Object> getDashboardState(@NotNull String idUser);
+
+    Map<String, Map<String, Object>> getGradeDocumentByClassroom(@NotNull String idTask,
+                                                                 @NotNull String idClassroom);
 }

@@ -3,15 +3,16 @@ package rizki.practicum.learning.entity;
     Created by : Rizki Maulana Akbar, On 02 - 2018 ;
 */
 
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
 @Entity
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class PlagiarismContent {
 
     @Id

@@ -25,5 +25,5 @@ public interface ClassroomService {
 
     List<Classroom> getByPractican(@NotBlank String idUser);
 
-    Classroom searchByEnrollmentKey(@NotBlank String enrollmentKey);
+    Classroom searchByEnrollmentKey(@NotBlank String enrollmentKey, String idUser);
 }

@@ -11,7 +11,6 @@ import rizki.practicum.learning.configuration.FilesLocationConfig;
 import rizki.practicum.learning.dto.DocumentPlagiarism;
 import rizki.practicum.learning.entity.*;
 import rizki.practicum.learning.repository.*;
-import rizki.practicum.learning.service.announcement.AnnouncementService;
 import rizki.practicum.learning.service.storage.StorageService;
 
 import javax.transaction.Transactional;
@@ -71,36 +70,32 @@ public class AssignmentServiceImpl implements AssignmentService {
     }
 
     @Override @Transactional
-    public List<Document> fulfillAssignment(String idAssignment, String idPractican, MultipartFile[] file, String idDocument) {
-        String extension = FilenameUtils.getExtension(file[0].getOriginalFilename());
-        String filename = FilenameUtils.removeExtension(file[0].getOriginalFilename());
+    public List<Document> fulfillAssignment(String idAssignment, String idPractican, MultipartFile[] file, String idDocument) throws FileFormatException {
+        String extension = FilenameUtils.getExtension(file[0].getName());
+        String filename = FilenameUtils.removeExtension(file[0].getName());
         ArrayList<String> doc = null;
         if (idDocument!=null && !idDocument.equals("")) {
             Document temp = documentRepository.findOne(idDocument);
-            storageService.delete(temp.getFilename());
-            List<Document> other = documentRepository.findAllByAssignment(temp.getAssignment());
+            if (storageService!=null) storageService.delete(temp.getFilename());
+            List<Document> other = documentRepository.findAllByAssignmentAndPractican(temp.getAssignment(), userRepository.findOne(idPractican));
             if (temp != null && other != null) {
                 other.stream().forEach(o -> {
-                    plagiarismContentRepository.deleteAllByDocument1OrDocument2(o, o);
-                    documentRepository.delete(o);
+                        plagiarismContentRepository.deleteAllByDocument1OrDocument2(o, o);
+                        documentRepository.delete(o);
                 });
             }
         }
-        try {
             if (Arrays.asList(FilesLocationConfig.Document.FILE_EXTENSION_ALLOWED).contains(extension)) {
                 doc = documentStorageService.store(file, filename);
             } else if (Arrays.asList(FilesLocationConfig.SourceCode.FILE_EXTENSION_ALLOWED).contains(extension)) {
                 doc = sourceCodeStorageService.store(file, filename);
-            } else if (Arrays.asList(FilesLocationConfig.Image.FILE_EXTENSION_ALLOWED).contains(extension)) {
-                doc = imageStorageService.store(file, filename);
+            } else {
+                throw new FileFormatException("Format tidak didukung");
             }
-        } catch (FileFormatException e) {
-            e.printStackTrace();
-        }
         return documentCreator(doc, idPractican, idAssignment);
     }
 
-    private List<Document> documentCreator(List<String> filename, String idPractican, String idAssignment) {
+    public List<Document> documentCreator(List<String> filename, String idPractican, String idAssignment) {
         List<Document> documents = new ArrayList<>();
         filename.stream().forEach(
                 f-> {
@@ -151,7 +146,7 @@ public class AssignmentServiceImpl implements AssignmentService {
             }
             result.put(filter.getPractican().getId(), temp);
         }
-        Map<String, Map<String, List<DocumentPlagiarism>>> result1= new HashMap<>();
+        Map<String, Map<String, List<DocumentPlagiarism>>> result1 = new HashMap<>();
         result.forEach((key, value) -> {
             Map<String, List<DocumentPlagiarism>> res = new HashMap<>();
             ArrayList<DocumentPlagiarism> temp = null;
@@ -213,7 +208,7 @@ public class AssignmentServiceImpl implements AssignmentService {
         result.put("average_plagiarism", average_plagiarism);
         if (user.getRole().contains(roleRepository.findByInitial("kalab"))) {
             int plagiarism_found = documentRepository.countDistinctByMarkAsPlagiarizedIsTrue();
-            float plagiarism_rate = documentRepository.averagePlagiarismRates();
+            float plagiarism_rate = plagiarismContentRepository.averagePlagiarismRates();
             int practicum_class = (int) classroomRepository.count();
             result.put("plagiarism_found", plagiarism_found);
             result.put("plagiarism_rate", plagiarism_rate);
@@ -236,6 +231,21 @@ public class AssignmentServiceImpl implements AssignmentService {
             }
         }
         return result;
+    }
+
+    @Override
+    public Map<String, Map<String, Object>> getGradeDocumentByClassroom(String idTask, String idClassroom) {
+//        Map<String, Map<String, List<DocumentPlagiarism>>> documents = getDocumentByClassroom(idTask, idClassroom);
+//        Map<String, Map<String, Double>> result = new HashMap<>();
+//        documents.forEach((key, value) -> {
+//            Map<String, Double> temp = new HashMap<>();
+//            value.forEach((keyIn, valueIn) -> {
+//                int sum = valueIn.stream().mapToInt(d -> (int) d.getDocument().getGrade()).sum();
+//                int avg = sum / valueIn.size();
+//                temp.put()
+//            });
+//        });
+        return null;
     }
 
     @Override

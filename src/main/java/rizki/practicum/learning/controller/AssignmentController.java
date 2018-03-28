@@ -2,6 +2,7 @@ package rizki.practicum.learning.controller;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.xmlbeans.impl.piccolo.io.FileFormatException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -87,7 +88,7 @@ public class AssignmentController {
             @ApiParam("Id dokumen yang digunakan untuk pengecekan duplikasi upload")
             @RequestParam(value = "document", required = false) String idDocument,
             @ApiParam("File yang diunggah bertipe multipart") @RequestParam("file") MultipartFile ...file
-    ) {
+    ) throws FileFormatException {
             List<Document> document = assignmentService.fulfillAssignment(idAssignment, idPractican, file, idDocument);
             WebResponse.checkNullObject(document);
             plagiarismService.checkPlagiarism(document);

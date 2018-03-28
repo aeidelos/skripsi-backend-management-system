@@ -29,34 +29,29 @@ public class DocumentStorageServiceImpl extends StorageServiceImpl implements St
 
     @Override
     public ArrayList<String> store(MultipartFile[] file, String filename) throws FileFormatException {
-        String file_ext = FileUtils.getExtension(file[0].getOriginalFilename());
-        if(Arrays.asList(FilesLocationConfig.Document.FILE_EXTENSION_ALLOWED).contains(file_ext)){
-            return super.store(file, filename);
-        }else{
-            throw new FileFormatException();
-        }
+        return super.store(file, filename);
     }
 
     @Override
     public String load(String filename) throws IOException, InvalidFormatException {
+        String result = null;
         String file_ext = FileUtils.getExtension(filename);
         if(file_ext.equalsIgnoreCase("doc") || file_ext.equalsIgnoreCase("docx")){
             FileInputStream fis = new FileInputStream(filename);
             XWPFDocument xdoc = new XWPFDocument(OPCPackage.open(fis));
-            XWPFWordExtractor extractor = new XWPFWordExtractor(xdoc);
-            try {
-                return extractor.getText();
-            }finally {
-                extractor.close();
+            try (XWPFWordExtractor extractor = new XWPFWordExtractor(xdoc)) {
+                result = new String(extractor.getText());
+            } finally {
+                xdoc.close();
             }
         }else if(file_ext.equalsIgnoreCase("pdf")){
             File file = new File(filename);
             PDDocument document = PDDocument.load(file);
             PDFTextStripper pdfStripper = new PDFTextStripper();
-            return pdfStripper.getText(document);
-        }else{
-            throw new FileFormatException();
+            result = new String(pdfStripper.getText(document));
+            document.close();
         }
+        return result;
     }
 
     private String cleansing(String content){

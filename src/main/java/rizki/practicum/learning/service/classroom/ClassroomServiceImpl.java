@@ -5,10 +5,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import rizki.practicum.learning.entity.Classroom;
+import rizki.practicum.learning.entity.Role;
 import rizki.practicum.learning.entity.User;
 import rizki.practicum.learning.repository.ClassroomRepository;
+import rizki.practicum.learning.service.role.RoleService;
 import rizki.practicum.learning.service.user.UserService;
 
 import java.util.List;
@@ -21,6 +24,9 @@ public class ClassroomServiceImpl implements ClassroomService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private RoleService roleService;
 
     @Override
     public Classroom addClassroom(Classroom classroom){
@@ -51,8 +57,16 @@ public class ClassroomServiceImpl implements ClassroomService {
         if(classroom.getAssistance().contains(userService.getUser(idAsssistance))){
             throw new DataIntegrityViolationException("Asisten sudah ada");
         }else{
-            assistances.add(userService.getUser(idAsssistance));
+            User user = userService.getUser(idAsssistance);
+            assistances.add(user);
             classroom.setAssistance(assistances);
+            List<Role> roles = user.getRole();
+            Role role = roleService.getRole("asprak");
+            if (!roles.contains(role)) {
+                roles.add(role);
+                user.setRole(roles);
+            }
+            userService.updateUser(user);
             return classroomRepository.save(classroom);
         }
     }
@@ -111,7 +125,12 @@ public class ClassroomServiceImpl implements ClassroomService {
     }
 
     @Override
-    public Classroom searchByEnrollmentKey(String enrollmentKey) {
-        return classroomRepository.findByEnrollmentKey(enrollmentKey);
+    public Classroom searchByEnrollmentKey(String enrollmentKey, String idUser) {
+        User user = userService.getUser(idUser);
+        Classroom classroom = classroomRepository.findByEnrollmentKey(enrollmentKey);
+        if (classroom == null) throw new ResourceNotFoundException("Kelas tidak ditemukan");
+        else if (classroom.getPractican().contains(user)) throw new DataIntegrityViolationException("Pengguna sudah terdaftar sebagai praktikan");
+        else if (classroom.getAssistance().contains(user)) throw new DataIntegrityViolationException("Pengguna sudah terdaftar sebagai asisten");
+        else return classroom;
     }
 }
