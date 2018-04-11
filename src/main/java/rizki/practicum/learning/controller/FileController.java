@@ -15,7 +15,6 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import rizki.practicum.learning.entity.Document;
-import rizki.practicum.learning.proxy.CompilerProxy;
 import rizki.practicum.learning.service.assignment.AssignmentService;
 
 import java.io.File;
@@ -60,7 +59,7 @@ public class FileController {
             @ApiParam("id praktikan dalam format string") @PathVariable("practican") String practican
     ) {
         List<Document> document = assignmentService.getDocumentByAssignmentAndPractican(assignment, practican);
-        WebResponse.checkNullObject(document);
+        WebResponse.verify(document);
         return document;
     }
 

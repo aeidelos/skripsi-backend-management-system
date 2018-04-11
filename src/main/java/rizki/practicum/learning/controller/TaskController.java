@@ -25,7 +25,7 @@ public class TaskController {
             @PathVariable("status") String status
     ) {
         List<Task> tasks = taskService.getTaskByPractican(idPractican, status);
-        WebResponse.checkNullObject(tasks);
+        WebResponse.verify(tasks);
         return tasks;
     }
 
@@ -38,7 +38,7 @@ public class TaskController {
             @PathVariable("time") String time
     ) {
         List<Task> tasks = taskService.getTask(mode, id, time);
-        WebResponse.checkNullObject(tasks);
+        WebResponse.verify(tasks);
         return tasks;
     }
 
@@ -53,7 +53,7 @@ public class TaskController {
         String category = new Date().before(result.getDueDate()) ? "current" : "past";
         Map<String, Object> map = new HashMap<>();
         map.put("task", result);
-        WebResponse.checkNullObject(result);
+        WebResponse.verify(result);
         map.put("category", category);
         return ResponseObject
                 .builder()
@@ -91,7 +91,7 @@ public class TaskController {
         Task result = taskService.updateTask(task);
         String category = new Date().before(result.getDueDate()) ? "current" : "past";
         Map<String, Object> map = new HashMap<>();
-        WebResponse.checkNullObject(result);
+        WebResponse.verify(result);
         map.put("task", result);
         map.put("category", category);
         return ResponseObject

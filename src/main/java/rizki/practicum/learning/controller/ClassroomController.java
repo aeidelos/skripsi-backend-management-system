@@ -3,25 +3,16 @@ package rizki.practicum.learning.controller;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import rizki.practicum.learning.dto.ResponseObject;
 import rizki.practicum.learning.entity.Classroom;
 import rizki.practicum.learning.service.classroom.ClassroomService;
-import rizki.practicum.learning.service.course.CourseService;
-import rizki.practicum.learning.service.practicum.PracticumService;
-import rizki.practicum.learning.service.user.UserService;
-import rizki.practicum.learning.util.response.ResponseBuilder;
 
-import javax.xml.ws.Response;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 public class ClassroomController {
@@ -38,7 +29,7 @@ public class ClassroomController {
             @ApiParam("Id praktikum dalam format string") @PathVariable("idpracticum") String idPracticum
     ){
         List<Classroom> classrooms = classroomService.getByPracticum(idPracticum);
-        WebResponse.checkNullObject(classrooms);
+        WebResponse.verify(classrooms);
         return classrooms;
     }
 
@@ -54,7 +45,7 @@ public class ClassroomController {
         limit = WebResponse.DEFAULT_PAGE_SIZE;
         Pageable pageable = new PageRequest(page,limit);
         Page<Classroom> classrooms = classroomService.getAllClassroom(pageable);
-        WebResponse.checkNullObject(classrooms);
+        WebResponse.verify(classrooms);
         return classrooms;
     }
 
@@ -65,7 +56,7 @@ public class ClassroomController {
         @ApiParam("Objek classroom dalam format json") @RequestBody Classroom classroom
     ){
         Classroom result = classroomService.addClassroom(classroom);
-        WebResponse.checkNullObject(result);
+        WebResponse.verify(result);
         return result;
     }
 
@@ -92,7 +83,7 @@ public class ClassroomController {
             @ApiParam("Objek classroom dalam format json")@RequestBody Classroom classroom
     ){
         Classroom result = classroomService.updateClassroom(classroom);
-        WebResponse.checkNullObject(result);
+        WebResponse.verify(result);
         return result;
     }
 
@@ -104,7 +95,7 @@ public class ClassroomController {
             @ApiParam("ID User") @PathVariable("idUser") String idUser
     ){
         Classroom result = classroomService.searchByEnrollmentKey(enrollmentKey, idUser);
-        WebResponse.checkNullObject(result);
+        WebResponse.verify(result);
         return result;
     }
 
@@ -115,7 +106,7 @@ public class ClassroomController {
             @PathVariable("iduser") String idUser
     ){
         List<Classroom> classrooms = classroomService.getByAssistance(idUser);
-        WebResponse.checkNullObject(classrooms);
+        WebResponse.verify(classrooms);
         return classrooms;
     }
 
@@ -126,7 +117,7 @@ public class ClassroomController {
             @PathVariable("iduser") String idUser
     ){
         List<Classroom> classrooms = classroomService.getByPractican(idUser);
-        WebResponse.checkNullObject(classrooms);
+        WebResponse.verify(classrooms);
         return classrooms;
     }
 

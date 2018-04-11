@@ -1,24 +1,18 @@
 package rizki.practicum.learning.controller;
 
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import rizki.practicum.learning.dto.ResponseObject;
 import rizki.practicum.learning.entity.Course;
 import rizki.practicum.learning.service.course.CourseService;
-import rizki.practicum.learning.util.response.ResponseBuilder;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 public class CourseController {
@@ -34,7 +28,7 @@ public class CourseController {
             @PathVariable(required = false, value = "query") String query
     ){
         List<Course> courses = courseService.getSearchCourse(query);
-        WebResponse.checkNullObject(courses);
+        WebResponse.verify(courses);
         return courses;
     }
 
@@ -50,7 +44,7 @@ public class CourseController {
         limit = WebResponse.DEFAULT_PAGE_SIZE;
         Pageable pageable = new PageRequest(page,limit);
         Page<Course> courses = courseService.getAllCourse(pageable);
-        WebResponse.checkNullObject(courses);
+        WebResponse.verify(courses);
         return courses;
     }
 
@@ -65,7 +59,7 @@ public class CourseController {
         course.setCourseName(courseName);
         course.setCourseCode(courseCode);
         Course result = courseService.addCourse(course);
-        WebResponse.checkNullObject(result);
+        WebResponse.verify(result);
         return result;
 
     }
@@ -81,7 +75,7 @@ public class CourseController {
         updater.setCourseName(course.getCourseName());
         updater.setCourseCode(course.getCourseCode());
         Course result = courseService.updateCourse(updater);
-        WebResponse.checkNullObject(result);
+        WebResponse.verify(result);
         return result;
 
     }

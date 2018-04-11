@@ -34,7 +34,7 @@ public class AssignmentController {
             @ApiParam(value = "Id Task dalam format String") @PathVariable("idtask") String idTask
     ) {
         List<Assignment> assignments = assignmentService.getAssignmentByTask(idTask);
-        WebResponse.checkNullObject(assignments);
+        WebResponse.verify(assignments);
         return assignments;
     }
 
@@ -49,7 +49,7 @@ public class AssignmentController {
             @PathVariable("idpractican") String idPractican
     ) {
         List<Document> assignments = assignmentService.getAssignmentByTaskPractican(idTask, idPractican);
-        WebResponse.checkNullObject(assignments);
+        WebResponse.verify(assignments);
         return assignments;
     }
 
@@ -61,7 +61,7 @@ public class AssignmentController {
             @ApiParam(value = "id task dalam format String") @PathVariable("idtask") String idTask
     ) {
         List<Document> assignments = assignmentService.getAssignmentByTaskPractican(idTask);
-        WebResponse.checkNullObject(assignments);
+        WebResponse.verify(assignments);
         return assignments;
     }
 
@@ -75,7 +75,7 @@ public class AssignmentController {
             @RequestParam("fileallowed") String fileAllowed
     ) {
             Assignment assignment = assignmentService.addAssignment(idTask, description, fileAllowed);
-            WebResponse.checkNullObject(assignment);
+            WebResponse.verify(assignment);
             return assignment;
     }
 
@@ -90,7 +90,7 @@ public class AssignmentController {
             @ApiParam("File yang diunggah bertipe multipart") @RequestParam("file") MultipartFile ...file
     ) throws FileFormatException {
             List<Document> document = assignmentService.fulfillAssignment(idAssignment, idPractican, file, idDocument);
-            WebResponse.checkNullObject(document);
+            WebResponse.verify(document);
             plagiarismService.checkPlagiarism(document);
             return document;
 
@@ -133,7 +133,7 @@ public class AssignmentController {
             @ApiParam("id user dalam format string") @PathVariable("iduser") String idUser
     ) {
             List<Document> documents = assignmentService.getAssignmentByTaskPractican(idTask, idUser);
-            WebResponse.checkNullObject(documents);
+            WebResponse.verify(documents);
             return documents;
     }
 
@@ -146,7 +146,7 @@ public class AssignmentController {
            @ApiParam("id classroom dalam format String")@PathVariable(value = "idclassroom", required = false) String idClassroom
     ) {
             Map<String, Map<String, List<DocumentPlagiarism>>> assignments = assignmentService.getDocumentByClassroom(idTask, idClassroom);
-            WebResponse.checkNullObject(assignments);
+            WebResponse.verify(assignments);
             return assignments;
     }
 
@@ -157,7 +157,7 @@ public class AssignmentController {
     Object getDashboardState (
             @PathVariable("id") String idUser
     ) {
-        return WebResponse.checkNullObject(assignmentService.getDashboardState(idUser));
+        return WebResponse.verify(assignmentService.getDashboardState(idUser));
     }
 
 

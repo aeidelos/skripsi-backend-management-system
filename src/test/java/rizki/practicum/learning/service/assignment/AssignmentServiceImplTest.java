@@ -95,7 +95,7 @@ public class AssignmentServiceImplTest {
 
     @Test
     public void fulfillAssignment_TYPE_DOCUMENT_NORMAL_CONDITION() throws Exception {
-        multipartFile = new MockMultipartFile("file.docx", new FileInputStream(
+        multipartFile = new MockMultipartFile("file.docx","file.docx","application/msword", new FileInputStream(
                 new File("media/document/test/file.docx")));
         document = Document.builder().id("DOCID").filename(multipartFile.getName()).practican(user).assignment(assignment).grade(0.0).markAsPlagiarized(false).build();
         documentOld = document;
@@ -140,7 +140,7 @@ public class AssignmentServiceImplTest {
     @Test
     public void fulfillAssignment_TYPE_DOCUMENT_OVERRIDE_ASSIGNMENT_CONDITION() throws Exception {
 
-        multipartFile = new MockMultipartFile("file.docx", new FileInputStream(
+        multipartFile = new MockMultipartFile("file.docx","file.docx","application/msword", new FileInputStream(
                 new File("media/document/test/file.docx")));
         document = Document.builder().id("DOCID").filename(multipartFile.getName()).practican(user).assignment(assignment).grade(0.0).markAsPlagiarized(false).build();
         documentOld = document;
@@ -189,7 +189,7 @@ public class AssignmentServiceImplTest {
     @Test
     public void fulfillAssignment_TYPE_CODE_NORMAL_CONDITION() throws Exception {
 
-        multipartFile = new MockMultipartFile("file.java", new FileInputStream(
+        multipartFile = new MockMultipartFile("file.java","file.java","application/java", new FileInputStream(
                 new File("media/document/test/file.java")));
         document = Document.builder().id("DOCID").filename(multipartFile.getName()).practican(user).assignment(assignment).grade(0.0).markAsPlagiarized(false).build();
         documentOld = document;
@@ -235,7 +235,7 @@ public class AssignmentServiceImplTest {
     @Test
     public void fulfillAssignment_TYPE_CODE_OVERRIDE_ASSIGNMENT_CONDITION() throws Exception {
 
-        multipartFile = new MockMultipartFile("file.java", new FileInputStream(
+        multipartFile = new MockMultipartFile("file.java","file.java","application/java", new FileInputStream(
                 new File("media/document/test/file.java")));
         document = Document.builder().id("DOCID").filename(multipartFile.getName()).practican(user).assignment(assignment).grade(0.0).markAsPlagiarized(false).build();
         documentOld = document;
@@ -284,7 +284,7 @@ public class AssignmentServiceImplTest {
     @Test(expected = FileFormatException.class)
     public void fulfillAssignment_TYPE_UNDEFINED_NORMAL_CONDITION() throws Exception {
 
-        multipartFile = new MockMultipartFile("file.war", new FileInputStream(
+        multipartFile = new MockMultipartFile("file.war","file.war","application/java", new FileInputStream(
                 new File("media/document/test/file.war")));
         document = Document.builder().id("DOCID").filename(multipartFile.getName()).practican(user).assignment(assignment).grade(0.0).markAsPlagiarized(false).build();
         documentOld = document;
@@ -322,7 +322,7 @@ public class AssignmentServiceImplTest {
     @Test(expected = FileFormatException.class)
     public void fulfillAssignment_TYPE_UNDEFINED_OVERRIDE_ASSIGNMENT_CONDITION() throws Exception {
 
-        multipartFile = new MockMultipartFile("file.war", new FileInputStream(
+        multipartFile = new MockMultipartFile("file.war","file.war","application/java", new FileInputStream(
                 new File("media/document/test/file.war")));
         document = Document.builder().id("DOCID").filename(multipartFile.getName()).practican(user).assignment(assignment).grade(0.0).markAsPlagiarized(false).build();
         documentOld = document;

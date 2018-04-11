@@ -38,7 +38,7 @@ public class WebResponse implements ApplicationEventPublisherAware{
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
-    public static <T> T checkNullObject ( T object ) {
+    public static <T> T verify(T object ) {
         if (object == null) throw new ResourceNotFoundException("Objek tidak ditemukan");
         return object;
     }

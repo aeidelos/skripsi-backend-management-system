@@ -6,15 +6,9 @@ package rizki.practicum.learning.controller;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import rizki.practicum.learning.entity.Announcement;
 import rizki.practicum.learning.service.announcement.AnnouncementService;
-import rizki.practicum.learning.service.assignment.AssignmentService;
-import rizki.practicum.learning.util.response.ResponseBuilder;
-
-import java.util.Collection;
-import java.util.Map;
 
 @RestController
 public class AnnouncementController {
@@ -28,7 +22,7 @@ public class AnnouncementController {
     public @ResponseBody Announcement addAnnouncement(
             @RequestBody Announcement announcement
     ){
-        return WebResponse.checkNullObject(announcementService.save(announcement));
+        return WebResponse.verify(announcementService.save(announcement));
     }
 
     @ApiOperation("Mendapatkan pengumuman")

@@ -3,9 +3,6 @@ package rizki.practicum.learning.service.plagiarism;
     Created by : Rizki Maulana Akbar, On 01 - 2018 ;
 */
 
-import info.debatty.java.stringsimilarity.JaroWinkler;
-import info.debatty.java.stringsimilarity.Levenshtein;
-import info.debatty.java.stringsimilarity.NormalizedLevenshtein;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.io.FilenameUtils;
@@ -50,17 +47,15 @@ public class PlagiarismServiceRunners implements Runnable {
     private StorageService sourceCodeStorageService;
 
     @Autowired
-    private Levenshtein levenshtein;
-
-    @Bean
-    public Levenshtein getLevenstheinInstance() {
-        return new Levenshtein();
-    }
+    private Levensthein levensthein;
 
     private List<Document> document;
 
     public PlagiarismServiceRunners() {
     }
+
+    @Autowired
+     private ASTPlagiarism astPlagiarism;
 
     public PlagiarismServiceRunners(List<Document> document) {
         this.document = document;
@@ -96,15 +91,16 @@ public class PlagiarismServiceRunners implements Runnable {
                 Arrays.asList(FilesLocationConfig.Document.FILE_EXTENSION_ALLOWED).contains(file_ext_2)) {
             content_file_1 = documentStorageService.load(document.getFilename());
             content_file_2 = documentStorageService.load(temp.getFilename());
+            content_file_1.replaceAll("[^A-Za-z0-9]", "");
+            content_file_2.replaceAll("[^A-Za-z0-9]", "");
+            result = 100 - ((levensthein.rates(content_file_1, content_file_2)) * 100);
         } else if (Arrays.asList(FilesLocationConfig.SourceCode.FILE_EXTENSION_ALLOWED).contains(file_ext_1) &&
                 Arrays.asList(FilesLocationConfig.SourceCode.FILE_EXTENSION_ALLOWED).contains(file_ext_2)) {
-            content_file_1 = sourceCodeStorageService.load(document.getFilename());
-            content_file_2 = sourceCodeStorageService.load(temp.getFilename());
+            astPlagiarism.setup(document.getFilename(), temp.getFilename());
+            result = astPlagiarism.getRates() * 100;
         } else {
             throw new FileFormatException("File tidak didukung atau format file yang dibandingkan tidak sama");
         }
-
-        result = 100 - ((levenshtein.distance(content_file_1, content_file_2)) * 100);
 
         PlagiarismContent plagiarismContent = new PlagiarismContent();
         plagiarismContent.setDocument1(document);

@@ -71,8 +71,8 @@ public class AssignmentServiceImpl implements AssignmentService {
 
     @Override @Transactional
     public List<Document> fulfillAssignment(String idAssignment, String idPractican, MultipartFile[] file, String idDocument) throws FileFormatException {
-        String extension = FilenameUtils.getExtension(file[0].getName());
-        String filename = FilenameUtils.removeExtension(file[0].getName());
+        String extension = FilenameUtils.getExtension(file[0].getOriginalFilename());
+        String filename = FilenameUtils.removeExtension(file[0].getOriginalFilename());
         ArrayList<String> doc = null;
         if (idDocument!=null && !idDocument.equals("")) {
             Document temp = documentRepository.findOne(idDocument);

@@ -1,6 +1,5 @@
 package rizki.practicum.learning.controller;
 
-import com.netflix.ribbon.proxy.annotation.Http;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,20 +7,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import rizki.practicum.learning.dto.ResponseObject;
 import rizki.practicum.learning.entity.Practicum;
-import rizki.practicum.learning.entity.User;
 import rizki.practicum.learning.service.course.CourseService;
 import rizki.practicum.learning.service.practicum.PracticumService;
-import rizki.practicum.learning.service.user.UserService;
-import rizki.practicum.learning.util.response.ResponseBuilder;
-
-import javax.validation.ConstraintViolationException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @RestController
 public class PracticumController {
@@ -44,7 +34,7 @@ public class PracticumController {
         limit = WebResponse.DEFAULT_PAGE_SIZE;
         Pageable pageable = new PageRequest(page,limit);
         Page<Practicum> practicums = practicumService.getAllPracticum(pageable);
-        WebResponse.checkNullObject(practicums);
+        WebResponse.verify(practicums);
         return practicums;
     }
 
@@ -59,7 +49,7 @@ public class PracticumController {
         practicum.setName(practicumName);
         practicum.setCourse(courseService.getCourse(idCourse));
         Practicum result = practicumService.addPracticum(practicum);
-        WebResponse.checkNullObject(result);
+        WebResponse.verify(result);
         return result;
     }
 
@@ -71,9 +61,9 @@ public class PracticumController {
             @ApiParam("Objek praktikum dalam json") @RequestBody Practicum practicum
     ){
         Practicum temp = practicumService.getPracticum(id);
-        WebResponse.checkNullObject(temp);
+        WebResponse.verify(temp);
         Practicum result = practicumService.updatePracticum(practicum);
-        WebResponse.checkNullObject(result);
+        WebResponse.verify(result);
         return result;
     }
 
@@ -85,7 +75,7 @@ public class PracticumController {
             @ApiParam("Id praktikum dalam string") @PathVariable("id") String id
     ){
         Practicum practicum = practicumService.getPracticum(id);
-        WebResponse.checkNullObject(practicum);
+        WebResponse.verify(practicum);
         practicumService.deletePracticum(practicum);
         return ResponseObject.builder()
                 .status(HttpStatus.OK.getReasonPhrase())
@@ -101,7 +91,7 @@ public class PracticumController {
             @PathVariable("iduser") String idUser
     ){
         Practicum practicum = practicumService.getPracticumByCoordinatorAssistance(idUser);
-        WebResponse.checkNullObject(practicum);
+        WebResponse.verify(practicum);
         return practicum;
     }
 }

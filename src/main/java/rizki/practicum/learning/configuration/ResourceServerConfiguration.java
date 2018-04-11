@@ -34,7 +34,6 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
         http.anonymous().disable()
                 .authorizeRequests()
                 .antMatchers("/").permitAll()
-                .antMatchers("/test").hasRole("kalab")
                 .and().exceptionHandling().accessDeniedHandler(new OAuth2AccessDeniedHandler());
     }
     @Override

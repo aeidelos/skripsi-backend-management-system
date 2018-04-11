@@ -1,7 +1,5 @@
 package rizki.practicum.learning.service.plagiarism;
 
-import info.debatty.java.stringsimilarity.Levenshtein;
-import info.debatty.java.stringsimilarity.NormalizedLevenshtein;
 import org.apache.xmlbeans.impl.piccolo.io.FileFormatException;
 import org.junit.*;
 import org.junit.runner.RunWith;
@@ -37,10 +35,13 @@ public class PlagiarismServiceRunnersTest {
     private DocumentRepository documentRepository;
 
     @Mock
+    private ASTPlagiarism astPlagiarism;
+
+    @Mock
     private PlagiarismContentRepository plagiarismContentRepository;
 
     @Mock
-    private Levenshtein levenshtein;
+    private Levensthein levensthein;
 
     @Captor
     private ArgumentCaptor<PlagiarismContent> plagiarismContentArgumentCaptor;
@@ -119,7 +120,8 @@ public class PlagiarismServiceRunnersTest {
 
         Mockito.when(sourceCodeStorageService.load(resource.getFilename())).thenReturn(resourceContent);
         Mockito.when(sourceCodeStorageService.load(comparator.getFilename())).thenReturn(comparatorContent);
-
+        Mockito.doNothing().when(astPlagiarism).setup(resource.getFilename(), comparator.getFilename());
+        Mockito.when(astPlagiarism.getRates()).thenReturn(100.0);
         Mockito.when(documentRepository.save(resource)).thenReturn(resource);
         Mockito.when(documentRepository.save(comparator)).thenReturn(comparator);
 
@@ -129,9 +131,6 @@ public class PlagiarismServiceRunnersTest {
         Mockito.when(plagiarismContentRepository.save(plagiarismContent)).thenReturn(plagiarismContent);
 
         plagiarismServiceRunners.documentCheckPlagiarism(resource,comparator);
-
-        Mockito.verify(sourceCodeStorageService).load(resource.getFilename());
-        Mockito.verify(sourceCodeStorageService).load(comparator.getFilename());
 
         Mockito.verify(documentRepository, Mockito.times(2)).
                 save(documentArgumentCaptor.capture());
@@ -168,6 +167,7 @@ public class PlagiarismServiceRunnersTest {
 
         Mockito.when(documentRepository.save(resource)).thenReturn(resource);
         Mockito.when(documentRepository.save(comparator)).thenReturn(comparator);
+        Mockito.when(levensthein.rates(resourceContent, comparatorContent)).thenReturn(100.0);
 
         PlagiarismContent plagiarismContent = PlagiarismContent.builder().id("PLAGCONTENT").assignment(assignment).
                 document1(resource).document2(resource).build();
@@ -183,7 +183,7 @@ public class PlagiarismServiceRunnersTest {
 
         PlagiarismContent plagiarismContentResult = plagiarismContentArgumentCaptor.getValue();
 
-        Mockito.verifyZeroInteractions(sourceCodeStorageService, documentRepository);
+        Mockito.verifyZeroInteractions(sourceCodeStorageService);
 
         Mockito.verifyNoMoreInteractions(documentStorageService, plagiarismContentRepository);
 
@@ -193,8 +193,8 @@ public class PlagiarismServiceRunnersTest {
 
     @Test
     public void documentCheckPlagiarism_DOC_TYPE_CODE_NOT_PLAGIARIZED_EXEC() throws Exception {
-        resource = Document.builder().id("RESID").assignment(assignment).filename("RES.java").markAsPlagiarized(false).grade(0.0).build();
-        comparator = Document.builder().id("COMID").assignment(assignment).filename("COM.java").markAsPlagiarized(false).grade(0.0).build();
+        resource = Document.builder().id("RESID").assignment(assignment).filename("media/RES.java").markAsPlagiarized(false).grade(0.0).build();
+        comparator = Document.builder().id("COMID").assignment(assignment).filename("media/COM.java").markAsPlagiarized(false).grade(0.0).build();
 
         String resourceContent = "this is my code written in java";
         String comparatorContent = "dont be impostor, you are liars";
@@ -208,12 +208,13 @@ public class PlagiarismServiceRunnersTest {
         PlagiarismContent plagiarismContent = PlagiarismContent.builder().id("PLAGCONTENT").assignment(assignment).
                 document1(resource).document2(resource).build();
 
+        Mockito.doNothing().when(astPlagiarism).setup(resource.getFilename(), comparator.getFilename());
+        Mockito.when(astPlagiarism.getRates()).thenReturn(0.0);
         Mockito.when(plagiarismContentRepository.save(plagiarismContent)).thenReturn(plagiarismContent);
 
         plagiarismServiceRunners.documentCheckPlagiarism(resource,comparator);
 
-        Mockito.verify(sourceCodeStorageService).load(resource.getFilename());
-        Mockito.verify(sourceCodeStorageService).load(comparator.getFilename());
+        Mockito.verify(astPlagiarism).getRates();
         Mockito.verify(plagiarismContentRepository).save(plagiarismContentArgumentCaptor.capture());
 
         PlagiarismContent plagiarismContentResult = plagiarismContentArgumentCaptor.getValue();
