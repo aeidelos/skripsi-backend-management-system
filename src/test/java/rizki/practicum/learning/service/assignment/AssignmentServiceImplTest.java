@@ -105,10 +105,6 @@ public class AssignmentServiceImplTest {
         documentStored.add(multipartFile.getName());
         ArrayList<Document> documentFileStored = new ArrayList<>();
         documentFileStored.add(document);
-        ArrayList<Document> documentOldStored = new ArrayList<>();
-        documentOldStored.add(documentOld);
-
-        Mockito.when(documentRepository.findOne(document.getId())).thenReturn(documentOld);
 
         Mockito.doNothing().when(storageService).delete(document.getId());
 
@@ -118,11 +114,6 @@ public class AssignmentServiceImplTest {
                 thenReturn(documentStored);
 
         Mockito.when(documentRepository.save(document)).thenReturn(document);
-        Mockito.when(documentRepository.findAllByAssignmentAndPractican(assignment, user)).thenReturn(documentOldStored);
-
-        Mockito.doNothing().when(plagiarismContentRepository).deleteAllByDocument1OrDocument2(any(Document.class),any(Document.class));
-
-        Mockito.doNothing().when(documentRepository).delete(any(Document.class));
 
         Mockito.doReturn(documentStored).when(assignmentService).documentCreator(documentStored, user.getId(), assignment.getId());
 
@@ -130,55 +121,6 @@ public class AssignmentServiceImplTest {
                 null);
 
         verify(documentStorageService).store(new MultipartFile[]{multipartFile}, "file");
-
-        verifyZeroInteractions(sourceCodeStorageService);
-        verifyNoMoreInteractions(documentStorageService, documentRepository, plagiarismContentRepository);
-
-        assertEquals(result, documentStored);
-    }
-
-    @Test
-    public void fulfillAssignment_TYPE_DOCUMENT_OVERRIDE_ASSIGNMENT_CONDITION() throws Exception {
-
-        multipartFile = new MockMultipartFile("file.docx","file.docx","application/msword", new FileInputStream(
-                new File("media/document/test/file.docx")));
-        document = Document.builder().id("DOCID").filename(multipartFile.getName()).practican(user).assignment(assignment).grade(0.0).markAsPlagiarized(false).build();
-        documentOld = document;
-        documentOld.setFilename("DOCOLDNAME");
-
-        ArrayList<String> documentStored = new ArrayList<>();
-        documentStored.add(multipartFile.getName());
-        ArrayList<Document> documentFileStored = new ArrayList<>();
-        documentFileStored.add(document);
-        ArrayList<Document> documentOldStored = new ArrayList<>();
-        documentOldStored.add(documentOld);
-
-        Mockito.when(documentRepository.findOne(document.getId())).thenReturn(documentOld);
-
-        Mockito.doNothing().when(storageService).delete(document.getId());
-
-        Mockito.when(userRepository.findOne(user.getId())).thenReturn(user);
-
-        Mockito.when(documentStorageService.store(new MultipartFile[]{multipartFile}, "file")).
-                thenReturn(documentStored);
-
-        Mockito.when(documentRepository.save(document)).thenReturn(document);
-        Mockito.when(documentRepository.findAllByAssignmentAndPractican(assignment, user)).thenReturn(documentOldStored);
-
-        Mockito.doNothing().when(plagiarismContentRepository).deleteAllByDocument1OrDocument2(any(Document.class),any(Document.class));
-
-        Mockito.doNothing().when(documentRepository).delete(any(Document.class));
-
-        Mockito.doReturn(documentStored).when(assignmentService).documentCreator(documentStored, user.getId(), assignment.getId());
-
-        List<Document> result = assignmentService.fulfillAssignment(assignment.getId(), user.getId(), new MultipartFile[]{multipartFile},
-                documentOld.getId());
-
-        verify(documentStorageService).store(new MultipartFile[]{multipartFile}, "file");
-        verify(documentRepository).findOne(document.getId());
-        verify(documentRepository).findAllByAssignmentAndPractican(assignment, user);
-        verify(plagiarismContentRepository).deleteAllByDocument1OrDocument2(any(Document.class), any(Document.class));
-        verify(documentRepository).delete(any(Document.class));
 
         verifyZeroInteractions(sourceCodeStorageService);
         verifyNoMoreInteractions(documentStorageService, documentRepository, plagiarismContentRepository);
@@ -199,10 +141,6 @@ public class AssignmentServiceImplTest {
         documentStored.add(multipartFile.getName());
         ArrayList<Document> documentFileStored = new ArrayList<>();
         documentFileStored.add(document);
-        ArrayList<Document> documentOldStored = new ArrayList<>();
-        documentOldStored.add(documentOld);
-
-        Mockito.when(documentRepository.findOne(document.getId())).thenReturn(documentOld);
 
         Mockito.doNothing().when(storageService).delete(document.getId());
 
@@ -212,11 +150,6 @@ public class AssignmentServiceImplTest {
                 thenReturn(documentStored);
 
         Mockito.when(documentRepository.save(document)).thenReturn(document);
-        Mockito.when(documentRepository.findAllByAssignmentAndPractican(assignment, user)).thenReturn(documentOldStored);
-
-        Mockito.doNothing().when(plagiarismContentRepository).deleteAllByDocument1OrDocument2(any(Document.class),any(Document.class));
-
-        Mockito.doNothing().when(documentRepository).delete(any(Document.class));
 
         Mockito.doReturn(documentStored).when(assignmentService).documentCreator(documentStored, user.getId(), assignment.getId());
 
@@ -231,55 +164,6 @@ public class AssignmentServiceImplTest {
         assertEquals(result, documentStored);
     }
 
-
-    @Test
-    public void fulfillAssignment_TYPE_CODE_OVERRIDE_ASSIGNMENT_CONDITION() throws Exception {
-
-        multipartFile = new MockMultipartFile("file.java","file.java","application/java", new FileInputStream(
-                new File("media/document/test/file.java")));
-        document = Document.builder().id("DOCID").filename(multipartFile.getName()).practican(user).assignment(assignment).grade(0.0).markAsPlagiarized(false).build();
-        documentOld = document;
-        documentOld.setFilename("DOCOLDNAME");
-
-        ArrayList<String> documentStored = new ArrayList<>();
-        documentStored.add(multipartFile.getName());
-        ArrayList<Document> documentFileStored = new ArrayList<>();
-        documentFileStored.add(document);
-        ArrayList<Document> documentOldStored = new ArrayList<>();
-        documentOldStored.add(documentOld);
-
-        Mockito.when(documentRepository.findOne(document.getId())).thenReturn(documentOld);
-
-        Mockito.doNothing().when(storageService).delete(document.getId());
-
-        Mockito.when(userRepository.findOne(user.getId())).thenReturn(user);
-
-        Mockito.when(sourceCodeStorageService.store(new MultipartFile[]{multipartFile}, "file")).
-                thenReturn(documentStored);
-
-        Mockito.when(documentRepository.save(document)).thenReturn(document);
-        Mockito.when(documentRepository.findAllByAssignmentAndPractican(assignment, user)).thenReturn(documentOldStored);
-
-        Mockito.doNothing().when(plagiarismContentRepository).deleteAllByDocument1OrDocument2(any(Document.class),any(Document.class));
-
-        Mockito.doNothing().when(documentRepository).delete(any(Document.class));
-
-        Mockito.doReturn(documentStored).when(assignmentService).documentCreator(documentStored, user.getId(), assignment.getId());
-
-        List<Document> result = assignmentService.fulfillAssignment(assignment.getId(), user.getId(), new MultipartFile[]{multipartFile},
-                documentOld.getId());
-
-        verify(sourceCodeStorageService).store(new MultipartFile[]{multipartFile}, "file");
-        verify(documentRepository).findOne(document.getId());
-        verify(documentRepository).findAllByAssignmentAndPractican(assignment, user);
-        verify(plagiarismContentRepository).deleteAllByDocument1OrDocument2(any(Document.class), any(Document.class));
-        verify(documentRepository).delete(any(Document.class));
-
-        verifyZeroInteractions(documentStorageService);
-        verifyNoMoreInteractions(sourceCodeStorageService, documentRepository, plagiarismContentRepository);
-
-        assertEquals(result, documentStored);
-    }
 
     @Test(expected = FileFormatException.class)
     public void fulfillAssignment_TYPE_UNDEFINED_NORMAL_CONDITION() throws Exception {
@@ -294,10 +178,6 @@ public class AssignmentServiceImplTest {
         documentStored.add(multipartFile.getName());
         ArrayList<Document> documentFileStored = new ArrayList<>();
         documentFileStored.add(document);
-        ArrayList<Document> documentOldStored = new ArrayList<>();
-        documentOldStored.add(documentOld);
-
-        Mockito.when(documentRepository.findOne(document.getId())).thenReturn(documentOld);
 
         Mockito.doNothing().when(storageService).delete(document.getId());
 
@@ -307,11 +187,6 @@ public class AssignmentServiceImplTest {
                 thenReturn(documentStored);
 
         Mockito.when(documentRepository.save(document)).thenReturn(document);
-        Mockito.when(documentRepository.findAllByAssignmentAndPractican(assignment, user)).thenReturn(documentOldStored);
-
-        Mockito.doNothing().when(plagiarismContentRepository).deleteAllByDocument1OrDocument2(any(Document.class),any(Document.class));
-
-        Mockito.doNothing().when(documentRepository).delete(any(Document.class));
 
         Mockito.doReturn(documentStored).when(assignmentService).documentCreator(documentStored, user.getId(), assignment.getId());
 
@@ -319,41 +194,4 @@ public class AssignmentServiceImplTest {
                 null);
     }
 
-    @Test(expected = FileFormatException.class)
-    public void fulfillAssignment_TYPE_UNDEFINED_OVERRIDE_ASSIGNMENT_CONDITION() throws Exception {
-
-        multipartFile = new MockMultipartFile("file.war","file.war","application/java", new FileInputStream(
-                new File("media/document/test/file.war")));
-        document = Document.builder().id("DOCID").filename(multipartFile.getName()).practican(user).assignment(assignment).grade(0.0).markAsPlagiarized(false).build();
-        documentOld = document;
-        documentOld.setFilename("DOCOLDNAME");
-
-        ArrayList<String> documentStored = new ArrayList<>();
-        documentStored.add(multipartFile.getName());
-        ArrayList<Document> documentFileStored = new ArrayList<>();
-        documentFileStored.add(document);
-        ArrayList<Document> documentOldStored = new ArrayList<>();
-        documentOldStored.add(documentOld);
-
-        Mockito.when(documentRepository.findOne(document.getId())).thenReturn(documentOld);
-
-        Mockito.doNothing().when(storageService).delete(document.getId());
-
-        Mockito.when(userRepository.findOne(user.getId())).thenReturn(user);
-
-        Mockito.when(sourceCodeStorageService.store(new MultipartFile[]{multipartFile}, "file")).
-                thenReturn(documentStored);
-
-        Mockito.when(documentRepository.save(document)).thenReturn(document);
-        Mockito.when(documentRepository.findAllByAssignmentAndPractican(assignment, user)).thenReturn(documentOldStored);
-
-        Mockito.doNothing().when(plagiarismContentRepository).deleteAllByDocument1OrDocument2(any(Document.class),any(Document.class));
-
-        Mockito.doNothing().when(documentRepository).delete(any(Document.class));
-
-        Mockito.doReturn(documentStored).when(assignmentService).documentCreator(documentStored, user.getId(), assignment.getId());
-
-        assignmentService.fulfillAssignment(assignment.getId(), user.getId(), new MultipartFile[]{multipartFile},
-                documentOld.getId());
-    }
 }

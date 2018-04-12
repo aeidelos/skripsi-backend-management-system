@@ -4,7 +4,6 @@ package rizki.practicum.learning.service.plagiarism;
 */
 
 import com.github.javaparser.JavaParser;
-import com.github.javaparser.Position;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import org.springframework.stereotype.Component;
@@ -47,10 +46,8 @@ public class ASTPlagiarism {
     }
 
     public Double getRates() {
-        HashMap<Integer, Node> traversedOrigin = new HashMap();
-        HashMap<Integer, Node> traversedComparator = new HashMap();
         List<Node> plagiarized = getPlagiarism(originFileCompilation.getParentNodeForChildren().getChildNodes(),
-                comparatorFileCompilation.getChildNodes(), traversedOrigin, traversedComparator);
+                comparatorFileCompilation.getChildNodes());
         List<Node> perLine = plagiarized.stream().
                 filter(p -> p.getRange().get().begin.line == p.getRange().get().end.line)
                 .collect(Collectors.toList());
@@ -97,8 +94,7 @@ public class ASTPlagiarism {
         return (double) lineDetected.size() / maxSizeLine;
     }
 
-    private List<Node> getPlagiarism(List<Node> origin, List<Node> comparator, HashMap<Integer,Node>
-            traversedOrigin, HashMap<Integer,Node> traversedComparator) {
+    public List<Node> getPlagiarism(List<Node> origin, List<Node> comparator) {
         List<Node> plag = new ArrayList<>();
         List<Node> larger;
         List<Node> smaller;
@@ -117,11 +113,9 @@ public class ASTPlagiarism {
                     plag.add(smaller.get(i));
                 }else{
                     plag.addAll(getPlagiarism(smaller.get(i).getChildNodes(),
-                            larger.get(j).getChildNodes(), traversedOrigin, traversedComparator));
+                            larger.get(j).getChildNodes()));
                 }
-                traversedComparator.put(larger.get(j).hashCode(), larger.get(j));
             }
-            traversedOrigin.put(smaller.get(i).hashCode(), smaller.get(i));
         }
         return plag;
     }

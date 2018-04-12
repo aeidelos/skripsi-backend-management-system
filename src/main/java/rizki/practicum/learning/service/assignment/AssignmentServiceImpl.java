@@ -75,15 +75,7 @@ public class AssignmentServiceImpl implements AssignmentService {
         String filename = FilenameUtils.removeExtension(file[0].getOriginalFilename());
         ArrayList<String> doc = null;
         if (idDocument!=null && !idDocument.equals("")) {
-            Document temp = documentRepository.findOne(idDocument);
-            if (storageService!=null) storageService.delete(temp.getFilename());
-            List<Document> other = documentRepository.findAllByAssignmentAndPractican(temp.getAssignment(), userRepository.findOne(idPractican));
-            if (temp != null && other != null) {
-                other.stream().forEach(o -> {
-                        plagiarismContentRepository.deleteAllByDocument1OrDocument2(o, o);
-                        documentRepository.delete(o);
-                });
-            }
+            deletePreviousDocument(idDocument, idPractican);
         }
             if (Arrays.asList(FilesLocationConfig.Document.FILE_EXTENSION_ALLOWED).contains(extension)) {
                 doc = documentStorageService.store(file, filename);
@@ -93,6 +85,18 @@ public class AssignmentServiceImpl implements AssignmentService {
                 throw new FileFormatException("Format tidak didukung");
             }
         return documentCreator(doc, idPractican, idAssignment);
+    }
+
+    public void deletePreviousDocument(String idDocument, String idPractican) {
+        Document temp = documentRepository.findOne(idDocument);
+        if (storageService!=null) storageService.delete(temp.getFilename());
+        List<Document> other = documentRepository.findAllByAssignmentAndPractican(temp.getAssignment(), userRepository.findOne(idPractican));
+        if (temp != null && other != null) {
+            other.stream().forEach(o -> {
+                plagiarismContentRepository.deleteAllByDocument1OrDocument2(o, o);
+                documentRepository.delete(o);
+            });
+        }
     }
 
     public List<Document> documentCreator(List<String> filename, String idPractican, String idAssignment) {
