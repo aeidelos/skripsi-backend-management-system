@@ -190,42 +190,6 @@ public class PlagiarismServiceRunnersTest {
         Assert.assertTrue(plagiarismContentResult.getRate() < 99);
     }
 
-
-    @Test
-    public void documentCheckPlagiarism_DOC_TYPE_CODE_NOT_PLAGIARIZED_EXEC() throws Exception {
-        resource = Document.builder().id("RESID").assignment(assignment).filename("media/RES.java").markAsPlagiarized(false).grade(0.0).build();
-        comparator = Document.builder().id("COMID").assignment(assignment).filename("media/COM.java").markAsPlagiarized(false).grade(0.0).build();
-
-        String resourceContent = "this is my code written in java";
-        String comparatorContent = "dont be impostor, you are liars";
-
-        Mockito.when(sourceCodeStorageService.load(resource.getFilename())).thenReturn(resourceContent);
-        Mockito.when(sourceCodeStorageService.load(comparator.getFilename())).thenReturn(comparatorContent);
-
-        Mockito.when(documentRepository.save(resource)).thenReturn(resource);
-        Mockito.when(documentRepository.save(comparator)).thenReturn(comparator);
-
-        PlagiarismContent plagiarismContent = PlagiarismContent.builder().id("PLAGCONTENT").assignment(assignment).
-                document1(resource).document2(resource).build();
-
-        Mockito.doNothing().when(astPlagiarism).setup(resource.getFilename(), comparator.getFilename());
-        Mockito.when(astPlagiarism.getRates()).thenReturn(0.0);
-        Mockito.when(plagiarismContentRepository.save(plagiarismContent)).thenReturn(plagiarismContent);
-
-        plagiarismServiceRunners.documentCheckPlagiarism(resource,comparator);
-
-        Mockito.verify(astPlagiarism).getRates();
-        Mockito.verify(plagiarismContentRepository).save(plagiarismContentArgumentCaptor.capture());
-
-        PlagiarismContent plagiarismContentResult = plagiarismContentArgumentCaptor.getValue();
-
-        Mockito.verifyZeroInteractions(documentStorageService);
-
-        Mockito.verifyNoMoreInteractions(documentRepository, sourceCodeStorageService, plagiarismContentRepository);
-
-        Assert.assertTrue(plagiarismContentResult.getRate() < 99);
-    }
-
     @Test(expected = FileFormatException.class)
     public void documentCheckPlagiarism_UNSUPPORTED_FORMAT() throws Exception {
         resource = Document.builder().id("RESID").assignment(assignment).filename("RES.war").markAsPlagiarized(false).grade(0.0).build();

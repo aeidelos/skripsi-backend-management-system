@@ -115,7 +115,7 @@ public class AssignmentServiceImplTest {
 
         Mockito.when(documentRepository.save(document)).thenReturn(document);
 
-        Mockito.doReturn(documentStored).when(assignmentService).documentCreator(documentStored, user.getId(), assignment.getId());
+        Mockito.doReturn(documentFileStored).when(assignmentService).documentCreator(documentStored, user.getId(), assignment.getId());
 
         List<Document> result = assignmentService.fulfillAssignment(assignment.getId(), user.getId(), new MultipartFile[]{multipartFile},
                 null);
@@ -125,7 +125,7 @@ public class AssignmentServiceImplTest {
         verifyZeroInteractions(sourceCodeStorageService);
         verifyNoMoreInteractions(documentStorageService, documentRepository, plagiarismContentRepository);
 
-        assertEquals(result, documentStored);
+        assertEquals(result, documentFileStored);
     }
 
     @Test
