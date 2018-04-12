@@ -3,6 +3,7 @@ package rizki.practicum.learning.service.plagiarism;
     Created by : Rizki Maulana Akbar, On 03 - 2018 ;
 */
 
+import org.apache.xmlbeans.impl.piccolo.io.FileFormatException;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnit;
@@ -86,35 +87,6 @@ public class IntegrationPlagiarismServiceRunnersTest {
             comparator_code_plagiarized;
 
     private List<PlagiarismContent> plagiarismContents = new ArrayList<>();
-
-    @Test
-    public void run_DOCUMENT_ALONE() throws Exception {
-        User u1 = User.builder().name("UDA").password("XP").identity("UDA")
-                .email("uda@rizki.com").active(true).photo("").build();
-        this.user_document_alone = userRepository.save(u1);
-
-        Assignment a1 = Assignment.builder().description("ADA").fileAllowed("document").build();
-        this.assignment_alone = assignmentRepository.save(a1);
-
-        Document d1 = Document.builder().assignment(this.assignment_alone).grade(0.0)
-                .practican(this.user_document_alone)
-                .markAsPlagiarized(false)
-                .filename("media/integration_test/document/user_document_unique.docx")
-                .build();
-
-        this.document_alone = documentRepository.save(d1);
-
-        Document document = this.document_alone;
-
-        List<Document> documents = new ArrayList<>();
-        documents.add(document);
-
-        plagiarismServiceRunners.setDocument(documents);
-        plagiarismServiceRunners.run();
-
-        Assert.assertTrue(this.checkPlagiarismRate(document) == 0.0);
-        Assert.assertTrue(this.checkIsEmptyPlagiarismContent(document));
-    }
 
     @Test
     public void run_DOCUMENT_PLAGIARIZED() throws Exception {
@@ -201,8 +173,8 @@ public class IntegrationPlagiarismServiceRunnersTest {
         Assert.assertFalse(this.checkIsEmptyPlagiarismContent(document));
     }
 
-    @Test
-    public void run_CODE_PLAGIARISM() throws Exception {
+    @Test(expected = FileFormatException.class)
+    public void run_CODE_UNEXPECTED_FORMAT() throws Exception {
 
         User u4 = User.builder().name("UCP").password("XP").identity("UCP")
                 .email("ucp@rizki.com").active(true).photo("").build();
@@ -219,7 +191,7 @@ public class IntegrationPlagiarismServiceRunnersTest {
         Document d4 = Document.builder().assignment(this.assignment_source_code_plagiarized).grade(0.0)
                 .practican(this.user_source_code_plagiarized)
                 .markAsPlagiarized(false)
-                .filename("media/integration_test/code/code_plagiarized.java")
+                .filename("media/integration_test/code/code_unique.war")
                 .build();
 
 
@@ -240,9 +212,6 @@ public class IntegrationPlagiarismServiceRunnersTest {
 
         plagiarismServiceRunners.setDocument(documents);
         plagiarismServiceRunners.run();
-
-        Assert.assertTrue(this.checkPlagiarismRate(document) != 0.0);
-        Assert.assertFalse(this.checkIsEmptyPlagiarismContent(document));
     }
 
     @Test
