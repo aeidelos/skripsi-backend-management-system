@@ -120,8 +120,8 @@ public class PlagiarismServiceRunnersTest {
 
         Mockito.when(sourceCodeStorageService.load(resource.getFilename())).thenReturn(resourceContent);
         Mockito.when(sourceCodeStorageService.load(comparator.getFilename())).thenReturn(comparatorContent);
-        Mockito.doNothing().when(astPlagiarism).setup(resource.getFilename(), comparator.getFilename());
-        Mockito.when(astPlagiarism.getRates()).thenReturn(100.0);
+        // Mockito.doNothing().when(astPlagiarism).setup(resource.getFilename(), comparator.getFilename());
+        // Mockito.when(astPlagiarism.getRates()).thenReturn(100.0);
         Mockito.when(documentRepository.save(resource)).thenReturn(resource);
         Mockito.when(documentRepository.save(comparator)).thenReturn(comparator);
 

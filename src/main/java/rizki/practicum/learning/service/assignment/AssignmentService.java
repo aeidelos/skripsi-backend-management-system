@@ -36,7 +36,7 @@ public interface AssignmentService {
 
     List<Document> getAllDocumentsWithinSameAssignment(@NotNull String idDocument);
 
-    void setGradeAssignment(@NotNull @NotBlank String idDocument, @NotNull @NotEmpty int grade);
+    void setGradeAssignment(@NotNull @NotBlank String idDocument, int grade);
 
     Map<String, Object> getDashboardState(@NotNull String idUser);
 

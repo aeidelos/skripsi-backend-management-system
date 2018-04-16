@@ -15,11 +15,13 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Component
 public class ASTPlagiarism {
     CompilationUnit originFileCompilation;
     CompilationUnit comparatorFileCompilation;
-    public void setup(String file1, String file2) throws IOException {
+    List<Node> nodeList = new ArrayList<>();
+    Double rates = 0.0;
+
+    public ASTPlagiarism(String file1, String file2) throws IOException {
         String originCode = new String(Files.readAllBytes(Paths.get(file1)), Charset.defaultCharset());
         originCode = originCode.replaceAll("(?m)^[ \t]*\r?\n", "");
         originFileCompilation = JavaParser.parse(originCode);
@@ -43,9 +45,10 @@ public class ASTPlagiarism {
         for(int i = 0; i< comparatorImport; i++) {
             comparatorFileCompilation.getImports().removeFirst();
         }
+        rates = getRates(originFileCompilation.getChildNodes(), comparatorFileCompilation.getChildNodes()) * 100.0;
     }
 
-    public Double getRates() {
+    public Double getRates(List<Node> origin, List<Node> comparator) {
         List<Node> plagiarized = getPlagiarism(originFileCompilation.getParentNodeForChildren().getChildNodes(),
                 comparatorFileCompilation.getChildNodes());
         List<Node> perLine = plagiarized.stream().
@@ -83,11 +86,11 @@ public class ASTPlagiarism {
             }
         });
 
-        int originSizeLine = originFileCompilation.getRange().get().end.line -
-                originFileCompilation.getRange().get().begin.line;
+        int originSizeLine = origin.get(0).getRange().get().end.line -
+                origin.get(0).getRange().get().begin.line;
 
-        int comparatorSizeLine = comparatorFileCompilation.getRange().get().end.line -
-                comparatorFileCompilation.getRange().get().begin.line;
+        int comparatorSizeLine = comparator.get(0).getRange().get().end.line -
+                comparator.get(0).getRange().get().begin.line;
 
         int maxSizeLine = originSizeLine > comparatorSizeLine ? originSizeLine : comparatorSizeLine;
 
@@ -96,28 +99,18 @@ public class ASTPlagiarism {
 
     public List<Node> getPlagiarism(List<Node> origin, List<Node> comparator) {
         List<Node> plag = new ArrayList<>();
-        List<Node> larger;
-        List<Node> smaller;
-        if(origin.size() != comparator.size()) {
-            larger = origin.size() > comparator.size() ? origin : comparator;
-            smaller = origin.size() < comparator.size() ? origin : comparator;
-        }else{
-            smaller = origin;
-            larger = comparator;
-        }
-        smaller.stream().sorted(Comparator.comparing(Node::hashCode));
-        larger.stream().sorted(Comparator.comparing(Node::hashCode));
-        for(int i = 0; i<smaller.size(); i++) {
-            for(int j = 0; j<larger.size(); j++) {
-                if(smaller.hashCode() == larger.hashCode()) {
-                    plag.add(smaller.get(i));
+        origin.stream().sorted(Comparator.comparing(Node::hashCode));
+        comparator.stream().sorted(Comparator.comparing(Node::hashCode));
+        for(int i = 0; i<origin.size(); i++) {
+            for(int j = 0; j<comparator.size(); j++) {
+                if(origin.hashCode() == comparator.hashCode()) {
+                    plag.add(origin.get(i));
                 }else{
-                    plag.addAll(getPlagiarism(smaller.get(i).getChildNodes(),
-                            larger.get(j).getChildNodes()));
+                    plag.addAll(getPlagiarism(origin.get(i).getChildNodes(),
+                            comparator.get(j).getChildNodes()));
                 }
             }
         }
         return plag;
     }
-
 }

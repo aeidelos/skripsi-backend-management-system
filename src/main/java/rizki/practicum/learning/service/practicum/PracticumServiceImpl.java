@@ -10,6 +10,7 @@ import rizki.practicum.learning.entity.Role;
 import rizki.practicum.learning.entity.User;
 import rizki.practicum.learning.repository.PracticumRepository;
 import rizki.practicum.learning.service.role.RoleDefinition;
+import rizki.practicum.learning.service.role.RoleService;
 import rizki.practicum.learning.service.user.UserService;
 
 import java.util.List;
@@ -23,6 +24,9 @@ public class PracticumServiceImpl implements PracticumService {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private RoleService roleService;
+
     @Override
     public Practicum addPracticum(Practicum practicum){
         return practicumRepository.save(practicum);
@@ -35,11 +39,37 @@ public class PracticumServiceImpl implements PracticumService {
 
     @Override
     public Practicum updatePracticum(Practicum practicum){
+        Practicum old = practicumRepository.findOne(practicum.getId());
+        Role role = roleService.getRole("koas");
+        if(old.getCoordinatorAssistance() != practicum.getCoordinatorAssistance()) {
+            User oldCoordinator = old.getCoordinatorAssistance();
+            if (oldCoordinator != null ) {
+                List<Role> tempRole = oldCoordinator.getRole();
+                tempRole.remove(role);
+                oldCoordinator.setRole(tempRole);
+                userService.updateUser(oldCoordinator);
+            }
+            User newCoordinator = practicum.getCoordinatorAssistance();
+            if (oldCoordinator != null ) {
+                List<Role> tempRole = newCoordinator.getRole();
+                tempRole.add(role);
+                newCoordinator.setRole(tempRole);
+                userService.updateUser(newCoordinator);
+            }
+        }
         return practicumRepository.save(practicum);
     }
 
     @Override
     public void deletePracticum(Practicum practicum) {
+        User oldCoordinator = practicum.getCoordinatorAssistance();
+        if (oldCoordinator != null ) {
+            Role role = roleService.getRole("koas");
+            List<Role> tempRole = oldCoordinator.getRole();
+            tempRole.remove(role);
+            oldCoordinator.setRole(tempRole);
+            userService.updateUser(oldCoordinator);
+        }
         practicumRepository.delete(practicum);
     }
 

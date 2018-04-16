@@ -54,9 +54,6 @@ public class PlagiarismServiceRunners implements Runnable {
     public PlagiarismServiceRunners() {
     }
 
-    @Autowired
-     private ASTPlagiarism astPlagiarism;
-
     public PlagiarismServiceRunners(List<Document> document) {
         this.document = document;
     }
@@ -96,18 +93,17 @@ public class PlagiarismServiceRunners implements Runnable {
             result = 100 - ((levensthein.rates(content_file_1, content_file_2)) * 100);
         } else if (Arrays.asList(FilesLocationConfig.SourceCode.FILE_EXTENSION_ALLOWED).contains(file_ext_1) &&
                 Arrays.asList(FilesLocationConfig.SourceCode.FILE_EXTENSION_ALLOWED).contains(file_ext_2)) {
-            astPlagiarism.setup(document.getFilename(), temp.getFilename());
-            result = astPlagiarism.getRates() * 100;
+            ASTPlagiarism astPlagiarism = new ASTPlagiarism(document.getFilename(), temp.getFilename());
+            result = astPlagiarism.rates;
         } else {
             throw new FileFormatException("File tidak didukung atau format file yang dibandingkan tidak sama");
         }
-
         PlagiarismContent plagiarismContent = new PlagiarismContent();
         plagiarismContent.setDocument1(document);
         plagiarismContent.setDocument2(temp);
         plagiarismContent.setRate(result);
         plagiarismContent.setAssignment(document.getAssignment());
-        if (result > 80) {
+        if (result > 80.0) {
             document.setMarkAsPlagiarized(true);
             temp.setMarkAsPlagiarized(true);
             documentRepository.save(document);

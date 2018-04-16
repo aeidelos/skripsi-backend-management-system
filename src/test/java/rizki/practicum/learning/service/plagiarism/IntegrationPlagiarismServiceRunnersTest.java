@@ -260,7 +260,7 @@ public class IntegrationPlagiarismServiceRunnersTest {
 
 
     private boolean checkIsEmptyPlagiarismContent (Document document) {
-        PlagiarismContent plagiarismContents = plagiarismContentRepository.findDistinctFirstByDocument1OrDocument2OrderByRate(document, document);
+        PlagiarismContent plagiarismContents = plagiarismContentRepository.findDistinctFirstByDocument1OrDocument2OrderByRateDesc(document, document);
         if (plagiarismContents == null) {
             return true;
         } else {
@@ -270,7 +270,7 @@ public class IntegrationPlagiarismServiceRunnersTest {
     }
 
     private double checkPlagiarismRate (Document document) {
-        PlagiarismContent plagiarismContent = plagiarismContentRepository.findDistinctFirstByDocument1OrDocument2OrderByRate(document, document);
+        PlagiarismContent plagiarismContent = plagiarismContentRepository.findDistinctFirstByDocument1OrDocument2OrderByRateDesc(document, document);
         if (plagiarismContent == null) {
             return 0.0;
         } else {

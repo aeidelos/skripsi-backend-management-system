@@ -9,7 +9,7 @@ import rizki.practicum.learning.entity.PlagiarismContent;
 @Repository
 public interface PlagiarismContentRepository extends JpaRepository<PlagiarismContent, String> {
     void deleteAllByDocument1OrDocument2(Document doc_1, Document doc_2);
-    PlagiarismContent findDistinctFirstByDocument1OrDocument2OrderByRate(Document doc1, Document doc2);
+    PlagiarismContent findDistinctFirstByDocument1OrDocument2OrderByRateDesc(Document doc1, Document doc2);
 
     @Query("SELECT AVG(P.rate) FROM PlagiarismContent P")
     float averagePlagiarismRates();

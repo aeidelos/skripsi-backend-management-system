@@ -14,7 +14,7 @@ public class Levensthein {
         int max = Math.max(s1.length(), s2.length());
         return max == 0 ? 0.0D : distance(s1, s2) / (double)max;
     }
-    private int distance(String s1, String s2) {
+    public int distance(String s1, String s2) {
         if (s1 == null) {
             throw new NullPointerException("s1 must not be null");
         } else if (s2 == null) {
@@ -35,7 +35,6 @@ public class Levensthein {
             }
             for (i = 0; i < s1.length(); ++i) {
                 v1[0] = i + 1;
-
                 for (int j = 0; j < s2.length(); ++j) {
                     int cost = 1;
                     if (s1.charAt(i) == s2.charAt(j)) {

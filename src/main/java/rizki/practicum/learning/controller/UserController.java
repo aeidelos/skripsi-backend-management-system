@@ -5,23 +5,16 @@ import io.swagger.annotations.ApiParam;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import rizki.practicum.learning.entity.Role;
 import rizki.practicum.learning.entity.User;
-import rizki.practicum.learning.exception.ExceptionMessage;
 import rizki.practicum.learning.service.role.RoleService;
 import rizki.practicum.learning.service.user.UserService;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 public class UserController {

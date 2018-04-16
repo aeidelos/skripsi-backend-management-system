@@ -14,6 +14,7 @@ import rizki.practicum.learning.repository.ClassroomRepository;
 import rizki.practicum.learning.service.role.RoleService;
 import rizki.practicum.learning.service.user.UserService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -46,9 +47,36 @@ public class ClassroomServiceImpl implements ClassroomService {
 
     @Override
     public Classroom updateClassroom(Classroom classroom){
+        Classroom old = classroomRepository.findOne(classroom.getId());
+        if (classroom.getAssistance().hashCode() != old.getAssistance().hashCode()) {
+            List<User> newClass = classroom.getAssistance();
+            List<User> oldClass = old.getAssistance();
+            List<User> removed = oldClass;
+            List<User> added = newClass;
+            removed.retainAll(newClass);
+            added.retainAll(oldClass);
+            Role role = roleService.getRole("asprak");
+            removed.stream().forEach(user -> {
+                List<Classroom> classrooms = classroomRepository.findAllByAssistanceContains(user);
+                if (classrooms.size() == 1) {
+                    List<Role> tempRole = user.getRole();
+                    tempRole.remove(role);
+                    user.setRole(tempRole);
+                    userService.updateUser(user);
+                }
+            });
+            added.stream().forEach(user -> {
+                List<Classroom> classrooms = classroomRepository.findAllByAssistanceContains(user);
+                if(classrooms.size() == 0) {
+                    List<Role> tempRole = user.getRole();
+                    tempRole.add(role);
+                    user.setRole(tempRole);
+                    userService.updateUser(user);
+                }
+            });
+        }
         return classroomRepository.save(classroom);
     }
-
 
     @Override
     public Classroom addAssistance(String idClassroom, String idAsssistance){
@@ -73,6 +101,18 @@ public class ClassroomServiceImpl implements ClassroomService {
 
     @Override
     public void deleteClassroom(String idClassroom) {
+        Classroom classroom = classroomRepository.findOne(idClassroom);
+        List<User> oldClass = classroom.getAssistance();
+        Role role = roleService.getRole("asprak");
+        oldClass.stream().forEach(user -> {
+            List<Classroom> classrooms = classroomRepository.findAllByAssistanceContains(user);
+            if (classrooms.size() == 1) {
+                List<Role> tempRole = user.getRole();
+                tempRole.remove(role);
+                user.setRole(tempRole);
+                userService.updateUser(user);
+            }
+        });
         classroomRepository.delete(idClassroom);
     }
 

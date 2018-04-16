@@ -140,7 +140,7 @@ public class AssignmentServiceImpl implements AssignmentService {
         Map<String, List<DocumentPlagiarism>> result = new HashMap<>();
         for (Document filter : documents) {
             ArrayList<DocumentPlagiarism> temp = null;
-            DocumentPlagiarism docPlagTemp = new DocumentPlagiarism(filter,plagiarismContentRepository.findDistinctFirstByDocument1OrDocument2OrderByRate(filter,filter));
+            DocumentPlagiarism docPlagTemp = new DocumentPlagiarism(filter,plagiarismContentRepository.findDistinctFirstByDocument1OrDocument2OrderByRateDesc(filter,filter));
             if (result == null || !result.containsKey(filter.getPractican().getId())) {
                 temp = new ArrayList<>();
                 temp.add(docPlagTemp);
