@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 public class ASTPlagiarism {
     CompilationUnit originFileCompilation;
     CompilationUnit comparatorFileCompilation;
-    List<Node> nodeList = new ArrayList<>();
     Double rates = 0.0;
 
     public ASTPlagiarism(String file1, String file2) throws IOException {
@@ -48,6 +47,24 @@ public class ASTPlagiarism {
         rates = getRates(originFileCompilation.getChildNodes(), comparatorFileCompilation.getChildNodes()) * 100.0;
     }
 
+
+    public List<Node> getPlagiarism(List<Node> origin, List<Node> comparator) {
+        List<Node> plag = new ArrayList<>();
+        origin.stream().sorted(Comparator.comparing(Node::hashCode));
+        comparator.stream().sorted(Comparator.comparing(Node::hashCode));
+        for(int i = 0; i<origin.size(); i++) {
+            for(int j = 0; j<comparator.size(); j++) {
+                if(origin.hashCode() == comparator.hashCode()) {
+                    plag.add(origin.get(i));
+                }else{
+                    plag.addAll(getPlagiarism(origin.get(i).getChildNodes(),
+                            comparator.get(j).getChildNodes()));
+                }
+            }
+        }
+        return plag;
+    }
+
     public Double getRates(List<Node> origin, List<Node> comparator) {
         List<Node> plagiarized = getPlagiarism(originFileCompilation.getParentNodeForChildren().getChildNodes(),
                 comparatorFileCompilation.getChildNodes());
@@ -65,7 +82,6 @@ public class ASTPlagiarism {
             int counter;
             Node node;
         }
-
         HashMap<Integer, NodeCounter> counterLine = new HashMap<>();
         perLine.stream().forEach(node -> {
             int lineTemp = node.getRange().get().begin.line;
@@ -97,20 +113,4 @@ public class ASTPlagiarism {
         return (double) lineDetected.size() / maxSizeLine;
     }
 
-    public List<Node> getPlagiarism(List<Node> origin, List<Node> comparator) {
-        List<Node> plag = new ArrayList<>();
-        origin.stream().sorted(Comparator.comparing(Node::hashCode));
-        comparator.stream().sorted(Comparator.comparing(Node::hashCode));
-        for(int i = 0; i<origin.size(); i++) {
-            for(int j = 0; j<comparator.size(); j++) {
-                if(origin.hashCode() == comparator.hashCode()) {
-                    plag.add(origin.get(i));
-                }else{
-                    plag.addAll(getPlagiarism(origin.get(i).getChildNodes(),
-                            comparator.get(j).getChildNodes()));
-                }
-            }
-        }
-        return plag;
-    }
 }

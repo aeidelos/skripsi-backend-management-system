@@ -1,5 +1,6 @@
 package rizki.practicum.learning.service.assignment;
 
+import com.google.common.util.concurrent.AtomicDouble;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.xmlbeans.impl.piccolo.io.FileFormatException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,12 +10,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import rizki.practicum.learning.configuration.FilesLocationConfig;
 import rizki.practicum.learning.dto.DocumentPlagiarism;
+import rizki.practicum.learning.dto.ExportClassroom;
+import rizki.practicum.learning.dto.UserGrade;
 import rizki.practicum.learning.entity.*;
 import rizki.practicum.learning.repository.*;
 import rizki.practicum.learning.service.storage.StorageService;
 
 import javax.transaction.Transactional;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class AssignmentServiceImpl implements AssignmentService {
@@ -250,6 +254,40 @@ public class AssignmentServiceImpl implements AssignmentService {
 //            });
 //        });
         return null;
+    }
+
+    @Override
+    public List<ExportClassroom> exportGradeClassroom(String idClassroom) {
+        List<ExportClassroom> exportClassrooms = new ArrayList<>();
+        Classroom classroom = classroomRepository.findOne(idClassroom);
+        List<User> users = classroom.getPractican();
+        users.stream().sorted(Comparator.comparing(User::getIdentity));
+        List<Task> tasks = taskRepository.findAllByClassroom(classroom);
+        tasks.stream().sorted(Comparator.comparing(Task::getCreatedDate));
+        tasks.stream().forEach(task -> {
+            ExportClassroom exportClassroom = new ExportClassroom();
+            exportClassroom.setTask(task);
+            List<UserGrade> userGrades = new ArrayList<>();
+            users.stream().forEach(user -> {
+                AtomicDouble value = new AtomicDouble();
+                value.set(0);
+                task.getAssignments().stream().forEach(assignment -> {
+                    List<Document> documents = documentRepository.findAllByAssignmentAndPractican(assignment, user);
+                    if (documents.size() > 0) {
+                        AtomicDouble temp = new AtomicDouble();
+                        temp.set(0);
+                        documents.stream().forEach(doc -> {
+                            temp.set(temp.get() + doc.getGrade());
+                        });
+                        value.set((temp.get() + value.get())/documents.size());
+                    }
+                });
+                userGrades.add(UserGrade.builder().user(user).grade((double) value.get() / task.getAssignments().size()).build());
+            });
+            exportClassroom.setDocuments(userGrades);
+            exportClassrooms.add(exportClassroom);
+        });
+        return exportClassrooms;
     }
 
     @Override

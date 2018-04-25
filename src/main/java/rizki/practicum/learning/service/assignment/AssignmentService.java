@@ -2,10 +2,10 @@ package rizki.practicum.learning.service.assignment;
 
 import org.apache.xmlbeans.impl.piccolo.io.FileFormatException;
 import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.multipart.MultipartFile;
 import rizki.practicum.learning.dto.DocumentPlagiarism;
+import rizki.practicum.learning.dto.ExportClassroom;
 import rizki.practicum.learning.entity.Assignment;
 import rizki.practicum.learning.entity.Document;
 
@@ -42,4 +42,6 @@ public interface AssignmentService {
 
     Map<String, Map<String, Object>> getGradeDocumentByClassroom(@NotNull String idTask,
                                                                  @NotNull String idClassroom);
+
+    List<ExportClassroom> exportGradeClassroom(@NotNull @NotBlank String idClassroom);
 }

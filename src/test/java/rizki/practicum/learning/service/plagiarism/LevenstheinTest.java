@@ -44,7 +44,7 @@ public class LevenstheinTest {
         comparator = "same text here";
         int result = levensthein.distance(origin, comparator);
         Assert.assertEquals(origin.length(), comparator.length());
-        Assert.assertEquals(result, origin.length());
+        Assert.assertEquals(result, 0);
     }
 
     @Test
@@ -85,7 +85,7 @@ public class LevenstheinTest {
         origin = "a";
         comparator = "bce";
         int result = levensthein.distance(origin, comparator);
-        Assert.assertEquals(result,2 );
+        Assert.assertEquals(result,3);
     }
 
     @Test
@@ -93,7 +93,7 @@ public class LevenstheinTest {
         origin = "ikr";
         comparator = "ikan";
         int result = levensthein.distance(origin, comparator);
-        Assert.assertEquals(result, 3);
+        Assert.assertEquals(result, 2);
     }
 
 }

@@ -3,6 +3,7 @@ package rizki.practicum.learning.service.plagiarism;
     Created by : Rizki Maulana Akbar, On 01 - 2018 ;
 */
 
+import com.github.javaparser.ParseProblemException;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.io.FilenameUtils;
@@ -93,8 +94,13 @@ public class PlagiarismServiceRunners implements Runnable {
             result = 100 - ((levensthein.rates(content_file_1, content_file_2)) * 100);
         } else if (Arrays.asList(FilesLocationConfig.SourceCode.FILE_EXTENSION_ALLOWED).contains(file_ext_1) &&
                 Arrays.asList(FilesLocationConfig.SourceCode.FILE_EXTENSION_ALLOWED).contains(file_ext_2)) {
-            ASTPlagiarism astPlagiarism = new ASTPlagiarism(document.getFilename(), temp.getFilename());
-            result = astPlagiarism.rates;
+            ASTPlagiarism astPlagiarism = null;
+            try {
+                astPlagiarism = new ASTPlagiarism(document.getFilename(), temp.getFilename());
+                result = astPlagiarism.rates;
+            } catch (ParseProblemException e) {
+                result = -1;
+            }
         } else {
             throw new FileFormatException("File tidak didukung atau format file yang dibandingkan tidak sama");
         }

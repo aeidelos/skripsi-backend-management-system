@@ -30,4 +30,6 @@ public interface DocumentRepository extends PagingAndSortingRepository<Document,
     int countDistinctByMarkAsPlagiarizedIsTrue();
 
     List<Document> findAllByPracticanIn(List<User> users);
+
+    List<Document> findAllByPractican(User user);
 }

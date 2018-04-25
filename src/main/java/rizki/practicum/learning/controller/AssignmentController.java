@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import rizki.practicum.learning.dto.DocumentPlagiarism;
+import rizki.practicum.learning.dto.ExportClassroom;
 import rizki.practicum.learning.dto.ResponseObject;
 import rizki.practicum.learning.entity.Assignment;
 import rizki.practicum.learning.entity.Document;
@@ -158,6 +159,14 @@ public class AssignmentController {
             @PathVariable("id") String idUser
     ) {
         return WebResponse.verify(assignmentService.getDashboardState(idUser));
+    }
+
+    @ApiOperation(value= "mengexport seluruh nilai")
+    @GetMapping(value = "/assignment/export/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public @ResponseBody
+    List<ExportClassroom> getClassroomExported(@PathVariable("id") String idClassroom) {
+        return WebResponse.verify(assignmentService.exportGradeClassroom(idClassroom));
     }
 
 
