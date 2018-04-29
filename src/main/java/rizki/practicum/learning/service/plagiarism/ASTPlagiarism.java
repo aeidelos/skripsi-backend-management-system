@@ -52,10 +52,13 @@ public class ASTPlagiarism {
         List<Node> plag = new ArrayList<>();
         origin.stream().sorted(Comparator.comparing(Node::hashCode));
         comparator.stream().sorted(Comparator.comparing(Node::hashCode));
+        int inc = 0;
         for(int i = 0; i<origin.size(); i++) {
-            for(int j = 0; j<comparator.size(); j++) {
-                if(origin.hashCode() == comparator.hashCode()) {
+            for(int j = inc; j<comparator.size(); j++) {
+                if(origin.get(i).hashCode() == comparator.get(j).hashCode()) {
                     plag.add(origin.get(i));
+                    inc++;
+                    break;
                 }else{
                     plag.addAll(getPlagiarism(origin.get(i).getChildNodes(),
                             comparator.get(j).getChildNodes()));

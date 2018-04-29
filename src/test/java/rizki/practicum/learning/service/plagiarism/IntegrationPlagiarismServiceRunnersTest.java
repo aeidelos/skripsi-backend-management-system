@@ -3,6 +3,7 @@ package rizki.practicum.learning.service.plagiarism;
     Created by : Rizki Maulana Akbar, On 03 - 2018 ;
 */
 
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.xmlbeans.impl.piccolo.io.FileFormatException;
 import org.junit.*;
 import org.junit.runner.RunWith;
@@ -24,6 +25,7 @@ import rizki.practicum.learning.repository.PlagiarismContentRepository;
 import rizki.practicum.learning.repository.UserRepository;
 import rizki.practicum.learning.service.storage.StorageService;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -89,7 +91,7 @@ public class IntegrationPlagiarismServiceRunnersTest {
     private List<PlagiarismContent> plagiarismContents = new ArrayList<>();
 
     @Test
-    public void run_DOCUMENT_PLAGIARIZED() throws Exception {
+    public void run_DOCUMENT_PLAGIARIZED() throws IOException, InvalidFormatException {
 
         User u2 = User.builder().name("UDP").password("XP").identity("UDP")
                 .email("udp@rizki.com").active(true).photo("").build();
@@ -125,14 +127,14 @@ public class IntegrationPlagiarismServiceRunnersTest {
         documents.add(document);
 
         plagiarismServiceRunners.setDocument(documents);
-        plagiarismServiceRunners.run();
+        plagiarismServiceRunners.documentCheckPlagiarism(this.document_plagiarized, this.comparator_document_plagiarized);
 
-        Assert.assertTrue(this.checkPlagiarismRate(document) != 0.0);
+        Assert.assertTrue(this.checkPlagiarismRate(document) >= 95.0);
         Assert.assertFalse(this.checkIsEmptyPlagiarismContent(document));
     }
 
     @Test
-    public void run_DOCUMENT_UNIQUE() throws Exception {
+    public void run_DOCUMENT_UNIQUE() throws IOException, InvalidFormatException {
 
         User u3 = User.builder().name("UDU").password("XP").identity("UDU")
                 .email("udu@rizki.com").active(true).photo("").build();
@@ -167,14 +169,15 @@ public class IntegrationPlagiarismServiceRunnersTest {
         documents.add(document);
 
         plagiarismServiceRunners.setDocument(documents);
-        plagiarismServiceRunners.run();
+        plagiarismServiceRunners.documentCheckPlagiarism(this.document_unique, this.comparator_document_unique);
 
         Assert.assertTrue(this.checkPlagiarismRate(document) != 0.0);
+        Assert.assertTrue(this.checkPlagiarismRate(document) != 100.0);
         Assert.assertFalse(this.checkIsEmptyPlagiarismContent(document));
     }
 
     @Test(expected = FileFormatException.class)
-    public void run_CODE_UNEXPECTED_FORMAT() throws Exception {
+    public void run_CODE_UNEXPECTED_FORMAT() throws IOException, InvalidFormatException {
 
         User u4 = User.builder().name("UCP").password("XP").identity("UCP")
                 .email("ucp@rizki.com").active(true).photo("").build();
@@ -198,7 +201,7 @@ public class IntegrationPlagiarismServiceRunnersTest {
         Document d9 = Document.builder().assignment(this.assignment_source_code_plagiarized).grade(0.0)
                 .practican(this.comparator_for_source_code_plagiarized)
                 .markAsPlagiarized(false)
-                .filename("media/integration_test/code/comparator_code_plagiarized.java")
+                .filename("media/integration_test/code/comparator_code_plagiarized.war")
                 .build();
 
         this.comparator_code_plagiarized = documentRepository.save(d9);
@@ -211,11 +214,11 @@ public class IntegrationPlagiarismServiceRunnersTest {
         documents.add(document);
 
         plagiarismServiceRunners.setDocument(documents);
-        plagiarismServiceRunners.run();
+        plagiarismServiceRunners.documentCheckPlagiarism(this.code_plagiarized, this.comparator_code_plagiarized);
     }
 
     @Test
-    public void run_CODE_UNIQUE() throws Exception {
+    public void run_CODE_UNIQUE() throws IOException, InvalidFormatException {
 
         User u5 = User.builder().name("UCU").password("XP").identity("UCU")
                 .email("ucu@rizki.com").active(true).photo("").build();
@@ -252,7 +255,7 @@ public class IntegrationPlagiarismServiceRunnersTest {
         documents.add(document);
 
         plagiarismServiceRunners.setDocument(documents);
-        plagiarismServiceRunners.run();
+        plagiarismServiceRunners.documentCheckPlagiarism(this.code_unique, this.comparator_code_unique);
 
         Assert.assertTrue(this.checkPlagiarismRate(document) != 0.0);
         Assert.assertFalse(this.checkIsEmptyPlagiarismContent(document));

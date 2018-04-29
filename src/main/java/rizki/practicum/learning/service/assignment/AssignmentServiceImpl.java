@@ -210,7 +210,7 @@ public class AssignmentServiceImpl implements AssignmentService {
     public Map<String, Object> getDashboardState(String idUser) {
         User user = userRepository.findOne(idUser);
         Map<String, Object> result = new HashMap<>();
-        float plagiarize = documentRepository.countDocumentsByMarkAsPlagiarizedIsTrue();
+        float plagiarize = documentRepository.countDocumentsByMarkAsPlagiarizedIsTrueAndPractican(userRepository.findOne(idUser));
         float total = documentRepository.count();
         float average_plagiarism = (plagiarize / total);
         result.put("average_plagiarism", average_plagiarism);
@@ -239,21 +239,6 @@ public class AssignmentServiceImpl implements AssignmentService {
             }
         }
         return result;
-    }
-
-    @Override
-    public Map<String, Map<String, Object>> getGradeDocumentByClassroom(String idTask, String idClassroom) {
-//        Map<String, Map<String, List<DocumentPlagiarism>>> documents = getDocumentByClassroom(idTask, idClassroom);
-//        Map<String, Map<String, Double>> result = new HashMap<>();
-//        documents.forEach((key, value) -> {
-//            Map<String, Double> temp = new HashMap<>();
-//            value.forEach((keyIn, valueIn) -> {
-//                int sum = valueIn.stream().mapToInt(d -> (int) d.getDocument().getGrade()).sum();
-//                int avg = sum / valueIn.size();
-//                temp.put()
-//            });
-//        });
-        return null;
     }
 
     @Override
@@ -288,6 +273,13 @@ public class AssignmentServiceImpl implements AssignmentService {
             exportClassrooms.add(exportClassroom);
         });
         return exportClassrooms;
+    }
+
+    @Override
+    public void setStatusPlagiarismDocument(String idDocument, boolean status) {
+        Document document = documentRepository.findOne(idDocument);
+        document.setMarkAsPlagiarized(status);
+        documentRepository.save(document);
     }
 
     @Override

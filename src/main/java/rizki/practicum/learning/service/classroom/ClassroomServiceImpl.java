@@ -15,6 +15,7 @@ import rizki.practicum.learning.service.role.RoleService;
 import rizki.practicum.learning.service.user.UserService;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -53,14 +54,14 @@ public class ClassroomServiceImpl implements ClassroomService {
             List<User> oldClass = old.getAssistance();
             List<User> removed = oldClass;
             List<User> added = newClass;
-            removed.retainAll(newClass);
-            added.retainAll(oldClass);
+            removed.removeAll(newClass);
+            added.removeAll(oldClass);
             Role role = roleService.getRole("asprak");
             removed.stream().forEach(user -> {
                 List<Classroom> classrooms = classroomRepository.findAllByAssistanceContains(user);
                 if (classrooms.size() == 1) {
                     List<Role> tempRole = user.getRole();
-                    tempRole.remove(role);
+                    tempRole.removeAll(Collections.singleton(role));
                     user.setRole(tempRole);
                     userService.updateUser(user);
                 }
@@ -69,9 +70,11 @@ public class ClassroomServiceImpl implements ClassroomService {
                 List<Classroom> classrooms = classroomRepository.findAllByAssistanceContains(user);
                 if(classrooms.size() == 0) {
                     List<Role> tempRole = user.getRole();
-                    tempRole.add(role);
-                    user.setRole(tempRole);
-                    userService.updateUser(user);
+                    if(!tempRole.contains(role)) {
+                        tempRole.add(role);
+                        user.setRole(tempRole);
+                        userService.updateUser(user);
+                    }
                 }
             });
         }

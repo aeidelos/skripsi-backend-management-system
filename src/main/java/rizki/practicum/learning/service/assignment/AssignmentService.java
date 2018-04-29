@@ -40,8 +40,7 @@ public interface AssignmentService {
 
     Map<String, Object> getDashboardState(@NotNull String idUser);
 
-    Map<String, Map<String, Object>> getGradeDocumentByClassroom(@NotNull String idTask,
-                                                                 @NotNull String idClassroom);
-
     List<ExportClassroom> exportGradeClassroom(@NotNull @NotBlank String idClassroom);
+
+    void setStatusPlagiarismDocument(String idDocument, boolean status);
 }

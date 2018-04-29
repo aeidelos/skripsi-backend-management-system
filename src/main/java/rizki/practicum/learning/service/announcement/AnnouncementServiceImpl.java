@@ -50,4 +50,9 @@ public class AnnouncementServiceImpl implements AnnouncementService{
             return announcementRepository.getAnnouncementForUser(userRepository.findOne(idUser));
         }
     }
+
+    @Override
+    public void delete(Announcement announcement) {
+        announcementRepository.delete(announcement);
+    }
 }

@@ -15,13 +15,10 @@ public interface DocumentRepository extends PagingAndSortingRepository<Document,
     List<Document> findByAssignmentAndPractican(Assignment assignment, User practican);
 
     List<Document> findAllByAssignmentIsInAndPracticanIsIn(List<Assignment> assignment, List<User> practican);
-    List<Document> findAllByAssignment(Assignment assignment);
 
     List<Document> findAllByAssignmentAndPracticanIsNot(Assignment assignment, User user);
 
     List<Document> findAllByAssignmentIsIn(List<Assignment> assignments);
-
-    int countDocumentsByMarkAsPlagiarizedIsTrue();
 
     int countDocumentsByMarkAsPlagiarizedIsTrueAndPractican(User user);
 
@@ -29,7 +26,4 @@ public interface DocumentRepository extends PagingAndSortingRepository<Document,
 
     int countDistinctByMarkAsPlagiarizedIsTrue();
 
-    List<Document> findAllByPracticanIn(List<User> users);
-
-    List<Document> findAllByPractican(User user);
 }

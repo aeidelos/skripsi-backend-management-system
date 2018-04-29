@@ -127,6 +127,21 @@ public class AssignmentController {
     }
 
     @ResponseStatus(HttpStatus.OK)
+    @PostMapping("/assignment/status/set")
+    @ApiOperation("Mengubah status plagiasi dokumen")
+    public @ResponseBody ResponseObject setStatusPlag(
+            @ApiParam("Id document dalam string") @RequestParam("idDocument") String idDocument,
+            @ApiParam("Status plagiasi (boolean)") @RequestParam("status") boolean status
+    ) {
+        assignmentService.setStatusPlagiarismDocument(idDocument, status);
+        return ResponseObject.builder()
+                .code(HttpStatus.OK.value())
+                .message("Status plagiasi berhasil diubah")
+                .status(HttpStatus.OK.getReasonPhrase())
+                .build();
+    }
+
+    @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "melakukan pengecekan dokumen yang sudah diunggah")
     @GetMapping(value = "/assignment/document/{idtask}/{iduser}", produces = {"application/json"})
     public @ResponseBody List<Document> checkDocumentAssigned(

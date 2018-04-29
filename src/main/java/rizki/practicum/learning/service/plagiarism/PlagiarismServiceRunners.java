@@ -91,7 +91,7 @@ public class PlagiarismServiceRunners implements Runnable {
             content_file_2 = documentStorageService.load(temp.getFilename());
             content_file_1.replaceAll("[^A-Za-z0-9]", "");
             content_file_2.replaceAll("[^A-Za-z0-9]", "");
-            result = 100 - ((levensthein.rates(content_file_1, content_file_2)) * 100);
+            result = 100 - ((levensthein.getRates(content_file_1, content_file_2)) * 100);
         } else if (Arrays.asList(FilesLocationConfig.SourceCode.FILE_EXTENSION_ALLOWED).contains(file_ext_1) &&
                 Arrays.asList(FilesLocationConfig.SourceCode.FILE_EXTENSION_ALLOWED).contains(file_ext_2)) {
             ASTPlagiarism astPlagiarism = null;
@@ -102,14 +102,14 @@ public class PlagiarismServiceRunners implements Runnable {
                 result = -1;
             }
         } else {
-            throw new FileFormatException("File tidak didukung atau format file yang dibandingkan tidak sama");
+            throw new FileFormatException("File tidak didukung");
         }
         PlagiarismContent plagiarismContent = new PlagiarismContent();
         plagiarismContent.setDocument1(document);
         plagiarismContent.setDocument2(temp);
         plagiarismContent.setRate(result);
         plagiarismContent.setAssignment(document.getAssignment());
-        if (result > 80.0) {
+        if (result == 100.0) {
             document.setMarkAsPlagiarized(true);
             temp.setMarkAsPlagiarized(true);
             documentRepository.save(document);

@@ -13,4 +13,6 @@ public interface AnnouncementService {
     Announcement save(Announcement announcement);
 
     Object get(String idClassroom, String idPracticum, String idUser);
+
+    void delete(Announcement announcement);
 }

@@ -2,11 +2,11 @@ package rizki.practicum.learning.controller;
 /*
     Created by : Rizki Maulana Akbar, On 01 - 2018 ;
 */
-
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import rizki.practicum.learning.dto.ResponseObject;
 import rizki.practicum.learning.entity.Announcement;
 import rizki.practicum.learning.service.announcement.AnnouncementService;
 
@@ -18,11 +18,26 @@ public class AnnouncementController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation("Insert atau Update pengumuman")
-    @PutMapping(value = "/announcement" , produces = {"application/json"}, consumes = {"application/json"})
+    @PutMapping(value = "/announcement" , produces = {"application/json"})
     public @ResponseBody Announcement addAnnouncement(
             @RequestBody Announcement announcement
     ){
         return WebResponse.verify(announcementService.save(announcement));
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation("Hapus pengumuman")
+    @DeleteMapping(value = "/announcement", produces = {"application/json"})
+    public @ResponseBody
+    ResponseObject delete (@RequestBody Announcement announcement) {
+        WebResponse.verify(announcement);
+        announcementService.delete(announcement);
+        return ResponseObject
+                .builder()
+                .code(HttpStatus.OK.value())
+                .message("Pengumuman berhasil dihapus")
+                .status(HttpStatus.OK.getReasonPhrase())
+                .build();
     }
 
     @ApiOperation("Mendapatkan pengumuman")
@@ -33,12 +48,6 @@ public class AnnouncementController {
             @RequestParam (value = "idPracticum", required = false) String idPracticum,
             @RequestParam (value = "idUser", required = false) String idUser
     ){
-        return announcementService.get(idClassroom, idPracticum, idUser);
+        return WebResponse.verify(announcementService.get(idClassroom, idPracticum, idUser));
     }
-
-
-
-
-
-
 }

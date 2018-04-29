@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class Levensthein {
 
-    public double rates(String s1, String s2) {
+    public double getRates(String s1, String s2) {
         int max = Math.max(s1.length(), s2.length());
         return max == 0 ? 0.0D : distance(s1, s2) / (double)max;
     }

@@ -61,9 +61,9 @@ public class UserController {
 
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation("Mendapatkan data user dari username/email")
-    @GetMapping("/check/user/{username}")
-    public User getCurrentUser(
-            @PathVariable(value = "username") String username
+    @PostMapping("/check/user/")
+    public @ResponseBody User getCurrentUser(
+            @RequestParam(value = "username") String username
     ){
         User result = userService.getUserByEmail(username);
         return WebResponse.verify(result);
@@ -72,7 +72,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation("Mengganti password pengguna")
     @PostMapping("/user/password/")
-    public User updatePassword(
+    public @ResponseBody User updatePassword(
             @ApiParam("Password Lama") @RequestParam("password") String password,
             @ApiParam("Password Baru") @RequestParam("newpassword") @Length(min = 8) String newPassword,
             @ApiParam("ID Pengguna") @RequestParam("id") String id
@@ -91,7 +91,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation("Mendapatkan kandidat koordinator asisten")
     @GetMapping(value = "/user/search/coordinator/{query}", produces = {"application/json"})
-    public @ResponseBody List<User> getCoordinateAssistanceCandidate(
+    public @ResponseBody List<User> getCandidateCoordinateAssistance(
            @ApiParam("Query search") @PathVariable(name = "query") String query
     ){
         List<User> users = userService.getCandidateCoordinatorAssistance(query);
@@ -102,7 +102,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation("Mendapatkan kandidat asisten")
     @GetMapping(value = "/user/search/assistance/{idclassroom}/{query}", produces = {"application/json"})
-    public @ResponseBody List<User> searchCandidateAssistance(
+    public @ResponseBody List<User> getCandidateAssistance(
             @ApiParam("ID classroom dalam format string")@PathVariable(name ="idclassroom") String idClassroom,
             @ApiParam("Query pencarian") @PathVariable(name = "query") String query
     ){
