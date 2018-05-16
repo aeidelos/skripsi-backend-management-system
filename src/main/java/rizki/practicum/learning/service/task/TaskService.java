@@ -24,5 +24,13 @@ public interface TaskService {
 
     List<Task> getTaskByPractican(@NotBlank String idPractican, @NotBlank String status);
 
+
+    /**
+     *
+     * @param mode value practicum, classroom and mix
+     * @param id id user
+     * @param time past or future
+     * @return
+     */
     List<Task> getTask(@NotBlank @NotNull String mode, @NotBlank @NotNull String id, @NotBlank @NotNull String time);
 }

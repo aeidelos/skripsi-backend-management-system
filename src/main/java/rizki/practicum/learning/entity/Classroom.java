@@ -38,6 +38,6 @@ public class Classroom {
     @ManyToMany
     private List<User> assistance;
 
-    @OneToMany
+    @ManyToMany
     private List<User> practican;
 }

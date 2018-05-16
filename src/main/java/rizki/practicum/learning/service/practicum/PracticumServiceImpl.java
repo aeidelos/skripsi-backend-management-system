@@ -50,11 +50,13 @@ public class PracticumServiceImpl implements PracticumService {
                 userService.updateUser(oldCoordinator);
             }
             User newCoordinator = practicum.getCoordinatorAssistance();
-            if (oldCoordinator != null ) {
+            if (newCoordinator != null ) {
                 List<Role> tempRole = newCoordinator.getRole();
-                tempRole.add(role);
-                newCoordinator.setRole(tempRole);
-                userService.updateUser(newCoordinator);
+                if(!tempRole.contains(role)) {
+                    tempRole.add(role);
+                    newCoordinator.setRole(tempRole);
+                    userService.updateUser(newCoordinator);
+                }
             }
         }
         return practicumRepository.save(practicum);

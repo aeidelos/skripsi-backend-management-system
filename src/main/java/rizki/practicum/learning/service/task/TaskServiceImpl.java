@@ -6,6 +6,7 @@ import rizki.practicum.learning.entity.*;
 import rizki.practicum.learning.repository.*;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Service
@@ -109,34 +110,52 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public List<Task> getTask(String mode, String id, String time) {
-        List<Task> tasks = null;
+        AtomicReference<List<Task>> tasks = new AtomicReference<>();
         Date date = new Date();
         if(mode.equalsIgnoreCase("practicum")){
             Practicum practicum = practicumRepository.findOne(id);
             if(time.equalsIgnoreCase("past")){
-                tasks = taskRepository.findAllByPracticumAndDueDateIsBefore(practicum,date);
+                tasks.set(taskRepository.findAllByPracticumAndDueDateIsBefore(practicum, date));
             }else{
-                tasks = taskRepository.findAllByPracticumAndDueDateIsAfter(practicum,date);
+                tasks.set(taskRepository.findAllByPracticumAndDueDateIsAfter(practicum, date));
             }
         }else if(mode.equalsIgnoreCase("classroom")){
             Classroom classroom = classroomRepository.findOne(id);
             if(time.equalsIgnoreCase("past")){
-                tasks = taskRepository.findAllByClassroomAndDueDateIsBefore(classroom, date);
+                tasks.set(taskRepository.findAllByClassroomAndDueDateIsBefore(classroom, date));
             }else{
-                tasks = taskRepository.findAllByClassroomAndDueDateIsAfter(classroom, date);
+                tasks.set(taskRepository.findAllByClassroomAndDueDateIsAfter(classroom, date));
             }
         }else if(mode.equalsIgnoreCase("mix")){
             Classroom classroom = classroomRepository.findOne(id);
             if(time.equalsIgnoreCase("past")){
-                tasks = taskRepository.findAllByClassroomAndDueDateIsBefore(classroom, date);
-                tasks.addAll(taskRepository.findAllByPracticumAndDueDateIsBefore(classroom.getPracticum(),date));
+                tasks.set(taskRepository.findAllByClassroomAndDueDateIsBefore(classroom, date));
+                tasks.get().addAll(taskRepository.findAllByPracticumAndDueDateIsBefore(classroom.getPracticum(),date));
+            } else if(time.equalsIgnoreCase("now")){
+                List<Classroom> classrooms = classroomRepository.findAllByPracticanContains(userRepository.findOne(id));
+                classrooms.stream().forEach(cl-> {
+                    List<Task> temp;
+                    if(tasks.get() == null) {
+                        temp = new ArrayList<>();
+                    }else {
+                        temp = tasks.get();
+                    }
+                    temp.addAll(taskRepository.findAllByClassroomAndDueDateIsAfter(cl, date));
+                    temp.addAll(taskRepository.findAllByPracticumAndDueDateIsAfter(cl.getPracticum(), date));
+                    tasks.set(temp);
+                });
+                List<Task> ta = tasks.get();
+                if(ta != null)
+                ta = tasks.get().stream().filter(task -> task.getDueDate().compareTo(date) != 0 &&
+                        task.getDueDate().compareTo(date) != 1 ).collect(Collectors.toList());
+                tasks.set(ta);
             }else{
-                tasks = taskRepository.findAllByClassroomAndDueDateIsAfter(classroom, date);
-                tasks.addAll(taskRepository.findAllByPracticumAndDueDateIsAfter(classroom.getPracticum(),date));
+                tasks.set(taskRepository.findAllByClassroomAndDueDateIsAfter(classroom, date));
+                tasks.get().addAll(taskRepository.findAllByPracticumAndDueDateIsAfter(classroom.getPracticum(),date));
             }
         }else{
             throw new IllegalArgumentException("Kategori tidak ditemukan");
         }
-        return tasks;
+        return tasks.get();
     }
 }

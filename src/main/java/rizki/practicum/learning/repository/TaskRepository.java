@@ -30,4 +30,5 @@ public interface TaskRepository extends PagingAndSortingRepository<Task, String>
     int countTasksByDueDateIsAfterAndClassroom_PracticanContainsOrPracticumIsIn(Date date, User user, List<Practicum> practicums);
 
     List<Task> findAllByClassroom(Classroom classroom);
+
 }

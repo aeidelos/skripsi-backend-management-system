@@ -34,7 +34,6 @@ public class UserController {
     public @ResponseBody User register(@ApiParam("Objek User dalam JSON") @RequestBody User user) {
         User newUser = user;
         Role role = roleService.getRole("mhs");
-        newUser.setPassword(passwordEncoder.encode(user.getPassword()));
         ArrayList<Role> roles = new ArrayList<>();
         roles.add(role);
         newUser.setPhoto(null);

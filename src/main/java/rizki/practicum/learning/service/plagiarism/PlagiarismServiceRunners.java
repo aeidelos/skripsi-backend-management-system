@@ -61,6 +61,7 @@ public class PlagiarismServiceRunners implements Runnable {
 
     @Override
     public void run() {
+        System.out.println("running plag search");
         List<Document> documentsList = documentRepository.findAllByAssignmentAndPracticanIsNot
                 (document.get(0).getAssignment(),document.get(0).getPractican()) ;
         for (Document doc : document) {

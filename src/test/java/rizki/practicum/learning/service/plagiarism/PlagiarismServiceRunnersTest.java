@@ -168,7 +168,7 @@ public class PlagiarismServiceRunnersTest {
 
         Mockito.when(documentRepository.save(resource)).thenReturn(resource);
         Mockito.when(documentRepository.save(comparator)).thenReturn(comparator);
-        Mockito.when(levensthein.rates(resourceContent, comparatorContent)).thenReturn(100.0);
+        Mockito.when(levensthein.getRates(resourceContent, comparatorContent)).thenReturn(100.0);
 
         PlagiarismContent plagiarismContent = PlagiarismContent.builder().id("PLAGCONTENT").assignment(assignment).
                 document1(resource).document2(resource).build();

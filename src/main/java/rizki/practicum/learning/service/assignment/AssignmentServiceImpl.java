@@ -15,6 +15,7 @@ import rizki.practicum.learning.dto.UserGrade;
 import rizki.practicum.learning.entity.*;
 import rizki.practicum.learning.repository.*;
 import rizki.practicum.learning.service.storage.StorageService;
+import rizki.practicum.learning.service.task.TaskService;
 
 import javax.transaction.Transactional;
 import java.util.*;
@@ -29,6 +30,9 @@ public class AssignmentServiceImpl implements AssignmentService {
 
     @Autowired
     private RoleRepository roleRepository;
+
+    @Autowired
+    private TaskService taskService;
 
     @Autowired
     @Qualifier("SourceCodeStorageService")
@@ -232,7 +236,9 @@ public class AssignmentServiceImpl implements AssignmentService {
             result.put("plagiarized", plagiarized);
             result.put("classroom", classroom);
             List<Announcement> announcements = announcementRepository.getAnnouncementForUser(user);
+            List<Task> tasks = taskService.getTask("mix",idUser, "now");
             result.put("announcement", announcements);
+            result.put("task", tasks);
             if (user.getRole().contains(roleRepository.findByInitial("asprak"))) {
                 int document_unchecked = documentRepository.countDocumentsByGradeEquals(0.0);
                 result.put("document_unchecked", document_unchecked);
