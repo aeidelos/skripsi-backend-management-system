@@ -9,6 +9,7 @@ import rizki.practicum.learning.dto.MyUserDetails;
 public class AuthorizationServiceImpl implements  AuthorizationService {
     @Override
     public MyUserDetails getUserDetails() {
+        // get user detail for authorization
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         MyUserDetails myUserDetails = (MyUserDetails) auth.getPrincipal();
         return myUserDetails;

@@ -6,6 +6,11 @@ import java.util.Date;
 
 @Component
 public class MD5 {
+    /**
+     * generate md5 value
+     * @param md5 input data
+     * @return hashed value
+     */
     public static String generate(String md5) {
         md5 += new Date().getTime();
         try {

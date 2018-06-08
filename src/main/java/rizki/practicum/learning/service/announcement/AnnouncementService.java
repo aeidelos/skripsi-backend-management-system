@@ -10,9 +10,25 @@ import java.util.List;
 
 @Validated
 public interface AnnouncementService {
+    /**
+     *
+     * @param announcement
+     * @return
+     */
     Announcement save(Announcement announcement);
 
+    /**
+     *
+     * @param idClassroom
+     * @param idPracticum
+     * @param idUser
+     * @return
+     */
     Object get(String idClassroom, String idPracticum, String idUser);
 
+    /**
+     *
+     * @param announcement
+     */
     void delete(Announcement announcement);
 }

@@ -94,8 +94,7 @@ public class UserController {
            @ApiParam("Query search") @PathVariable(name = "query") String query
     ){
         List<User> users = userService.getCandidateCoordinatorAssistance(query);
-        WebResponse.verify(users);
-        return users;
+        return WebResponse.verify(users);
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -106,8 +105,7 @@ public class UserController {
             @ApiParam("Query pencarian") @PathVariable(name = "query") String query
     ){
         List<User> users = userService.getCandidateAssistance(idClassroom,query);
-        WebResponse.verify(users);
-        return users;
+        return WebResponse.verify(users);
     }
 
 }

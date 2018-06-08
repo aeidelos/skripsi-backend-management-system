@@ -10,6 +10,7 @@ import java.util.List;
 
 @Repository
 public interface DocumentRepository extends PagingAndSortingRepository<Document, String> {
+
     List<Document> findAllByAssignmentAndPractican(Assignment assignment, User practican);
 
     List<Document> findByAssignmentAndPractican(Assignment assignment, User practican);
@@ -19,11 +20,11 @@ public interface DocumentRepository extends PagingAndSortingRepository<Document,
     List<Document> findAllByAssignmentAndPracticanIsNot(Assignment assignment, User user);
 
     List<Document> findAllByAssignmentIsIn(List<Assignment> assignments);
-
     int countDocumentsByMarkAsPlagiarizedIsTrueAndPractican(User user);
 
     int countDocumentsByGradeEquals(Double grade);
 
     int countDistinctByMarkAsPlagiarizedIsTrue();
+    void deleteAllByAssignmentIn(List<Assignment> assignments);
 
 }

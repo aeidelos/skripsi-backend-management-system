@@ -37,6 +37,7 @@ public class DocumentStorageServiceImpl extends StorageServiceImpl implements St
         String result = null;
         String file_ext = FileUtils.getExtension(filename);
         if(file_ext.equalsIgnoreCase("doc") || file_ext.equalsIgnoreCase("docx")){
+            // if doc read by xwpf
             FileInputStream fis = new FileInputStream(filename);
             XWPFDocument xdoc = new XWPFDocument(OPCPackage.open(fis));
             try (XWPFWordExtractor extractor = new XWPFWordExtractor(xdoc)) {
@@ -45,6 +46,7 @@ public class DocumentStorageServiceImpl extends StorageServiceImpl implements St
                 xdoc.close();
             }
         }else if(file_ext.equalsIgnoreCase("pdf")){
+            // if pdf read by pddoc
             File file = new File(filename);
             PDDocument document = PDDocument.load(file);
             PDFTextStripper pdfStripper = new PDFTextStripper();

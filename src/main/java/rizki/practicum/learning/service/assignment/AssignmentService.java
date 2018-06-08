@@ -17,9 +17,11 @@ import java.util.Map;
 @Validated
 public interface AssignmentService {
     Assignment addAssignment(String idTask, Assignment assignment) throws Exception;
+
     List<Assignment> getAssignmentByTask(@NotNull @NotBlank String idTask);
 
     Assignment addAssignment(@NotBlank @NotNull String idTask, @NotBlank @NotNull String description,@NotBlank @NotNull String fileAllowed);
+
     void deleteAssignment(@NotNull @NotBlank String idAssignment);
     List<Document> fulfillAssignment(@NotNull @NotBlank String idAssignment, @NotNull String idPractican,
                                      MultipartFile[] file, @Nullable String idDocument) throws FileFormatException;

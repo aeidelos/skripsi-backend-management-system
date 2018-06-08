@@ -10,7 +10,9 @@ import rizki.practicum.learning.entity.User;
 import java.util.List;
 
 public interface AnnouncementRepository extends PagingAndSortingRepository<Announcement, String> {
+
     Announcement findByClassroom(Classroom classroom);
+
 
     Announcement findByPracticum(Practicum practicum);
 

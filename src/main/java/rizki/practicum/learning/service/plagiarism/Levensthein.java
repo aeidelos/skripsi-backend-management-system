@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 public class Levensthein {
 
     public double getRates(String s1, String s2) {
+        // get rates distance
         int max = Math.max(s1.length(), s2.length());
         return max == 0 ? 0.0D : distance(s1, s2) / (double)max;
     }
@@ -30,6 +31,7 @@ public class Levensthein {
             int[] v1 = new int[s2.length() + 1];
 
             int i;
+            // initialization
             for (i = 0; i < v0.length;  i++) {
                 v0[i] = i ;
             }
@@ -39,7 +41,9 @@ public class Levensthein {
                     int cost = 1;
                     if (s1.charAt(i) == s2.charAt(j)) {
                         cost = 0;
+                        // if same character count as zero
                     }
+                    // get minimum distance
                     v1[j + 1] = Math.min(v1[j] + 1, Math.min(v0[j + 1] + 1, v0[j] + cost));
                 }
                 int[] vtemp = v0;

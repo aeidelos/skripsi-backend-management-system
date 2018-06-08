@@ -6,9 +6,11 @@ import org.springframework.stereotype.Repository;
 import rizki.practicum.learning.entity.Document;
 import rizki.practicum.learning.entity.PlagiarismContent;
 
+import javax.transaction.Transactional;
+
 @Repository
 public interface PlagiarismContentRepository extends JpaRepository<PlagiarismContent, String> {
-    void deleteAllByDocument1OrDocument2(Document doc_1, Document doc_2);
+    @Transactional void deleteAllByDocument1OrDocument2(Document doc_1, Document doc_2);
     PlagiarismContent findDistinctFirstByDocument1OrDocument2OrderByRateDesc(Document doc1, Document doc2);
 
     @Query("SELECT AVG(P.rate) FROM PlagiarismContent P")

@@ -35,7 +35,7 @@ public class ClassroomServiceImpl implements ClassroomService {
         Classroom duplicated = null;
         String enrollmentKey = null;
         do{
-            enrollmentKey = generateEnrollmentKey();
+            enrollmentKey = generateEnrollmentKey(); //generate key
             duplicated = classroomRepository.findByEnrollmentKey(enrollmentKey);
         }while(duplicated != null);
         classroom.setEnrollmentKey(enrollmentKey);
@@ -48,7 +48,9 @@ public class ClassroomServiceImpl implements ClassroomService {
 
     @Override
     public Classroom updateClassroom(Classroom classroom){
+        // updte classroom
         Classroom old = classroomRepository.findOne(classroom.getId());
+        // check if assistant is updated
         if (classroom.getAssistance().hashCode() != old.getAssistance().hashCode()) {
             List<User> newClass = classroom.getAssistance();
             List<User> oldClass = old.getAssistance();
@@ -58,6 +60,7 @@ public class ClassroomServiceImpl implements ClassroomService {
             added.removeAll(oldClass);
             Role role = roleService.getRole("asprak");
             removed.stream().forEach(user -> {
+                // removed state of assistant
                 List<Classroom> classrooms = classroomRepository.findAllByAssistanceContains(user);
                 if (classrooms.size() == 1) {
                     List<Role> tempRole = user.getRole();
@@ -67,6 +70,7 @@ public class ClassroomServiceImpl implements ClassroomService {
                 }
             });
             added.stream().forEach(user -> {
+                // add new assistant role
                 List<Classroom> classrooms = classroomRepository.findAllByAssistanceContains(user);
                 if(classrooms.size() == 0) {
                     List<Role> tempRole = user.getRole();
@@ -107,6 +111,7 @@ public class ClassroomServiceImpl implements ClassroomService {
         Classroom classroom = classroomRepository.findOne(idClassroom);
         List<User> oldClass = classroom.getAssistance();
         Role role = roleService.getRole("asprak");
+        // remove current state of assistant based on classroom
         oldClass.stream().forEach(user -> {
             List<Classroom> classrooms = classroomRepository.findAllByAssistanceContains(user);
             if (classrooms.size() == 1) {

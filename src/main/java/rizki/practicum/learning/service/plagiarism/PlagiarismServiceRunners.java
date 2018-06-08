@@ -61,13 +61,14 @@ public class PlagiarismServiceRunners implements Runnable {
 
     @Override
     public void run() {
-        System.out.println("running plag search");
+        // get document comparator
         List<Document> documentsList = documentRepository.findAllByAssignmentAndPracticanIsNot
                 (document.get(0).getAssignment(),document.get(0).getPractican()) ;
         for (Document doc : document) {
             if (documentsList == null || documentsList.size() > 0) {
                 for (Document temp : documentsList) {
                     try {
+                        // comparing document
                         this.documentCheckPlagiarism(doc, temp);
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -88,28 +89,37 @@ public class PlagiarismServiceRunners implements Runnable {
 
         if (Arrays.asList(FilesLocationConfig.Document.FILE_EXTENSION_ALLOWED).contains(file_ext_1) &&
                 Arrays.asList(FilesLocationConfig.Document.FILE_EXTENSION_ALLOWED).contains(file_ext_2)) {
+            // if file is document
             content_file_1 = documentStorageService.load(document.getFilename());
             content_file_2 = documentStorageService.load(temp.getFilename());
+            // remove all other alpha numerical character
             content_file_1.replaceAll("[^A-Za-z0-9]", "");
             content_file_2.replaceAll("[^A-Za-z0-9]", "");
+            // get result
             result = 100 - ((levensthein.getRates(content_file_1, content_file_2)) * 100);
         } else if (Arrays.asList(FilesLocationConfig.SourceCode.FILE_EXTENSION_ALLOWED).contains(file_ext_1) &&
                 Arrays.asList(FilesLocationConfig.SourceCode.FILE_EXTENSION_ALLOWED).contains(file_ext_2)) {
             ASTPlagiarism astPlagiarism = null;
+            // if file is code
             try {
+                // get rates
                 astPlagiarism = new ASTPlagiarism(document.getFilename(), temp.getFilename());
                 result = astPlagiarism.rates;
             } catch (ParseProblemException e) {
+                // if parse fail
                 result = -1;
             }
         } else {
+            // file is not supported
             throw new FileFormatException("File tidak didukung");
         }
+        // save similarity value
         PlagiarismContent plagiarismContent = new PlagiarismContent();
         plagiarismContent.setDocument1(document);
         plagiarismContent.setDocument2(temp);
         plagiarismContent.setRate(result);
         plagiarismContent.setAssignment(document.getAssignment());
+        // if plagiarism is identical automatically set as plagiarized file
         if (result == 100.0) {
             document.setMarkAsPlagiarized(true);
             temp.setMarkAsPlagiarized(true);

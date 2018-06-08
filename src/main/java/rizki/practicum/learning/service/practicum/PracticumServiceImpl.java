@@ -41,9 +41,11 @@ public class PracticumServiceImpl implements PracticumService {
     public Practicum updatePracticum(Practicum practicum){
         Practicum old = practicumRepository.findOne(practicum.getId());
         Role role = roleService.getRole("koas");
+        // check if coordinator is changed
         if(old.getCoordinatorAssistance() != practicum.getCoordinatorAssistance()) {
             User oldCoordinator = old.getCoordinatorAssistance();
             if (oldCoordinator != null ) {
+                // remove old coordinator state
                 List<Role> tempRole = oldCoordinator.getRole();
                 tempRole.remove(role);
                 oldCoordinator.setRole(tempRole);
@@ -51,6 +53,7 @@ public class PracticumServiceImpl implements PracticumService {
             }
             User newCoordinator = practicum.getCoordinatorAssistance();
             if (newCoordinator != null ) {
+                // add new coordinator state
                 List<Role> tempRole = newCoordinator.getRole();
                 if(!tempRole.contains(role)) {
                     tempRole.add(role);
@@ -66,6 +69,7 @@ public class PracticumServiceImpl implements PracticumService {
     public void deletePracticum(Practicum practicum) {
         User oldCoordinator = practicum.getCoordinatorAssistance();
         if (oldCoordinator != null ) {
+            // remove coordinator state
             Role role = roleService.getRole("koas");
             List<Role> tempRole = oldCoordinator.getRole();
             tempRole.remove(role);

@@ -35,6 +35,7 @@ public class StorageServiceImpl implements StorageService {
 
     @Override
     public void init() {
+        // init storage
         try {
             if (!Files.isDirectory(rootLocation) ) {
                 Files.createDirectory(rootLocation);
@@ -46,16 +47,18 @@ public class StorageServiceImpl implements StorageService {
 
     @Override
     public ArrayList<String> store(MultipartFile[] file, String filename) throws FileFormatException {
-        String filename_folder = MD5.generate(filename);
-        String folder_location = this.rootLocation+"/"+filename_folder;
+        String filename_folder = MD5.generate(filename); // md5 as filename
+        String folder_location = this.rootLocation+"/"+filename_folder; //set folder file
         ArrayList<String> filenames = new ArrayList<>();
         for (MultipartFile filex : file) {
             String file_location = folder_location+"/"+filex.getOriginalFilename();
             try {
                 File fileCheck = new File(folder_location);
+                // create directory
                 if(!fileCheck.isDirectory()){
                     fileCheck.mkdir();
                 }
+                // saving file
                 File fileSave = new File(file_location);
                 FileUtils.writeByteArrayToFile(fileSave, filex.getBytes());
                 filenames.add(file_location);
@@ -69,7 +72,7 @@ public class StorageServiceImpl implements StorageService {
     @Override
     public Stream<Path> loadAll() {
         return null;
-    } // to be implemented
+    }
 
     @Override
     public String load(String filename) throws IOException, InvalidFormatException {
@@ -78,6 +81,7 @@ public class StorageServiceImpl implements StorageService {
 
     @Override
     public Resource loadAsResource(String filename) {
+        // load as resource
         try {
             Path file = rootLocation.resolve(filename);
             Resource resource = new UrlResource(file.toUri());
@@ -98,6 +102,7 @@ public class StorageServiceImpl implements StorageService {
 
     @Override
     public void delete(String filename) {
+        // delete specific file
         try {
             String[] splitter = filename.split("/");
             String folder = splitter[0] +"/" + splitter[1] +"/" + splitter[2];

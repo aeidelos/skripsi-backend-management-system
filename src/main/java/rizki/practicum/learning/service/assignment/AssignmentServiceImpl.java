@@ -82,15 +82,15 @@ public class AssignmentServiceImpl implements AssignmentService {
         String extension = FilenameUtils.getExtension(file[0].getOriginalFilename());
         String filename = FilenameUtils.removeExtension(file[0].getOriginalFilename());
         ArrayList<String> doc = null;
-        if (idDocument!=null && !idDocument.equals("")) {
+        if (idDocument!=null && !idDocument.equals("")) { // delete existing document and files
             deletePreviousDocument(idDocument, idPractican);
         }
             if (Arrays.asList(FilesLocationConfig.Document.FILE_EXTENSION_ALLOWED).contains(extension)) {
-                doc = documentStorageService.store(file, filename);
+                doc = documentStorageService.store(file, filename); // store document
             } else if (Arrays.asList(FilesLocationConfig.SourceCode.FILE_EXTENSION_ALLOWED).contains(extension)) {
-                doc = sourceCodeStorageService.store(file, filename);
+                doc = sourceCodeStorageService.store(file, filename); // store code
             } else {
-                throw new FileFormatException("Format tidak didukung");
+                throw new FileFormatException("Format tidak didukung"); // exception if file not doc or code
             }
         return documentCreator(doc, idPractican, idAssignment);
     }
@@ -100,6 +100,7 @@ public class AssignmentServiceImpl implements AssignmentService {
         if (storageService!=null) storageService.delete(temp.getFilename());
         List<Document> other = documentRepository.findAllByAssignmentAndPractican(temp.getAssignment(), userRepository.findOne(idPractican));
         if (temp != null && other != null) {
+            // remove all deleted document
             other.stream().forEach(o -> {
                 plagiarismContentRepository.deleteAllByDocument1OrDocument2(o, o);
                 documentRepository.delete(o);
@@ -109,6 +110,7 @@ public class AssignmentServiceImpl implements AssignmentService {
 
     public List<Document> documentCreator(List<String> filename, String idPractican, String idAssignment) {
         List<Document> documents = new ArrayList<>();
+        // create and save each document object based on file assigned
         filename.stream().forEach(
                 f-> {
                     Document document = new Document();
@@ -138,15 +140,18 @@ public class AssignmentServiceImpl implements AssignmentService {
         Classroom classroom = classroomRepository.findOne(idClassroom);
         List<Document> documents = null;
         if (idClassroom == null || idClassroom.equalsIgnoreCase("null")) {
+            // get practicum scope document
             documents = documentRepository.findAllByAssignmentIsIn(task.getAssignments());
         } else {
+            // get specific document based on classroom
             documents = documentRepository.findAllByAssignmentIsInAndPracticanIsIn(task.getAssignments(), classroom.getPractican());
         }
-        if (documents == null || documents.size() == 0) {
+        if (documents == null || documents.size() == 0) { // empty result
             return null;
         }
         Map<String, List<DocumentPlagiarism>> result = new HashMap<>();
         for (Document filter : documents) {
+            // grouping document by user
             ArrayList<DocumentPlagiarism> temp = null;
             DocumentPlagiarism docPlagTemp = new DocumentPlagiarism(filter,plagiarismContentRepository.findDistinctFirstByDocument1OrDocument2OrderByRateDesc(filter,filter));
             if (result == null || !result.containsKey(filter.getPractican().getId())) {
@@ -160,6 +165,7 @@ public class AssignmentServiceImpl implements AssignmentService {
         }
         Map<String, Map<String, List<DocumentPlagiarism>>> result1 = new HashMap<>();
         result.forEach((key, value) -> {
+            // then grouping document by assignment
             Map<String, List<DocumentPlagiarism>> res = new HashMap<>();
             ArrayList<DocumentPlagiarism> temp = null;
             for (DocumentPlagiarism filter : value) {
@@ -203,6 +209,7 @@ public class AssignmentServiceImpl implements AssignmentService {
     public void setGradeAssignment(String idDocument, int grade) {
         Document doc = documentRepository.findOne(idDocument);
         if (doc == null) throw new ResourceNotFoundException("Data tidak ditemukan");
+        // set grade for each document object
         List<Document> docs = documentRepository.findAllByAssignmentAndPractican(doc.getAssignment(), doc.getPractican());
         docs.forEach(document -> {
             document.setGrade(grade);
@@ -214,6 +221,7 @@ public class AssignmentServiceImpl implements AssignmentService {
     public Map<String, Object> getDashboardState(String idUser) {
         User user = userRepository.findOne(idUser);
         Map<String, Object> result = new HashMap<>();
+        // get plagiarized average specific user
         float plagiarize = documentRepository.countDocumentsByMarkAsPlagiarizedIsTrueAndPractican(userRepository.findOne(idUser));
         float total = documentRepository.count();
         float average_plagiarism = (plagiarize / total);
@@ -226,6 +234,7 @@ public class AssignmentServiceImpl implements AssignmentService {
             result.put("plagiarism_rate", plagiarism_rate);
             result.put("practicum_class", practicum_class);
         } else {
+            // get active tasak, plagiarized count and classroom
             List<Practicum> practicums = new ArrayList<>();
             List<Classroom> classrooms = classroomRepository.findAllByPracticanContains(user);
             classrooms.stream().forEach(classroom -> practicums.add(classroom.getPracticum()));
@@ -252,16 +261,18 @@ public class AssignmentServiceImpl implements AssignmentService {
         List<ExportClassroom> exportClassrooms = new ArrayList<>();
         Classroom classroom = classroomRepository.findOne(idClassroom);
         List<User> users = classroom.getPractican();
-        users.stream().sorted(Comparator.comparing(User::getIdentity));
+        users.stream().sorted(Comparator.comparing(User::getIdentity)); // sorted by user
         List<Task> tasks = taskRepository.findAllByClassroom(classroom);
-        tasks.stream().sorted(Comparator.comparing(Task::getCreatedDate));
+        tasks.stream().sorted(Comparator.comparing(Task::getCreatedDate)); // sorted by created date
         tasks.stream().forEach(task -> {
+            // each task grouped using dto export classroom
             ExportClassroom exportClassroom = new ExportClassroom();
             exportClassroom.setTask(task);
             List<UserGrade> userGrades = new ArrayList<>();
             users.stream().forEach(user -> {
                 AtomicDouble value = new AtomicDouble();
                 value.set(0);
+                // get average for each document to one assignment
                 task.getAssignments().stream().forEach(assignment -> {
                     List<Document> documents = documentRepository.findAllByAssignmentAndPractican(assignment, user);
                     if (documents.size() > 0) {

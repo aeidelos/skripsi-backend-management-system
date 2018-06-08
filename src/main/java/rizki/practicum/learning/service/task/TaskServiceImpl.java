@@ -1,9 +1,11 @@
 package rizki.practicum.learning.service.task;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import rizki.practicum.learning.entity.*;
 import rizki.practicum.learning.repository.*;
+import rizki.practicum.learning.service.storage.StorageService;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
@@ -26,6 +28,13 @@ public class TaskServiceImpl implements TaskService {
 
     @Autowired
     private AssignmentRepository assignmentRepository;
+
+    @Autowired
+    private DocumentRepository documentRepository;
+
+    @Qualifier("StorageService")
+    @Autowired
+    private StorageService storageService;
 
     @Override
     public void deleteTask(String idTask){
@@ -60,16 +69,28 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public Task updateTask(Task task) {
-        for(Assignment assignment: task.getAssignments()) {
-            List<Assignment> result = task.getAssignments();
-            if(assignment.getId()==null) {
-                result.remove(assignment);
-                result.add(assignmentRepository.save(assignment));
-                task.setAssignments(result);
-            }
+        Task old = taskRepository.findOne(task.getId());
+        List<Assignment> oldAssignment = old.getAssignments();
+        List<Assignment> newAssignment = task.getAssignments();
+        List<Assignment> removed = oldAssignment;
+        List<Assignment> added = newAssignment;
+        if(oldAssignment!=newAssignment) {
+            // check changed assignment
+            removed.removeAll(newAssignment);
+            added.removeAll(removed);
+            List<Document> documents = documentRepository.findAllByAssignmentIsIn(removed);
+            documents.forEach(doc -> {
+                plagiarismContentRepository.deleteAllByDocument1OrDocument2(doc,doc);
+                storageService.delete(doc.getFilename());
+                documentRepository.delete(doc);
+            });
         }
+        task.setAssignments(added);
         return taskRepository.save(task);
     }
+
+
+    @Autowired  PlagiarismContentRepository plagiarismContentRepository;
 
     @Override
     public Task addTask(Task task) {
@@ -91,12 +112,14 @@ public class TaskServiceImpl implements TaskService {
         List<Classroom> classrooms = classroomRepository.findAllByPracticanContains
                                         (userRepository.findOne(idPractican));
         if(status.equalsIgnoreCase("past")){
+            // get past task by practican
             byClassrooms = taskRepository.findAllByClassroomInAndDueDateIsBefore(classrooms, new Date());
             byPracticums = taskRepository.findAllByPracticumInAndDueDateIsBefore(classrooms
                     .stream()
                     .map(Classroom::getPracticum)
                     .collect(Collectors.toList()), new Date());
         }else{
+            // get future task by practican
             byClassrooms = taskRepository.findAllByClassroomInAndDueDateIsAfter(classrooms, new Date());
             byPracticums = taskRepository.findAllByPracticumInAndDueDateIsAfter(classrooms
                     .stream()
@@ -113,27 +136,37 @@ public class TaskServiceImpl implements TaskService {
         AtomicReference<List<Task>> tasks = new AtomicReference<>();
         Date date = new Date();
         if(mode.equalsIgnoreCase("practicum")){
+            // get practicum task collection
             Practicum practicum = practicumRepository.findOne(id);
             if(time.equalsIgnoreCase("past")){
+                // past
                 tasks.set(taskRepository.findAllByPracticumAndDueDateIsBefore(practicum, date));
             }else{
+                // future
                 tasks.set(taskRepository.findAllByPracticumAndDueDateIsAfter(practicum, date));
             }
         }else if(mode.equalsIgnoreCase("classroom")){
+            // get classroom task collection
             Classroom classroom = classroomRepository.findOne(id);
             if(time.equalsIgnoreCase("past")){
+                // past
                 tasks.set(taskRepository.findAllByClassroomAndDueDateIsBefore(classroom, date));
             }else{
+                // future
                 tasks.set(taskRepository.findAllByClassroomAndDueDateIsAfter(classroom, date));
             }
         }else if(mode.equalsIgnoreCase("mix")){
+            // get all task in specific classroom
             Classroom classroom = classroomRepository.findOne(id);
             if(time.equalsIgnoreCase("past")){
+                // past
                 tasks.set(taskRepository.findAllByClassroomAndDueDateIsBefore(classroom, date));
                 tasks.get().addAll(taskRepository.findAllByPracticumAndDueDateIsBefore(classroom.getPracticum(),date));
             } else if(time.equalsIgnoreCase("now")){
+                // future
                 List<Classroom> classrooms = classroomRepository.findAllByPracticanContains(userRepository.findOne(id));
                 classrooms.stream().forEach(cl-> {
+                    // grouping by classroom
                     List<Task> temp;
                     if(tasks.get() == null) {
                         temp = new ArrayList<>();
@@ -146,6 +179,7 @@ public class TaskServiceImpl implements TaskService {
                 });
                 List<Task> ta = tasks.get();
                 if(ta != null)
+                    // get future
                 ta = tasks.get().stream().filter(task -> task.getDueDate().compareTo(date) != 0 &&
                         task.getDueDate().compareTo(date) != 1 ).collect(Collectors.toList());
                 tasks.set(ta);
@@ -154,7 +188,7 @@ public class TaskServiceImpl implements TaskService {
                 tasks.get().addAll(taskRepository.findAllByPracticumAndDueDateIsAfter(classroom.getPracticum(),date));
             }
         }else{
-            throw new IllegalArgumentException("Kategori tidak ditemukan");
+            throw new IllegalArgumentException("Kategori mode tidak ditemukan");
         }
         return tasks.get();
     }

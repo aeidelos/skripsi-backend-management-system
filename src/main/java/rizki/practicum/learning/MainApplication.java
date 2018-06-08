@@ -22,31 +22,33 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import rizki.practicum.learning.dto.MyUserDetails;
 import rizki.practicum.learning.repository.UserRepository;
-import rizki.practicum.learning.service.plagiarism.PlagiarismServiceRunners;
 import rizki.practicum.learning.service.storage.DocumentStorageServiceImpl;
 import rizki.practicum.learning.service.storage.ImageStorageServiceImpl;
 import rizki.practicum.learning.service.storage.SourceCodeStorageServiceImpl;
 import rizki.practicum.learning.service.storage.StorageServiceImpl;
 
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.*;
 
 @SpringBootApplication
 @EnableFeignClients
-public class LearningManagementSystemApplication {
+public class MainApplication {
 
-	public static void main(String[] args) {
-		Thread t = new Thread(() -> {
-			while(true){
-				try {
-					plagiarismServiceRunnersQueue.take().run();
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-		});
-		t.start();
-		SpringApplication.run(LearningManagementSystemApplication.class, args);
+    public static BlockingQueue<Runnable> plagiarismServiceRunnersQueue = new LinkedBlockingDeque<>();
+
+
+    public static void main(String[] args) {
+		ExecutorService exService = Executors.newFixedThreadPool(10);
+		Thread mainThread = new Thread(() -> {
+		    while (true){
+                try {
+                    exService.execute(plagiarismServiceRunnersQueue.take());
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+                    mainThread.start();
+        SpringApplication.run(MainApplication.class, args);
 	}
 
 	@Bean
@@ -55,9 +57,6 @@ public class LearningManagementSystemApplication {
 			// generatorService.populate();
 		};
 	}
-
-	public static BlockingQueue<PlagiarismServiceRunners> plagiarismServiceRunnersQueue = new LinkedBlockingDeque<>();
-
 
 	@Bean
 	CommandLineRunner init(StorageServiceImpl storageServiceImpl,
@@ -119,3 +118,15 @@ public class LearningManagementSystemApplication {
 	}
 
 }
+
+
+//		Thread t = new Thread(() -> {
+//			while(true){
+//				try {
+//					plagiarismServiceRunnersQueue.take().run();
+//				} catch (InterruptedException e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		});
+//		t.start();

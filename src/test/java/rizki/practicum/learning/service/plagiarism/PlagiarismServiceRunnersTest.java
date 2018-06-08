@@ -113,8 +113,8 @@ public class PlagiarismServiceRunnersTest {
 
     @Test
     public void documentCheckPlagiarism_DOC_TYPE_CODE_PLAGIARIZED_EXEC() throws Exception {
-        resource = Document.builder().id("RESID").assignment(assignment).filename("RES.java").markAsPlagiarized(false).grade(0.0).build();
-        comparator = Document.builder().id("COMID").assignment(assignment).filename("COM.java").markAsPlagiarized(false).grade(0.0).build();
+        resource = Document.builder().id("RESID").assignment(assignment).filename("media/RES.java").markAsPlagiarized(false).grade(0.0).build();
+        comparator = Document.builder().id("COMID").assignment(assignment).filename("media/RES.java").markAsPlagiarized(false).grade(0.0).build();
 
         String resourceContent = "this is an identical content";
         String comparatorContent = "this is an identical content";
